@@ -1,10 +1,11 @@
 import * as cheerio from "cheerio";
 import Bottleneck from "bottleneck";
 import robotsParser from "robots-parser";
-import { APP_NAME, RecurringFrequency, type PageToScrape } from "./constants";
-import puppeteer from "puppeteer";
 import type { Page } from "puppeteer";
 import debug from "debug";
+import { promises as fs } from "node:fs";
+
+import { APP_NAME, RecurringFrequency, type PageToScrape } from "./constants";
 
 const log = debug(`${APP_NAME}:utils.ts`);
 
@@ -35,36 +36,21 @@ export async function fetchArticles(page: PageToScrape, browserPage: Page) {
 
 		const $ = cheerio.load(html);
 
-		log($.text());
-
-		const articles = $(page.articleContainerSelector)
-			.map((_, el) => {
-				log($(el).find(page.titleSelector).text());
-
-				return {
-					url: page.url,
-					link: $(el).find(page.linkSelector).attr("href"),
-					title: $(el).find(page.titleSelector).length
-						? $(el).find(page.titleSelector).text().trim()
-						: undefined,
-					description: $(el).find(page.descriptionSelector).length
-						? $(el).find(page.descriptionSelector).text().trim()
-						: undefined,
-					date: $(el).find(page.dateSelector).length
-						? new Date($(el).find(page.dateSelector).text().trim())
-						: undefined,
-				};
-			})
+		return $(page.articleContainerSelector)
+			.map((_, el) => ({
+				url: page.url,
+				link: $(el).find(page.linkSelector).attr("href"),
+				title: $(el).find(page.titleSelector).length
+					? $(el).find(page.titleSelector).text().trim()
+					: undefined,
+				description: $(el).find(page.descriptionSelector).length
+					? $(el).find(page.descriptionSelector).text().trim()
+					: undefined,
+				date: $(el).find(page.dateSelector).length
+					? new Date($(el).find(page.dateSelector).text().trim())
+					: undefined,
+			}))
 			.get() as ArticleData[];
-
-		log(articles);
-
-		return articles.filter(
-			(article): article is ValidArticleData =>
-				!!article.link &&
-				!!article.title &&
-				(!page.removeIfNoDate || (!!page.removeIfNoDate && !!article.date)),
-		);
 	} catch (error) {
 		console.error("Error in fetchArticleLinksAndDates:", error);
 		return [];
@@ -123,23 +109,25 @@ function sortByDate(articles: ArticleData[]) {
 }
 
 // filter articles - still on home page
-// 1. by date
-// 2. hopefully something else so can ai less
-// 3. use ai to check if seems relevant
-export async function filterRelevantArticles(articles: ValidArticleData[]) {
-	const filteredByDate = articles
-		.filter((article) => {
-			if (!article.date) return true;
-
+export async function filterRelevantArticles(
+	articles: ArticleData[],
+	page: PageToScrape,
+) {
+	const filteredArticles = articles.filter(
+		(article): article is ValidArticleData => {
 			const weekAgo = new Date().getTime() - RecurringFrequency;
+			const isValidDate = !article.date || article.date.getTime() > weekAgo;
 
-			return article.date.getTime() > weekAgo;
-		})
-		
+			const hasRequiredFields = !!article.link && !!article.title;
 
-	// ai - filter by relevance
+			const meetsDateRequirement =
+				!page.removeIfNoDate || (!!page.removeIfNoDate && !!article.date);
 
-	return filteredByDate;
+			return isValidDate && hasRequiredFields && meetsDateRequirement;
+		},
+	);
+
+	return filteredArticles;
 }
 
 //
@@ -151,25 +139,25 @@ const limiter = new Bottleneck({
 	maxConcurrent: 1, // Ensures only one job runs at a time
 });
 
-export async function scrapeWithRetryAndDelay(
-	page: PageToScrape,
-	scrapeFunction: (page: PageToScrape) => Promise<any>,
-	maxRetries = 3,
-) {
-	for (let i = 0; i < maxRetries; i++) {
-		try {
-			return await limiter.schedule(() => scrapeFunction(page));
-		} catch (error) {
-			console.error(`Attempt ${i + 1} failed for ${page.url}: ${error.message}`);
+// export async function scrapeWithRetryAndDelay(
+// 	page: PageToScrape,
+// 	scrapeFunction: (page: PageToScrape) => Promise<any>,
+// 	maxRetries = 3,
+// ) {
+// 	for (let i = 0; i < maxRetries; i++) {
+// 		try {
+// 			return await limiter.schedule(() => scrapeFunction(page));
+// 		} catch (error) {
+// 			console.error(`Attempt ${i + 1} failed for ${page.url}: ${error}`);
 
-			if (i === maxRetries - 1) {
-				console.error(`All ${maxRetries} attempts failed for ${page.url}`);
-				return {
-					url: page.url,
-					data: undefined,
-					error: `Failed after ${maxRetries} attempts`,
-				};
-			}
-		}
-	}
-}
+// 			if (i === maxRetries - 1) {
+// 				console.error(`All ${maxRetries} attempts failed for ${page.url}`);
+// 				return {
+// 					url: page.url,
+// 					data: undefined,
+// 					error: `Failed after ${maxRetries} attempts`,
+// 				};
+// 			}
+// 		}
+// 	}
+// }
