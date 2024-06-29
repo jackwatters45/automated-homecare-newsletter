@@ -1,17 +1,8 @@
+import type { PageToScrape } from "../types";
+
 export const APP_NAME = "webscrape";
 
-export type PageToScrape = {
-	url: string;
-	type: "client" | "server";
-	articleContainerSelector: string;
-	linkSelector: string;
-	titleSelector: string;
-	descriptionSelector: string | undefined;
-	dateSelector: string | undefined;
-	removeIfNoDate?: boolean;
-};
-
-export const testPages: PageToScrape[] = [
+export const TEST_PAGES: PageToScrape[] = [
 	{
 		url: "https://pqhh.org/media-center/",
 		type: "server",
@@ -23,7 +14,7 @@ export const testPages: PageToScrape[] = [
 	},
 ];
 
-export const specificPages: PageToScrape[] = [
+export const SPECIFIC_PAGES: PageToScrape[] = [
 	{
 		url: "https://pqhh.org/media-center/",
 		type: "server",
@@ -131,4 +122,4 @@ export const specificPages: PageToScrape[] = [
 // 	url: "https://netforum.avectra.com/eWeb/DynamicPage.aspx?Site=HCLA&WebCode=NationalHomeCareNews",
 // },
 
-export const RecurringFrequency = 7 * 24 * 60 * 60 * 1000; // 7 days in milliseconds
+export const RECURRING_FREQUENCY = 7 * 24 * 60 * 60 * 1000; // 7 days in milliseconds
