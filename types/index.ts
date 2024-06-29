@@ -22,3 +22,7 @@ export interface ValidArticleData {
 	description?: string;
 	date?: Date;
 }
+
+export interface ValidArticleDataWithCount extends ValidArticleData {
+	count: number;
+}

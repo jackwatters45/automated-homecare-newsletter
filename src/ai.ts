@@ -10,5 +10,7 @@ export function initializeGenAI() {
 
 	return genAI.getGenerativeModel({
 		model: "gemini-1.5-flash",
+		systemInstruction:
+			"You are a homecare business operator. You are tasked with choosing which articles to include in a newsletter.˝",
 	});
 }

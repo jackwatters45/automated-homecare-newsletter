@@ -1,12 +1,12 @@
-import * as cheerio from "cheerio";
 import Bottleneck from "bottleneck";
-import robotsParser from "robots-parser";
-import type { Page } from "puppeteer";
+import * as cheerio from "cheerio";
 import debug from "debug";
-import { promises as fs } from "node:fs";
+import type { Page } from "puppeteer";
+import robotsParser from "robots-parser";
 
-import { APP_NAME, RECURRING_FREQUENCY } from "./constants";
 import type { ArticleData, PageToScrape } from "../types";
+import { APP_NAME, RECURRING_FREQUENCY } from "./constants";
+import { combineUrlParts, convertHttpToHttps } from "./utils";
 
 const log = debug(`${APP_NAME}:data-fetching.ts`);
 
@@ -24,24 +24,39 @@ export async function fetchArticles(page: PageToScrape, browserPage: Page) {
 		const $ = cheerio.load(html);
 
 		return $(page.articleContainerSelector)
-			.map((_, el) => ({
-				url: page.url,
-				link: $(el).find(page.linkSelector).attr("href"),
-				title: $(el).find(page.titleSelector).length
-					? $(el).find(page.titleSelector).text().trim()
-					: undefined,
-				description: $(el).find(page.descriptionSelector).length
-					? $(el).find(page.descriptionSelector).text().trim()
-					: undefined,
-				date: $(el).find(page.dateSelector).length
-					? new Date($(el).find(page.dateSelector).text().trim())
-					: undefined,
-			}))
+			.map((_, el) => getArticlePreview({ page, $, el }))
 			.get() as ArticleData[];
 	} catch (error) {
 		console.error("Error in fetchArticleLinksAndDates:", error);
 		return [];
 	}
+}
+
+interface GetArticlePreviewParams {
+	page: PageToScrape;
+	$: cheerio.CheerioAPI;
+	el: cheerio.AnyNode;
+}
+
+function getArticlePreview({ page, $, el }: GetArticlePreviewParams) {
+	const href = $(el).find(page.linkSelector).attr("href");
+
+	let link = href ? convertHttpToHttps(href) : undefined;
+	if (!link?.startsWith("https://")) link = combineUrlParts(page.url, link);
+
+	return {
+		url: page.url,
+		link,
+		title: $(el).find(page.titleSelector).length
+			? $(el).find(page.titleSelector).text().trim()
+			: undefined,
+		description: $(el).find(page.descriptionSelector).length
+			? $(el).find(page.descriptionSelector).text().trim()
+			: undefined,
+		date: $(el).find(page.dateSelector).length
+			? new Date($(el).find(page.dateSelector).text().trim())
+			: undefined,
+	};
 }
 
 async function canScrape(pageToScrape: string) {
