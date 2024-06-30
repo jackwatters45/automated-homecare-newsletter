@@ -6,6 +6,13 @@ import { APP_NAME } from "./constants";
 
 const log = debug(`${APP_NAME}:utils.ts`);
 
+export async function generateStringResponse(prompt: string): Promise<string> {
+	const result = await model.generateContent(prompt);
+	const response = await result.response;
+
+	return response.text();
+}
+
 export async function generateJsonResponse<T>(prompt: string): Promise<T[]> {
 	const result = await model.generateContent(prompt);
 	const response = await result.response;
@@ -70,4 +77,12 @@ export function parseJsonDate<T extends { date?: string }>(jsonString: T[]) {
 		...item,
 		date: item.date ? new Date(item.date) : undefined,
 	}));
+}
+
+export function formatDescription(description: string) {
+	const descArr = description?.split(" ");
+
+	if (descArr[descArr.length - 1].endsWith(".")) descArr.pop();
+
+	return `${descArr.slice(0, 25).join(" ")}...`;
 }

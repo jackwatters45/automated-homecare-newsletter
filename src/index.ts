@@ -2,32 +2,52 @@ import "dotenv/config";
 
 import { promises as fs } from "node:fs";
 import debug from "debug";
-import puppeteer from "puppeteer";
+import Handlebars from "handlebars";
+import puppeteer, { Page } from "puppeteer";
 
-import type { ValidArticleData, ValidArticleDataWithCount } from "../types";
+import type {
+	ArticleDisplayData,
+	ValidArticleData,
+	ValidArticleDataWithCount,
+} from "../types";
 import { initializeGenAI } from "./ai";
 import { APP_NAME, SPECIFIC_PAGES } from "./constants";
-import { fetchArticles } from "./data-fetching";
 
 import { runWeekly } from "./cron";
-import { parseJsonDate } from "./utils";
+import {
+	formatDescription,
+	generateJsonResponse,
+	generateStringResponse,
+	parseJsonDate,
+} from "./utils";
 
+import Bottleneck from "bottleneck";
+import displayDataJson from "../article-display-data.json" assert {
+	type: "json",
+};
+import rankedJson from "../ranked.json" assert { type: "json" };
 import responseJson from "../response.json" assert { type: "json" };
 import resultsJson from "../results.json" assert { type: "json" };
+import { filterAllArticles, filterPageArticles } from "./date-filtering";
+import { processArticles } from "./format-articles";
+import { renderTemplate, sendEmail } from "./template";
 
 const log = debug(`${APP_NAME}:index.ts`);
 
 export const model = initializeGenAI();
 
-// TODO fix categories responses ie https://hospicenews.com/category/featured/
-// TODO rank articles (combine with filter??)
 // TODO add new results to main
+// TODO style template
+
+// TODO rank articles (combine with filter??)
 // TODO fine tune prompts
+
+// TODO cron job
 async function main() {
 	runWeekly(async () => {
 		const browser = await puppeteer.launch();
 		try {
-			// const browserPage = await browser.newPage();
+			const browserPage = await browser.newPage();
 
 			// const results = [];
 			// for (const page of SPECIFIC_PAGES) {
@@ -39,20 +59,36 @@ async function main() {
 
 			// 	results.push(...relevantArticles);
 			// }
+			// fs.writeFile("response.json", JSON.stringify(results, null, 2));
 
 			// const relevantArticles = await filterAllArticles(results);
 
-			const parsedResultsJson = parseJsonDate(resultsJson);
+			// testing
+			// const relevantArticles = await filterAllArticles(
+			// 	parseJsonDate(responseJson),
+			// );
+			// fs.writeFile("results.json", JSON.stringify(relevantArticles, null, 2));
+
+			// const parsedResultsJson = parseJsonDate(resultsJson);
 
 			// select n most relevant articles - use ai to rank
-			const rankedArticles = await rankArticles(parsedResultsJson);
+			// const rankedArticles = await rankArticles(parsedResultsJson);
 
-			log(rankedArticles.length);
-			fs.writeFile("ranked.json", JSON.stringify(rankedArticles, null, 2));
+			// log(rankedArticles.length);
+			// fs.writeFile("ranked.json", JSON.stringify(rankedArticles, null, 2));
 
-			// below still needs to be expanded on
-			// add to template
-			// distribute
+			// const rankedArticles = parseJsonDate(rankedJson);
+
+			// const articleDisplayData = await processArticles(
+			// 	rankedArticles,
+			// 	browserPage,
+			// );
+
+			// template
+
+			const result = await renderTemplate(displayDataJson);
+
+			const res = await sendEmail(result);
 		} catch (error) {
 			console.error(error);
 		} finally {
@@ -64,7 +100,7 @@ async function main() {
 //
 function rankArticles(
 	articles: ValidArticleDataWithCount[],
-	numberOfArticles = 20,
+	numberOfArticles = 30,
 	// doesnt need to omit count if it requires an extra loop
 ): ValidArticleDataWithCount[] {
 	const sortedArticles = articles.sort((a, b) => b.count - a.count);

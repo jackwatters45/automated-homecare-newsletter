@@ -40,7 +40,7 @@ export async function filterAllArticles(articles: ValidArticleData[]) {
 
 	// TODO improve prompt
 	const topic = "homecare (medical)";
-	const prompt = `remove any articles that are irrelevant to the topic of ${topic}:\n\n${JSON.stringify(aiFilteringData, null, 2)}.\n\n return the remaining articles as a JSON array in the same format as the original list. If they are all irrelevant, return an empty array. If they are all relevant, return the original list. Under no circumstances should you return something that is not in the same format as the original list.`;
+	const prompt = `remove any articles that are irrelevant to the topic of ${topic} news:\n\n${JSON.stringify(aiFilteringData, null, 2)}.\n\n Filter out any articles that aren't related to news (opinions, editorials, etc). Return the remaining articles as a JSON array in the same format as the original list. If they are all irrelevant, return an empty array. If they are all relevant, return the original list. Under no circumstances should you return something that is not in the same format as the original list. also id two articles are the same or very similar (that would indicate they are talking about the same thing), return the one with the most recent date.`;
 
 	const relevantArticles = await generateJsonResponse<ValidArticleData>(prompt);
 

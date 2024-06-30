@@ -19,8 +19,7 @@ export async function fetchArticles(page: PageToScrape, browserPage: Page) {
 			return [];
 		}
 
-		const html = await fetchPageHTML(page, browserPage);
-
+		const html = await tryFetchPageHTML(page.url, browserPage);
 		const $ = cheerio.load(html);
 
 		return $(page.articleContainerSelector)
@@ -96,6 +95,25 @@ async function fetchPageHTML(page: PageToScrape, browserPage: Page) {
 		}
 
 		return await response.text();
+	} catch (error) {
+		console.error("Error in fetchPageHTML:", error);
+		throw error;
+	}
+}
+
+export async function tryFetchPageHTML(url: string, browserPage: Page) {
+	try {
+		try {
+			const response = await fetch(url);
+			if (!response.ok) {
+				throw new Error(`HTTP error! status: ${response.status}`);
+			}
+
+			return await response.text();
+		} catch (error) {
+			await browserPage.goto(url);
+			return await browserPage.content();
+		}
 	} catch (error) {
 		console.error("Error in fetchPageHTML:", error);
 		throw error;

@@ -1,5 +1,61 @@
 [
 	{
+		"url": "https://hospicenews.com/",
+		"link": "https://hospicenews.com/category/finance/",
+		"title": "Amedisys Divests Locations in Advance of Optum Deal",
+		"date": "2024-06-28T07:00:00.000Z",
+		"count": 3
+	},
+	{
+		"url": "https://hospicenews.com/",
+		"link": "https://hospicenews.com/category/regulation/",
+		"title": "Hospices’ Compliance Outlook a ‘Balancing Act’",
+		"date": "2024-06-27T07:00:00.000Z",
+		"count": 3
+	},
+	{
+		"url": "https://hospicenews.com/",
+		"link": "https://hospicenews.com/category/featured/",
+		"title": "Hospices’ 2024 Public Policy Priorities",
+		"date": "2024-06-27T07:00:00.000Z",
+		"count": 3
+	},
+	{
+		"url": "https://homehealthcarenews.com/",
+		"link": "https://homehealthcarenews.com/category/home-health-care/",
+		"title": "How The Supreme Court’s Chevron Decision Could Help Stop Home Health Cuts",
+		"date": "2024-06-28T07:00:00.000Z",
+		"count": 2
+	},
+	{
+		"url": "https://hospicenews.com/",
+		"link": "https://hospicenews.com/category/regulation/",
+		"title": "End-of-Life Care Delivery ‘Ripe for Reform’ in Rep. Blumenauer’s Hospice CARE Act",
+		"date": "2024-06-26T07:00:00.000Z",
+		"count": 2
+	},
+	{
+		"url": "https://hospicenews.com/",
+		"link": "https://hospicenews.com/category/regulation/",
+		"title": "Supreme Court Ruling Could Complicate CMS Efforts to Regulate Hospices",
+		"date": "2024-06-28T07:00:00.000Z",
+		"count": 2
+	},
+	{
+		"url": "https://hospicenews.com/",
+		"link": "https://hospicenews.com/category/operations/diversity-and-inclusion/",
+		"title": "The AIDS Epidemic’s Lasting Impact on Hospice Care for LGBTQ+ Populations",
+		"date": "2024-06-28T07:00:00.000Z",
+		"count": 2
+	},
+	{
+		"url": "https://hospicenews.com/",
+		"link": "https://hospicenews.com/category/ma/",
+		"title": "Elara Caring Acquires Caregivers Home Health",
+		"date": "2024-06-28T07:00:00.000Z",
+		"count": 2
+	},
+	{
 		"url": "https://pqhh.org/media-center/",
 		"link": "https://pqhh.org/article/home-health-lobby-slams-proposed-2025-home-health-pay-rule/",
 		"title": "Home Health Lobby Slams Proposed 2025 Home Health Pay Rule",
@@ -192,6 +248,14 @@
 	},
 	{
 		"url": "https://www.mcknightshomecare.com/home/news/",
+		"link": "https://www.mcknightshomecare.com/news/ai-could-open-doors-to-advances-in-care-operations-in-aging-services/",
+		"title": "AI could open doors to advances in care, operations in aging services",
+		"description": "Aging services organizations already are using artificial intelligence, whether or not they realize it, experts said.",
+		"date": "2024-06-28T07:00:00.000Z",
+		"count": 1
+	},
+	{
+		"url": "https://www.mcknightshomecare.com/home/news/",
 		"link": "https://www.mcknightshomecare.com/news/home-care-briefs-for-monday-july-1/",
 		"title": "Home Care briefs for Monday, July 1",
 		"description": "Supreme Court’s overturning of Chevron decision calls CMS rules into question … Elara Caring expands reach into Kansas, Iowa with acquisition of Caregivers Home hHealth … Visiting...",
@@ -216,18 +280,19 @@
 	},
 	{
 		"url": "https://www.mcknightshomecare.com/home/news/",
+		"link": "https://www.mcknightshomecare.com/news/senior-care-experts-detail-how-to-build-a-coveted-destination-workplace/",
+		"title": "Senior care experts detail how to build a coveted ‘destination workplace’",
+		"description": "Faced with today’s complex array of financial, staffing and regulatory challenges, senior care operators need to rely on a broad range of solutions, a panel of experts said Thursday.",
+		"date": "2024-06-27T07:00:00.000Z",
+		"count": 1
+	},
+	{
+		"url": "https://www.mcknightshomecare.com/home/news/",
 		"link": "https://www.mcknightshomecare.com/news/home-care-briefs-for-friday-june-28/",
 		"title": "Home Care briefs for Friday, June 28",
 		"description": "Hackensack Meridian partners with Medically Home to launch hospital-at-home program … Senior Helpers receives new CHAP Age-Friendly Care at Home certification … Addus begins proposed public...",
 		"date": "2024-06-27T07:00:00.000Z",
 		"count": 1
-	},
-	{
-		"url": "https://homehealthcarenews.com/",
-		"link": "https://homehealthcarenews.com/category/home-health-care/",
-		"title": "How The Supreme Court’s Chevron Decision Could Help Stop Home Health Cuts",
-		"date": "2024-06-28T07:00:00.000Z",
-		"count": 2
 	},
 	{
 		"url": "https://homehealthcarenews.com/",
@@ -294,13 +359,6 @@
 	},
 	{
 		"url": "https://hospicenews.com/",
-		"link": "https://hospicenews.com/category/finance/",
-		"title": "Amedisys Divests Locations in Advance of Optum Deal",
-		"date": "2024-06-28T07:00:00.000Z",
-		"count": 3
-	},
-	{
-		"url": "https://hospicenews.com/",
 		"link": "https://hospicenews.com/2024/06/28/supreme-court-ruling-could-complicate-cms-efforts-to-regulate-hospices/",
 		"title": "Supreme Court Ruling Could Complicate CMS Efforts to Regulate Hospices",
 		"date": "2024-06-28T07:00:00.000Z",
@@ -312,48 +370,6 @@
 		"title": "The AIDS Epidemic’s Lasting Impact on Hospice Care for LGBTQ+ Populations",
 		"date": "2024-06-28T07:00:00.000Z",
 		"count": 1
-	},
-	{
-		"url": "https://hospicenews.com/",
-		"link": "https://hospicenews.com/category/regulation/",
-		"title": "Hospices’ Compliance Outlook a ‘Balancing Act’",
-		"date": "2024-06-27T07:00:00.000Z",
-		"count": 3
-	},
-	{
-		"url": "https://hospicenews.com/",
-		"link": "https://hospicenews.com/category/featured/",
-		"title": "Hospices’ 2024 Public Policy Priorities",
-		"date": "2024-06-27T07:00:00.000Z",
-		"count": 3
-	},
-	{
-		"url": "https://hospicenews.com/",
-		"link": "https://hospicenews.com/category/regulation/",
-		"title": "End-of-Life Care Delivery ‘Ripe for Reform’ in Rep. Blumenauer’s Hospice CARE Act",
-		"date": "2024-06-26T07:00:00.000Z",
-		"count": 2
-	},
-	{
-		"url": "https://hospicenews.com/",
-		"link": "https://hospicenews.com/category/regulation/",
-		"title": "Supreme Court Ruling Could Complicate CMS Efforts to Regulate Hospices",
-		"date": "2024-06-28T07:00:00.000Z",
-		"count": 2
-	},
-	{
-		"url": "https://hospicenews.com/",
-		"link": "https://hospicenews.com/category/operations/diversity-and-inclusion/",
-		"title": "The AIDS Epidemic’s Lasting Impact on Hospice Care for LGBTQ+ Populations",
-		"date": "2024-06-28T07:00:00.000Z",
-		"count": 2
-	},
-	{
-		"url": "https://hospicenews.com/",
-		"link": "https://hospicenews.com/category/ma/",
-		"title": "Elara Caring Acquires Caregivers Home Health",
-		"date": "2024-06-28T07:00:00.000Z",
-		"count": 2
 	},
 	{
 		"url": "https://hospicenews.com/",
@@ -447,150 +463,73 @@
 		"count": 1
 	},
 	{
-		"url": "https://dailycaring.com/",
-		"link": "https://dailycaring.com/video-fall-prevention-exercises-for-seniors-stay-balanced-while-reaching/",
-		"title": "2 Fall Prevention Exercises for Seniors: Improve Balance While Reaching",
-		"description": "1 out of 3 older adults fall each year Every year, millions of people aged 65+ fall. In fact, 1...",
-		"count": 1
-	},
-	{
-		"url": "https://dailycaring.com/",
-		"link": "https://dailycaring.com/visiting-someone-with-alzheimers-dos-and-donts-for-visitors/",
-		"title": "Do’s and Don’ts for Visiting Someone with Dementia",
-		"description": "People with dementia can still enjoy having visitors Older adults with Alzheimer’s disease or dementia may still enjoy having visitors....",
-		"count": 1
-	},
-	{
-		"url": "https://dailycaring.com/",
-		"link": "https://dailycaring.com/real-life-caregiver-stories-2/",
-		"title": "Real-life Caregiver Stories: Acceptance & Living in the Moment",
-		"description": "Caregiver stories let you know you’re not alone Real-life caregiver stories are important for caregivers to hear. Knowing that others...",
-		"count": 1
-	},
-	{
-		"url": "https://dailycaring.com/",
-		"link": "https://dailycaring.com/fantastic-4th-of-july-activities-for-seniors/",
-		"title": "16 Ways to Adapt 4th of July Activities for Seniors",
-		"description": "Date published: 2024-6-25 Make 4th of July activities fun for seniors When older adults are included in group celebrations like 4th...",
-		"count": 1
-	},
-	{
-		"url": "https://dailycaring.com/",
-		"link": "https://dailycaring.com/10-tips-to-keep-seniors-cool-in-hot-weather/",
-		"title": "How to Keep Seniors Cool in Hot Weather: 10 Tips",
-		"description": "Seniors are at risk for heat stroke during hot weather Seniors need to be more aware of overheating and heat...",
-		"count": 1
-	},
-	{
-		"url": "https://dailycaring.com/",
-		"link": "https://dailycaring.com/4-ways-to-overcome-caregiver-loneliness-in-dementia-care/",
-		"title": "4 Ways to Overcome Caregiver Loneliness in Dementia Care",
-		"description": "Caregiver loneliness makes dementia care more challenging When you’re caring for an older adult with Alzheimer’s disease or dementia, loneliness...",
-		"count": 1
-	},
-	{
-		"url": "https://dailycaring.com/",
-		"link": "https://dailycaring.com/simplify-complex-medication-routines-with-a-diy-pill-board/",
-		"title": "Simplify Complex Medication Routines with a DIY Pill Board",
-		"description": "When medication routines become complex or “non-standard,” it’s easy for mistakes or missed doses to happen. While caring for a...",
-		"count": 1
-	},
-	{
-		"url": "https://dailycaring.com/",
-		"link": "https://dailycaring.com/aging-at-home-essential-tips-for-safety-and-independence/",
-		"title": "Aging at Home: Essential Tips for Safety and Independence",
-		"description": "Many older adults wish to stay in their homes as they age. To make this a reality, a safe and...",
-		"count": 1
-	},
-	{
-		"url": "https://dailycaring.com/",
-		"link": "https://dailycaring.com/6-things-you-can-do-to-prevent-heat-stroke-in-seniors/",
-		"title": "6 Ways to Prevent Heat Stroke in Seniors",
-		"description": "Heat stroke in seniors is deadly In hot weather, heat stroke in seniors is a serious risk. Older bodies are...",
-		"count": 1
-	},
-	{
-		"url": "https://dailycaring.com/",
-		"link": "https://dailycaring.com/responding-to-4-common-dementia-accusations-stealing-poisoning-being-held-prisoner/",
-		"title": "4 Top Dementia Accusations: Stealing, Poisoning, Being Held Prisoner",
-		"description": "How to respond when falsely accused by someone with dementia It’s common for people with Alzheimer’s disease or dementia to...",
-		"count": 1
-	},
-	{
-		"url": "https://www.casacompanionhomecare.com/blog/",
-		"link": "https://www.casacompanionhomecare.com/home-care-blog/ten-ways-prepare-your-home-in-home-care/",
-		"title": "Ten Ways to Prepare Your Home for In-Home Care",
-		"description": "Bringing in-home care into your home can be a big change. Creating an environment that prioritizes effective and compassionate care for your loved one is a matter of preparation. The elderly in home care need to feel as comfortable, secure and independent as possible in their new situation. Preparing your home adequately can ease the…",
-		"count": 1
-	},
-	{
-		"url": "https://www.casacompanionhomecare.com/blog/",
-		"link": "https://www.casacompanionhomecare.com/home-care-blog/boosting-quality-life-in-home-care-memory-care-residents/",
-		"title": "Boosting Quality of Life: In-Home Care for Memory Care Residents",
-		"description": "Memory care involves specialized support for individuals with memory-related conditions, such as Alzheimer’s disease and other forms of dementia. These conditions progressively impair memory, cognitive function, and the ability to perform daily tasks. Tailored care from an in-home care provider can help memory care facility residents with these challenges. Traditional memory care offers structure and…",
-		"count": 1
-	},
-	{
-		"url": "https://www.casacompanionhomecare.com/blog/",
-		"link": "https://www.casacompanionhomecare.com/home-care-blog/beyond-basic-care-benefits-in-home-care-assisted-living/",
-		"title": "Beyond Basic Care: The Benefits of In-Home Care in Assisted Living",
-		"description": "The world of assisted living can be complex for families seeking the best care for their loved ones. These communities offer strong support and services, but gaps in care can impact residents’ quality of life. Adding in-home care to the care team makes a significant difference. Homecare solutions provide specialized attention and personal services so…",
-		"count": 1
-	},
-	{
-		"url": "https://www.casacompanionhomecare.com/blog/",
-		"link": "https://www.casacompanionhomecare.com/homecareblog/empowering-families-in-home-care-for-hospice-patients/",
-		"title": "Empowering Families: In-Home Care for Hospice Patients",
-		"description": "In-home care is an invaluable complement to hospice services, offering compassionate support and comfort to both patients and their families during challenging times. The support of home care aides can have a profound impact on hospice patients and their families. Home care during hospice provides personalized support, enhances quality of life, and empowers families to…",
-		"count": 1
-	},
-	{
-		"url": "https://www.casacompanionhomecare.com/blog/",
-		"link": "https://www.casacompanionhomecare.com/homecareblog/six-reasons-choose-non-emergency-medical-transport/",
-		"title": "Six Reasons to Choose Non-Emergency Medical Transport",
-		"description": "There are six key reasons patients in San Diego County should choose to use non-emergency medical transportation (NEMT). NEMT ensures safe and comfortable transport for individuals with mobility challenges or medical conditions, providing specialized vehicles and trained drivers. Non-emergency medical transport conveniently offers door-to-door service, eliminating the need for patients to navigate public transportation or…",
-		"count": 1
-	},
-	{
-		"url": "https://www.casacompanionhomecare.com/blog/",
-		"link": "https://www.casacompanionhomecare.com/home-care-blog/how-do-we-know-when-loved-one-needs-in-home-care/",
-		"title": "How Do We Know When Our Loved One Needs In-Home Care?",
-		"description": "In-home care can be a crucial support system for seniors and their families. Home care solutions offer personalized assistance and ensure comfort, safety, and dignity for aging loved ones. However, recognizing the right time to introduce home care can be challenging. There are several signs that indicate San Diego home care is appropriate. These signs…",
-		"count": 1
-	},
-	{
-		"url": "https://www.casacompanionhomecare.com/blog/",
-		"link": "https://www.casacompanionhomecare.com/home-care-blog/in-home-care-facility-care-how-to-make-right-choice/",
-		"title": "In-Home Care vs. Facility Care: How to Make the Right Choice",
-		"description": "As seniors age and face health challenges, they may face the choice between in home care and a facility. Both receiving care at home or moving into a facility have their benefits and drawbacks. The choice ultimately depends on individual circumstances and preferences. Are you and your family making the decision between home care in…",
-		"count": 1
-	},
-	{
-		"url": "https://www.casacompanionhomecare.com/blog/",
-		"link": "https://www.casacompanionhomecare.com/homecareblog/in-home-care-spring-checklist-renew-refresh-reassess/",
-		"title": "In Home Care Spring Checklist: Renew Refresh Reassess",
-		"description": "Spring is an ideal time to reassess all aspects of your loved one’s in-home care. A reviewed and updated home care plan aligns with current needs to provide the best possible support. The needs of patients receiving in home care in San Diego evolve over time as health conditions, household safety and family caregiver information…",
-		"count": 1
-	},
-	{
-		"url": "https://www.casacompanionhomecare.com/blog/",
-		"link": "https://www.casacompanionhomecare.com/homecareblog/quality-matters-why-trustworthy-non-emergency-medical-transport-non-negotiable/",
-		"title": "Quality Matters: Why Trustworthy Non-Emergency Medical Transport is Non-Negotiable",
-		"description": "Quality non-emergency medical transport (NEMT) is more than just a convenience; it’s a necessity for many individuals with medical needs. Patients and their families rely on these services for safe, comfortable transportation to medical appointments, treatments, and other essential engagements. Safe and trustworthy non-emergency medical transport costs more than ride sharing, but NEMT delivers peace…",
-		"count": 1
-	},
-	{
-		"url": "https://www.casacompanionhomecare.com/blog/",
-		"link": "https://www.casacompanionhomecare.com/home-care-blog/in-home-care-heart-disease-patients/",
-		"title": "In-Home Care for Heart Disease Patients",
-		"description": "In-home care provides a comforting and supportive environment where heart disease patients can receive the assistance they need while maintaining their independence. Living with heart disease is challenging but the right in home care lets patients manage their condition effectively. Home care aides offer personalized assistance tailored to the unique needs of heart disease patients,…",
-		"count": 1
-	},
-	{
 		"url": "https://www.healthcarefinancenews.com/news",
 		"link": "https://www.healthcarefinancenews.com/news/dialysis-facilities-get-22-payment-boost",
 		"title": "Dialysis providers get a 2.2% payment boost",
 		"description": "The rule also proposes to extend Medicare payment to dialysis in the home setting for beneficiaries with acute kidney ...",
+		"count": 1
+	},
+	{
+		"url": "https://www.healthcarefinancenews.com/news",
+		"link": "https://www.healthcarefinancenews.com/news/challenges-facing-childrens-and-rural-hospitals",
+		"title": "The challenges facing children's and rural hospitals",
+		"description": "Akron Children's Hospital gets half its reimbursement from Medicaid, with all health systems facing a ...",
+		"count": 1
+	},
+	{
+		"url": "https://www.healthcarefinancenews.com/news",
+		"link": "https://www.healthcarefinancenews.com/news/rcm-accelerates-cash-and-secure-financial-health",
+		"title": "RCM accelerates cash and secures financial health",
+		"description": "Mike Vigo, chief revenue officer at UCSD, addresses the \"Revenue Cycle Management Technology Adoption ...",
+		"count": 1
+	},
+	{
+		"url": "https://www.healthcarefinancenews.com/news",
+		"link": "https://www.healthcarefinancenews.com/news/arkansas-sues-optum-express-scripts-and-others-over-opioid-epidemic",
+		"title": "Arkansas sues Optum, Express Scripts and others over opioid epidemic",
+		"description": "The action of PBMs, combined with those of manufacturers, distributors and pharmacies created ...",
+		"count": 1
+	},
+	{
+		"url": "https://www.healthcarefinancenews.com/news",
+		"link": "https://www.healthcarefinancenews.com/news/hhs-announces-cost-savings-64-prescription-drugs",
+		"title": "HHS announces cost savings for 64 prescription drugs",
+		"description": "The drugs will have a lowered Part B coinsurance rate, since each drug company raised prices faster than the ...",
+		"count": 1
+	},
+	{
+		"url": "https://www.healthcarefinancenews.com/news",
+		"link": "https://www.healthcarefinancenews.com/news/lawmakers-ask-cms-greater-oversight-ma-coverage-decisions",
+		"title": "Lawmakers ask CMS for greater oversight of MA coverage decisions",
+		"description": "\"Plans continue to use AI tools to erroneously deny care and contradict provider assessment ...",
+		"count": 1
+	},
+	{
+		"url": "https://www.healthcarefinancenews.com/news",
+		"link": "https://www.healthcarefinancenews.com/news/finance-executives-address-three-big-challenges-revenue-hfma",
+		"title": "Finance executives address the three big challenges for revenue",
+		"description": "AI and automation are being used wherever possible, say experts from Kaiser, CHS and King's ...",
+		"count": 1
+	},
+	{
+		"url": "https://www.healthcarefinancenews.com/news",
+		"link": "https://www.healthcarefinancenews.com/news/former-blue-shield-california-employee-under-investigation-fraud",
+		"title": "Former Blue Shield of California employee under investigation for fraud",
+		"description": "The employee, reportedly an executive who was an interim medical director, allegedly ...",
+		"count": 1
+	},
+	{
+		"url": "https://www.healthcarefinancenews.com/news",
+		"link": "https://www.healthcarefinancenews.com/news/financial-disincentives-released-providers-who-commit-information-blocking",
+		"title": "Financial disincentives for providers who commit information blocking",
+		"description": "Final rule disincentives include hospitals not being able to earn three quarters of the ...",
+		"count": 1
+	},
+	{
+		"url": "https://www.healthcarefinancenews.com/news",
+		"link": "https://www.healthcarefinancenews.com/news/healthcare-cyberattacks-are-costing-average-11-million-breach",
+		"title": "Healthcare cyberattacks are costing an average of $11 million per breach",
+		"description": "Ransomware attacks have dominated, accounting for over 70% of healthcare cyberattacks in the ...",
 		"count": 1
 	}
 ]
