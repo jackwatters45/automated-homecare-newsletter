@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Generate Newsletter</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f4f4f4;
+    }
+
+    h1 {
+      color: #2c3e50;
+      text-align: center;
+    }
+
+    #generateBtn {
+      display: block;
+      width: 200px;
+      margin: 20px auto;
+      padding: 10px;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    #generateBtn:hover {
+      background-color: #2980b9;
+    }
+
+    #result {
+      margin-top: 20px;
+      padding: 15px;
+      text-align: center;
+    }
+
+    a {
+      color: #3498db;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Newsletter Generator</h1>
+  <button id="generateBtn">Generate New Data</button>
+  <div id="result"></div>
+
+  <script>
+    document.getElementById('generateBtn').addEventListener('click', async () => {
+      const result = document.getElementById('result');
+      result.textContent = 'Generating data...';
+
+      try {
+        const response = await fetch('/generate');
+        const data = await response.json();
+
+        if (data.success) {
+          result.innerHTML = `Data generated successfully. <a href="/newsletter">View Newsletter</a>`;
+        } else {
+          result.textContent = data.message;
+        }
+      } catch (error) {
+        result.textContent = `Error generating data${JSON.stringify(error)}`
+
+      }
+    });
+  </script>
+</body>
+
+</html>
