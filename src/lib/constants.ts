@@ -1,6 +1,4 @@
-import type { PageToScrape } from "../types";
-
-export const APP_NAME = "webscrape";
+import type { PageToScrape } from "../../types";
 
 export const TEST_PAGES: PageToScrape[] = [
 	{
@@ -117,9 +115,7 @@ export const SPECIFIC_PAGES: PageToScrape[] = [
 		dateSelector: undefined,
 	},
 ];
-// {
-// TODO shitty site but goodish info
-// 	url: "https://netforum.avectra.com/eWeb/DynamicPage.aspx?Site=HCLA&WebCode=NationalHomeCareNews",
-// },
 
 export const RECURRING_FREQUENCY = 7 * 24 * 60 * 60 * 1000; // 7 days in milliseconds
+
+export const DESCRIPTION_MAX_LENGTH = 25;

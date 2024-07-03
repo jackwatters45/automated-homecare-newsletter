@@ -1,9 +1,9 @@
 import { google } from "googleapis";
-import { RECURRING_FREQUENCY } from "./constants";
+import { RECURRING_FREQUENCY } from "../lib/constants";
 
 const customsearch = google.customsearch("v1");
 
-function getLastWeekQuery(q: string) {
+export function getLastWeekQuery(q: string) {
 	const pastWeek = new Date().getTime() - RECURRING_FREQUENCY;
 	const formattedPastWeek = new Date(pastWeek).toISOString().split("T")[0];
 

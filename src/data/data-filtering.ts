@@ -5,11 +5,11 @@ import type {
 	PageToScrape,
 	ValidArticleData,
 	ValidArticleDataWithCount,
-} from "../types";
-import { APP_NAME, RECURRING_FREQUENCY } from "./constants";
-import { generateJsonResponse } from "./utils";
+} from "../../types";
+import { RECURRING_FREQUENCY } from "../lib/constants";
+import { generateJsonResponse } from "../lib/utils";
 
-const log = debug(`${APP_NAME}:date-filtering.ts`);
+const log = debug(`${process.env.APP_NAME}:date-filtering.ts`);
 
 export async function filterPageArticles(
 	articles: ArticleData[],
@@ -33,18 +33,53 @@ export async function filterPageArticles(
 	return filteredArticles;
 }
 
-export async function filterAllArticles(articles: ValidArticleData[]) {
+export async function filterAllArticles(
+	articles: ValidArticleData[],
+	numberOfArticles = 30,
+): Promise<ValidArticleDataWithCount[]> {
 	const articlesNoDuplicates = removeDuplicatesAndCount(articles);
 
 	const aiFilteringData = getDataForAIFiltering(articlesNoDuplicates);
 
-	// TODO improve prompt
 	const topic = "homecare (medical)";
-	const prompt = `remove any articles that are irrelevant to the topic of ${topic} news:\n\n${JSON.stringify(aiFilteringData, null, 2)}.\n\n Filter out any articles that aren't related to news (opinions, editorials, etc). Return the remaining articles as a JSON array in the same format as the original list. If they are all irrelevant, return an empty array. If they are all relevant, return the original list. Under no circumstances should you return something that is not in the same format as the original list. also id two articles are the same or very similar (that would indicate they are talking about the same thing), return the one with the most recent date.`;
+	const filterAndRankPrompt = `Filter, refine, and rank the following list of articles related to ${topic}:
 
-	const relevantArticles = await generateJsonResponse<ValidArticleData>(prompt);
+	${JSON.stringify(aiFilteringData, null, 2)}
 
-	return getOriginalArticleData(articlesNoDuplicates, relevantArticles);
+	Filtering and ranking criteria:
+	1. Remove articles irrelevant to ${topic} news
+	2. Exclude non-news content (e.g., opinions, editorials)
+	3. If two articles are very similar or cover the same event, keep only the most recent one
+	4. Rank the articles by relevance and importance to the topic
+
+	Instructions:
+	- Return the filtered and ranked list as a JSON array in the exact format of the original list
+	- If all articles are irrelevant, return an empty array
+	- If all articles are relevant and unique, return the original list
+	- Ensure the output strictly adheres to the original JSON structure
+	- Limit the list to the top ${numberOfArticles} articles
+
+		Example of expected output format:
+		[
+			{
+				"title": "Example Title",
+				"link": "https://example.com",
+				"date": "2023-07-01T12:00:00Z",
+				"description": "Example description"
+			},
+			// ... more articles
+		]
+		`;
+
+	const relevantArticles =
+		await generateJsonResponse<ValidArticleData>(filterAndRankPrompt);
+
+	const relevantArticlesWithCount = getOriginalArticleData(
+		articlesNoDuplicates,
+		relevantArticles,
+	);
+
+	return relevantArticlesWithCount.slice(0, numberOfArticles);
 }
 
 interface ArticleDataForAIFiltering {
@@ -52,7 +87,7 @@ interface ArticleDataForAIFiltering {
 	description?: string;
 }
 
-function getDataForAIFiltering(
+export function getDataForAIFiltering(
 	articles: ValidArticleData[],
 ): ArticleDataForAIFiltering[] {
 	return articles.map((article) => ({
@@ -61,15 +96,15 @@ function getDataForAIFiltering(
 	}));
 }
 
-function getOriginalArticleData(
+export function getOriginalArticleData(
 	articleData: ValidArticleDataWithCount[],
 	filteredArticles: ArticleDataForAIFiltering[],
-): ValidArticleData[] {
+): ValidArticleDataWithCount[] {
 	const filteredTitles = new Set(filteredArticles.map((a) => a.title));
 	return articleData.filter((article) => filteredTitles.has(article.title));
 }
 
-function removeDuplicatesAndCount(
+export function removeDuplicatesAndCount(
 	arr: ValidArticleData[],
 	fields: (keyof ValidArticleData)[] = ["title", "link"],
 ): ValidArticleDataWithCount[] {

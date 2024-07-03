@@ -4,11 +4,14 @@ import debug from "debug";
 import type { Page } from "puppeteer";
 import robotsParser from "robots-parser";
 
-import type { ArticleData, PageToScrape } from "../types";
-import { APP_NAME, RECURRING_FREQUENCY } from "./constants";
-import { combineUrlParts, convertHttpToHttps } from "./utils";
+import type { ArticleData, PageToScrape } from "../../types";
+import {
+	combineUrlParts,
+	convertHttpToHttps,
+	tryFetchPageHTML,
+} from "../lib/utils";
 
-const log = debug(`${APP_NAME}:data-fetching.ts`);
+const log = debug(`${process.env.APP_NAME}:data-fetching.ts`);
 
 export async function fetchArticles(page: PageToScrape, browserPage: Page) {
 	try {
@@ -79,44 +82,6 @@ async function canScrape(pageToScrape: string) {
 	} catch (error) {
 		console.error("Error in canScrape on page:", pageToScrape, "error:", error);
 		return false; // Assume scraping is not allowed if there's an error
-	}
-}
-
-async function fetchPageHTML(page: PageToScrape, browserPage: Page) {
-	try {
-		if (page.type === "client") {
-			await browserPage.goto(page.url);
-			return await browserPage.content();
-		}
-
-		const response = await fetch(page.url);
-		if (!response.ok) {
-			throw new Error(`HTTP error! status: ${response.status}`);
-		}
-
-		return await response.text();
-	} catch (error) {
-		console.error("Error in fetchPageHTML:", error);
-		throw error;
-	}
-}
-
-export async function tryFetchPageHTML(url: string, browserPage: Page) {
-	try {
-		try {
-			const response = await fetch(url);
-			if (!response.ok) {
-				throw new Error(`HTTP error! status: ${response.status}`);
-			}
-
-			return await response.text();
-		} catch (error) {
-			await browserPage.goto(url);
-			return await browserPage.content();
-		}
-	} catch (error) {
-		console.error("Error in fetchPageHTML:", error);
-		throw error;
 	}
 }
 

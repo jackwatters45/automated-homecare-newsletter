@@ -2,13 +2,17 @@ import Bottleneck from "bottleneck";
 import * as cheerio from "cheerio";
 import type { Page } from "puppeteer";
 
-import type { ArticleDisplayData, ValidArticleData } from "../types";
-import { tryFetchPageHTML } from "./data-fetching";
-import { formatDescription, generateStringResponse } from "./utils";
+import { DESCRIPTION_MAX_LENGTH } from "@/lib/constants";
+import type { ArticleDisplayData, ValidArticleData } from "../../types";
+import {
+	formatDescription,
+	generateStringResponse,
+	tryFetchPageHTML,
+} from "../lib/utils";
 
 const limiter = new Bottleneck({
-	maxConcurrent: 5, // Adjust this number based on your needs
-	minTime: 1000, // Minimum time between operations in milliseconds
+	maxConcurrent: 10,
+	minTime: 2500,
 });
 
 export const processArticles = async (
@@ -29,7 +33,17 @@ export const processArticles = async (
 
 		const articleBody = $("body").text();
 
-		const prompt = `return a description of the following article: ${articleBody}. It should be a short description of the article, not the entire article. The description should be no more than 30 words and not the same as the title. Do not explain the article or any topics. Assume the reader is knowledgeable about the topic. `;
+		const prompt = `Generate a subtitle description for the following article:
+
+		${articleBody}
+		
+		Requirements:
+		- The subtitle should be a single sentence of no more than ${DESCRIPTION_MAX_LENGTH} words
+		- Capture the essence of the article without repeating the title
+		- Highlight a key insight, finding, or angle of the article
+		- Use engaging language that complements the title
+		- Assume the reader has basic familiarity with the topic
+		- Do not use colons or semicolons`;
 
 		const articleDescription = await generateStringResponse(prompt);
 
