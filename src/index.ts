@@ -5,6 +5,7 @@ import path from "node:path";
 import debug from "debug";
 import puppeteer from "puppeteer";
 
+import type { ValidArticleData } from "../types";
 import { fetchArticles } from "./data/data-fetching";
 import { filterAllArticles, filterPageArticles } from "./data/data-filtering";
 import { processArticles } from "./data/format-articles";
@@ -24,13 +25,23 @@ export async function generateNewsletterData() {
 	try {
 		const browserPage = await browser.newPage();
 
-		const results = [];
+		const results: ValidArticleData[] = [];
+		// specific pages
 		for (const page of SPECIFIC_PAGES) {
 			const articleLinks = await fetchArticles(page, browserPage);
-
 			const relevantArticles = await filterPageArticles(articleLinks, page);
-
 			results.push(...relevantArticles);
+		}
+
+		// google search
+		const googleSearchResults = await searchNews([
+			"homecare news",
+			"home health news",
+		]);
+		results.push(...googleSearchResults);
+
+		if (results.length === 0) {
+			throw new Error("No valid articles found");
 		}
 
 		const relevantArticles = await filterAllArticles(results);
@@ -52,24 +63,33 @@ async function main() {
 		try {
 			const newsletterData = await generateNewsletterData();
 
+			if (!newsletterData || newsletterData.length === 0) {
+				throw new Error("No newsletter data generated");
+			}
+
 			const template = await renderTemplate(newsletterData);
 
-			await fs.writeFile(
-				path.join(path.resolve(), "public", "newsletter.html"),
-				template,
-			);
+			const outputPath = path.join(path.resolve(), "public", "newsletter.html");
+			await fs.writeFile(outputPath, template);
+			log(`Newsletter written to ${outputPath}`);
 
-			// TODO
+			// TODO: Implement email sending
 			// const res = await sendEmail(result);
+			// log(`Email sent with response: ${JSON.stringify(res)}`);
 		} catch (error) {
 			console.error(error);
 		}
 	});
 }
 
-main();
+main().catch((error) => {
+	console.error("Unhandled error in main script:", error);
+	process.exit(1);
+});
 
 import { Resend } from "resend";
+import {} from "../types";
+import { searchNews } from "./data/google-search";
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function sendEmail(html: string, to = "jack.watters@me.com") {

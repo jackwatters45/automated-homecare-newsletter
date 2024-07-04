@@ -8,6 +8,7 @@ import type { ArticleData, PageToScrape } from "../../types";
 import {
 	combineUrlParts,
 	convertHttpToHttps,
+	retry,
 	tryFetchPageHTML,
 } from "../lib/utils";
 
@@ -17,12 +18,17 @@ export async function fetchArticles(page: PageToScrape, browserPage: Page) {
 	try {
 		const isScrapeable = await canScrape(page.url);
 		if (!isScrapeable) {
-			// TODO: handle error
-			log("can't scrape");
+			log(`Can't scrape ${page.url} - robots.txt disallows it`);
 			return [];
 		}
 
-		const html = await tryFetchPageHTML(page.url, browserPage);
+		const html = await retry(() => tryFetchPageHTML(page.url, browserPage));
+
+		if (!html) {
+			log("html is empty");
+			return [];
+		}
+
 		const $ = cheerio.load(html);
 
 		return $(page.articleContainerSelector)
@@ -64,13 +70,15 @@ function getArticlePreview({ page, $, el }: GetArticlePreviewParams) {
 async function canScrape(pageToScrape: string) {
 	try {
 		const robotsUrl = new URL("/robots.txt", pageToScrape).toString();
-		const response = await fetch(robotsUrl, {
-			redirect: "follow",
-		});
+		const response = await retry(() =>
+			fetch(robotsUrl, {
+				redirect: "follow",
+			}),
+		);
 
-		if (!response.ok) {
+		if (!response || !response.ok) {
 			console.warn(
-				`Couldn't fetch robots.txt: ${response.status} ${response.statusText}`,
+				`Couldn't fetch robots.txt: ${response?.status} ${response?.statusText}`,
 			);
 			return true; // Assume scraping is allowed if we can't fetch robots.txt
 		}
@@ -84,35 +92,3 @@ async function canScrape(pageToScrape: string) {
 		return false; // Assume scraping is not allowed if there's an error
 	}
 }
-
-//
-//
-//
-
-const limiter = new Bottleneck({
-	minTime: 2000, // Minimum time between requests (2 seconds)
-	maxConcurrent: 1, // Ensures only one job runs at a time
-});
-
-// export async function scrapeWithRetryAndDelay(
-// 	page: PageToScrape,
-// 	scrapeFunction: (page: PageToScrape) => Promise<any>,
-// 	maxRetries = 3,
-// ) {
-// 	for (let i = 0; i < maxRetries; i++) {
-// 		try {
-// 			return await limiter.schedule(() => scrapeFunction(page));
-// 		} catch (error) {
-// 			console.error(`Attempt ${i + 1} failed for ${page.url}: ${error}`);
-
-// 			if (i === maxRetries - 1) {
-// 				console.error(`All ${maxRetries} attempts failed for ${page.url}`);
-// 				return {
-// 					url: page.url,
-// 					data: undefined,
-// 					error: `Failed after ${maxRetries} attempts`,
-// 				};
-// 			}
-// 		}
-// 	}
-// }

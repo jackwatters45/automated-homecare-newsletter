@@ -1,5 +1,6 @@
 import Bottleneck from "bottleneck";
 import * as cheerio from "cheerio";
+import debug from "debug";
 import type { Page } from "puppeteer";
 
 import { DESCRIPTION_MAX_LENGTH } from "@/lib/constants";
@@ -7,19 +8,22 @@ import type { ArticleDisplayData, ValidArticleData } from "../../types";
 import {
 	formatDescription,
 	generateStringResponse,
+	retry,
 	tryFetchPageHTML,
 } from "../lib/utils";
+
+const log = debug(`${process.env.APP_NAME}:format-articles.ts`);
 
 const limiter = new Bottleneck({
 	maxConcurrent: 10,
 	minTime: 2500,
 });
 
-export const processArticles = async (
-	rankedArticles: ValidArticleData[],
+const processArticle = async (
+	article: ValidArticleData,
 	browserPage: Page,
-): Promise<ArticleDisplayData[]> => {
-	const processArticle = async (article: ValidArticleData) => {
+): Promise<ArticleDisplayData> => {
+	try {
 		if (article.description) {
 			return {
 				title: article.title,
@@ -28,7 +32,11 @@ export const processArticles = async (
 			};
 		}
 
-		const html = await tryFetchPageHTML(article.link, browserPage);
+		const html = await retry(() => tryFetchPageHTML(article.link, browserPage));
+
+		if (!html)
+			return { title: article.title, link: article.link, description: "" };
+
 		const $ = cheerio.load(html);
 
 		const articleBody = $("body").text();
@@ -45,20 +53,43 @@ export const processArticles = async (
 		- Assume the reader has basic familiarity with the topic
 		- Do not use colons or semicolons`;
 
-		const articleDescription = await generateStringResponse(prompt);
+		const articleDescription = await retry(() => generateStringResponse(prompt));
+
+		if (!articleDescription)
+			return { title: article.title, link: article.link, description: "" };
 
 		return {
 			title: article.title,
 			link: article.link,
 			description: formatDescription(articleDescription),
 		};
-	};
+	} catch (error) {
+		log(`Error processing article ${article.link}: ${error}`);
+		// Return a default object if processing fails
+		return {
+			title: article.title,
+			link: article.link,
+			description: "Unable to generate description due to an error.",
+		};
+	}
+};
 
-	const results = await Promise.all(
-		rankedArticles.map((article) =>
-			limiter.schedule(() => processArticle(article)),
-		),
-	);
+export const processArticles = async (
+	rankedArticles: ValidArticleData[],
+	browserPage: Page,
+): Promise<ArticleDisplayData[]> => {
+	try {
+		const results = await Promise.all(
+			rankedArticles.map((article) =>
+				limiter.schedule(() => processArticle(article, browserPage)),
+			),
+		);
 
-	return results;
+		log(`Processed ${results.length} articles successfully`);
+		return results;
+	} catch (error) {
+		log(`Error in processArticles: ${error}`);
+		// If the entire process fails, return an empty array
+		return [];
+	}
 };
