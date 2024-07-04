@@ -11,7 +11,7 @@ import { generateJsonResponse, retry } from "../lib/utils";
 
 const log = debug(`${process.env.APP_NAME}:date-filtering.ts`);
 
-export async function filterPageArticles(
+export async function filterArticlesByPage(
 	articles: ArticleData[],
 	page: PageToScrape,
 ) {
@@ -44,19 +44,19 @@ export async function filterPageArticles(
 	}
 }
 
-export async function filterAllArticles(
+export async function rankAndFilterArticles(
 	articles: ValidArticleData[],
 	numberOfArticles = 30,
 ): Promise<ValidArticleDataWithCount[]> {
 	try {
-		const articlesNoDuplicates = removeDuplicatesAndCount(articles);
+		const uniqueArticles = deduplicateAndCountArticles(articles);
 
-		const aiFilteringData = getDataForAIFiltering(articlesNoDuplicates);
+		const aiFilteringInput = extractAIFilteringData(uniqueArticles);
 
 		const topic = "homecare (medical)";
-		const filterAndRankPrompt = `Filter, refine, and rank the following list of articles related to ${topic}:
+		const aiFilteringPrompt = `Filter, refine, and rank the following list of articles related to ${topic}:
 
-    ${JSON.stringify(aiFilteringData, null, 2)}
+    ${JSON.stringify(aiFilteringInput, null, 2)}
 
     Filtering and ranking criteria:
     1. Remove articles irrelevant to ${topic} news
@@ -83,17 +83,17 @@ export async function filterAllArticles(
       ]
       `;
 
-		const relevantArticles =
+		const aiFilteredArticles =
 			(await retry(() =>
-				generateJsonResponse<ValidArticleData>(filterAndRankPrompt),
+				generateJsonResponse<ValidArticleData>(aiFilteringPrompt),
 			)) ?? [];
 
-		const relevantArticlesWithCount = getOriginalArticleData(
-			articlesNoDuplicates,
-			relevantArticles,
+		const rankedArticlesWithCount = mergeFilteredArticles(
+			uniqueArticles,
+			aiFilteredArticles,
 		);
 
-		return relevantArticlesWithCount.slice(0, numberOfArticles);
+		return rankedArticlesWithCount.slice(0, numberOfArticles);
 	} catch (error) {
 		log(`Error in filterAllArticles: ${error}`);
 		return [];
@@ -105,7 +105,7 @@ interface ArticleDataForAIFiltering {
 	description?: string;
 }
 
-export function getDataForAIFiltering(
+export function extractAIFilteringData(
 	articles: ValidArticleData[],
 ): ArticleDataForAIFiltering[] {
 	try {
@@ -119,7 +119,7 @@ export function getDataForAIFiltering(
 	}
 }
 
-export function getOriginalArticleData(
+export function mergeFilteredArticles(
 	articleData: ValidArticleDataWithCount[],
 	filteredArticles: ArticleDataForAIFiltering[],
 ): ValidArticleDataWithCount[] {
@@ -132,7 +132,7 @@ export function getOriginalArticleData(
 	}
 }
 
-export function removeDuplicatesAndCount(
+export function deduplicateAndCountArticles(
 	arr: ValidArticleData[],
 	fields: (keyof ValidArticleData)[] = ["title", "link"],
 ): ValidArticleDataWithCount[] {

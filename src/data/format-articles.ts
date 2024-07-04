@@ -6,90 +6,96 @@ import type { Page } from "puppeteer";
 import { DESCRIPTION_MAX_LENGTH } from "@/lib/constants";
 import type { ArticleDisplayData, ValidArticleData } from "../../types";
 import {
-	formatDescription,
+	fetchPageContent,
 	generateStringResponse,
 	retry,
-	tryFetchPageHTML,
+	truncateDescription,
 } from "../lib/utils";
 
-const log = debug(`${process.env.APP_NAME}:format-articles.ts`);
+const logger = debug(`${process.env.APP_NAME}:article-processor.ts`);
 
-const limiter = new Bottleneck({
+const rateLimiter = new Bottleneck({
 	maxConcurrent: 10,
 	minTime: 2500,
 });
 
-const processArticle = async (
-	article: ValidArticleData,
-	browserPage: Page,
+const enrichArticleData = async (
+	articleData: ValidArticleData,
+	browserInstance: Page,
 ): Promise<ArticleDisplayData> => {
 	try {
-		if (article.description) {
+		if (articleData.description) {
 			return {
-				title: article.title,
-				link: article.link,
-				description: formatDescription(article.description),
+				title: articleData.title,
+				link: articleData.link,
+				description: truncateDescription(articleData.description),
 			};
 		}
 
-		const html = await retry(() => tryFetchPageHTML(article.link, browserPage));
+		const pageContent = await retry(() =>
+			fetchPageContent(articleData.link, browserInstance),
+		);
 
-		if (!html)
-			return { title: article.title, link: article.link, description: "" };
+		if (!pageContent)
+			return { title: articleData.title, link: articleData.link, description: "" };
 
-		const $ = cheerio.load(html);
+		const $ = cheerio.load(pageContent);
 
-		const articleBody = $("body").text();
+		const fullArticleText = $("body").text();
 
-		const prompt = `Generate a subtitle description for the following article:
+		const descriptionPrompt = createDescriptionPrompt(fullArticleText);
 
-		${articleBody}
-		
-		Requirements:
-		- The subtitle should be a single sentence of no more than ${DESCRIPTION_MAX_LENGTH} words
-		- Capture the essence of the article without repeating the title
-		- Highlight a key insight, finding, or angle of the article
-		- Use engaging language that complements the title
-		- Assume the reader has basic familiarity with the topic
-		- Do not use colons or semicolons`;
+		const generatedDescription = await retry(() =>
+			generateStringResponse(descriptionPrompt),
+		);
 
-		const articleDescription = await retry(() => generateStringResponse(prompt));
-
-		if (!articleDescription)
-			return { title: article.title, link: article.link, description: "" };
+		if (!generatedDescription)
+			return { title: articleData.title, link: articleData.link, description: "" };
 
 		return {
-			title: article.title,
-			link: article.link,
-			description: formatDescription(articleDescription),
+			title: articleData.title,
+			link: articleData.link,
+			description: truncateDescription(generatedDescription),
 		};
 	} catch (error) {
-		log(`Error processing article ${article.link}: ${error}`);
-		// Return a default object if processing fails
+		logger(`Error enriching article ${articleData.link}: ${error}`);
 		return {
-			title: article.title,
-			link: article.link,
+			title: articleData.title,
+			link: articleData.link,
 			description: "Unable to generate description due to an error.",
 		};
 	}
 };
 
-export const processArticles = async (
-	rankedArticles: ValidArticleData[],
-	browserPage: Page,
+function createDescriptionPrompt(articleText: string): string {
+	return `Generate a subtitle description for the following article:
+
+    ${articleText}
+    
+    Requirements:
+    - The subtitle should be a single sentence of no more than ${DESCRIPTION_MAX_LENGTH} words
+    - Capture the essence of the article without repeating the title
+    - Highlight a key insight, finding, or angle of the article
+    - Use engaging language that complements the title
+    - Assume the reader has basic familiarity with the topic
+    - Do not use colons or semicolons`;
+}
+
+export const enrichArticlesData = async (
+	prioritizedArticles: ValidArticleData[],
+	browserInstance: Page,
 ): Promise<ArticleDisplayData[]> => {
 	try {
-		const results = await Promise.all(
-			rankedArticles.map((article) =>
-				limiter.schedule(() => processArticle(article, browserPage)),
+		const enrichedArticles = await Promise.all(
+			prioritizedArticles.map((article) =>
+				rateLimiter.schedule(() => enrichArticleData(article, browserInstance)),
 			),
 		);
 
-		log(`Processed ${results.length} articles successfully`);
-		return results;
+		logger(`Enriched ${enrichedArticles.length} articles successfully`);
+		return enrichedArticles;
 	} catch (error) {
-		log(`Error in processArticles: ${error}`);
-		// If the entire process fails, return an empty array
+		logger(`Error in enrichArticlesData: ${error}`);
 		return [];
 	}
 };

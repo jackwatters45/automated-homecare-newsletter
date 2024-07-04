@@ -1,10 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home Health & Hospice News</title>
     <style>
+        * {
+            box-sizing: border-box;
+            padding: 0;
+        }
+
         body {
             font-family: Arial, sans-serif;
             line-height: 1.6;
@@ -13,168 +19,72 @@
             margin: 0 auto;
             padding: 20px;
         }
-        h1 {
-            color: #2c3e50;
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             border-bottom: 2px solid #3498db;
             padding-bottom: 10px;
         }
+
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+
+            a {
+                color: #2c3e50;
+            }
+        }
+
+        h1 {
+            color: #2c3e50;
+            margin: 0;
+        }
+
         h2 {
             color: #2980b9;
         }
+
         .article {
             margin-bottom: 20px;
             border-bottom: 1px solid #ecf0f1;
             padding-bottom: 15px;
         }
+
         .article:last-child {
             border-bottom: none;
         }
+
         a {
             color: #3498db;
             text-decoration: none;
         }
+
         a:hover {
             text-decoration: underline;
         }
     </style>
 </head>
+
 <body>
-    <h1>Home Health & Hospice News</h1>
-    
-    <div class="article">
-        <h3><a href="https://hospicenews.com/2024/07/02/normalizing-trauma-informed-hospice-care-delivery/">‘Normalizing’ Trauma-Informed Hospice Care Delivery</a></h3>
-        <p>New guidelines aim to help hospice providers better understand and address trauma experienced by patients, especially those impacted by violence, abuse, and neglect. 
-...</p>
-    </div>
-    <div class="article">
-        <h3><a href="https://hospicenews.com/2024/07/01/top-factors-fueling-investor-interest-in-coming-golden-decades-for-hospice/">Top Factors Fueling Investor Interest in Coming ‘Golden Decades’ for Hospice</a></h3>
-        <p>Investors see significant growth potential in hospice, fueled by rising demand from an aging population and cost savings for Medicare. 
-...</p>
-    </div>
-    <div class="article">
-        <h3><a href="https://homehealthcarenews.com/2024/07/the-hidden-advantages-of-having-an-older-workforce-in-home-health-care/">The Hidden Advantages Of Having An Older Workforce In Home Health Care</a></h3>
-        <p>Experienced nurses bring a wealth of knowledge and stability to the home health industry, but their retirement presents a challenge for workforce development. 
-...</p>
-    </div>
-    <div class="article">
-        <h3><a href="https://homehealthcarenews.com/2024/06/how-the-supreme-courts-chevron-decision-could-help-stop-home-health-cuts/">How The Supreme Court’s Chevron Decision Could Help Stop Home Health Cuts</a></h3>
-        <p>The Supreme Court&#x27;s decision to overturn the Chevron doctrine could give home health providers a powerful new tool to fight against Medicare payment cuts. 
-...</p>
-    </div>
-    <div class="article">
-        <h3><a href="https://hospicenews.com/2024/06/28/supreme-court-ruling-could-complicate-cms-efforts-to-regulate-hospices/">Supreme Court Ruling Could Complicate CMS Efforts to Regulate Hospices</a></h3>
-        <p>A Supreme Court decision could significantly impact CMS&#x27;s ability to regulate hospice and other health care providers. 
-...</p>
-    </div>
-    <div class="article">
-        <h3><a href="https://pqhh.org/article/home-health-lobby-slams-proposed-2025-home-health-pay-rule/">Home Health Lobby Slams Proposed 2025 Home Health Pay Rule</a></h3>
-        <p>Home health providers face a third consecutive year of proposed Medicare cuts, prompting industry leaders to call for congressional intervention. 
-...</p>
-    </div>
-    <div class="article">
-        <h3><a href="https://pqhh.org/article/medicare-seeks-280-million-pay-cut-for-home-health-agencies/">Medicare Seeks $280 Million Pay Cut for Home Health Agencies</a></h3>
-        <p>The proposed Medicare payment rule could significantly impact home health agencies nationwide. 
-...</p>
-    </div>
-    <div class="article">
-        <h3><a href="https://pqhh.org/article/cms-proposes-1-7-percent-medicare-home-health-payment-decrease-for-2025/">CMS proposes -1.7 percent Medicare home health payment decrease for 2025</a></h3>
-        <p>CMS proposes a significant cut to Medicare payments for home health agencies in 2025, potentially impacting access to care for seniors. 
-...</p>
-    </div>
-    <div class="article">
-        <h3><a href="https://pqhh.org/article/home-health-leaders-more-home-health-cuts-in-2025-further-undermine-patient-access-to-care/">Home Health Leaders: More Home Health Cuts in 2025 Further Undermine Patient Access to Care</a></h3>
-        <p>CMS&#x27;s proposed cuts to home health services for 2025 threaten to further limit access to care for millions of older Americans. 
-...</p>
-    </div>
-    <div class="article">
-        <h3><a href="https://www.homecaremag.com/news/chiropractor-admits-149m-fraud-kickback-scheme-related-dme">Chiropractor Admits $14.9M Fraud, Kickback Scheme Related to DME</a></h3>
-        <p>Tefylon Cameron and her conspirators obtained DME orders using marketing call centers &amp; telemedicine companies...</p>
-    </div>
-    <div class="article">
-        <h3><a href="https://www.homecaremag.com/news/cms-proposed-rule-addresses-suspected-fraud-involving-medicare-acos">CMS Proposed Rule Addresses Suspected Fraud Involving Medicare ACOs</a></h3>
-        <p>Following the $2 billion urinary catheter scam, CMS is attempting to crack down on ACO fraud...</p>
-    </div>
-    <div class="article">
-        <h3><a href="https://www.homecaremag.com/news/man-charged-alleged-connection-dme-fraud-scheme">Man Charged for Alleged Connection to DME Fraud Scheme</a></h3>
-        <p>Michael Riggins allegedly submitted over $3.8m in fraudulent claims to Medicare for supplying PCDs...</p>
-    </div>
-    <div class="article">
-        <h3><a href="https://www.homecaremag.com/news/florida-individuals-charged-connection-dme-fraud-schemes">Florida Individuals Charged In Connection With DME Fraud Schemes</a></h3>
-        <p>The charges were filed in connection to the Department of Justice’s 2024 National Health Care Fraud Enforcement Action...</p>
-    </div>
-    <div class="article">
-        <h3><a href="https://www.homecaremag.com/news/carecentrix-launches-dme-navigator-modernize-equipment-delivery">CareCentrix Launches DME Navigator to Modernize Equipment Delivery</a></h3>
-        <p>DME Navigator is a patient-centric solution for health plans that streamlines ordering, distribution &amp; fulfillment of durable medical equipment...</p>
-    </div>
-    <div class="article">
-        <h3><a href="https://www.homecaremag.com/news/gao-report-finds-millions-seniors-are-not-getting-homecare-they-need">GAO Report Finds Millions of Seniors Are Not Getting the Homecare They Need</a></h3>
-        <p>Four out of five seniors who needed a home delivered or congregate meal in 2021 did not receive one...</p>
-    </div>
-    <div class="article">
-        <h3><a href="https://www.homecaremag.com/news/dynarex-unveils-distribution-center-wallkill-new-york">Dynarex Unveils Distribution Center in Wallkill, New York</a></h3>
-        <p>Expansive new warehouse broadens fulfillment capabilities of medical supply company...</p>
-    </div>
-    <div class="article">
-        <h3><a href="https://www.homecaremag.com/news/vns-health-settles-lawsuit-billing-services-they-failed-provide-document">VNS Health Settles Lawsuit For Billing For Services They Failed to Provide, Document</a></h3>
-        <p>Defendants will pay nearly $1M &amp; admit they sought &amp; received payments for assertive community treatment services they failed to provide or document...</p>
-    </div>
-    <div class="article">
-        <h3><a href="https://www.homecaremag.com/news/cms-proposes-4-payment-cut-home-health">CMS Proposes 4% Payment Cut for Home Health</a></h3>
-        <p>Advocates say move would continue to hurt patients, providers and limit access to care in the...</p>
-    </div>
-    <div class="article">
-        <h3><a href="https://www.mcknightshomecare.com/news/nahc-blasts-2025-home-health-proposed-rule-as-irrational/">NAHC blasts 2025 home health proposed rule as ‘irrational’</a></h3>
-        <p>CMS’ proposal to yet again slash home health rates not only will harm care access and quality, but also exacerbate providers’ financial...</p>
-    </div>
-    <div class="article">
-        <h3><a href="https://www.mcknightshomecare.com/news/mass-general-brigham-home-care-workers-unionize-for-better-pay-work-conditions/">Mass General Brigham home care workers unionize for better pay, work conditions</a></h3>
-        <p>Mass General Brigham’s home care nurses voted to unionize. The workers were seeking better pay, benefits, safety and work...</p>
-    </div>
-    <div class="article">
-        <h3><a href="https://www.mcknightshomecare.com/news/home-care-providers-pay-4-5m-to-settle-false-claims-allegations/">Home care providers pay $4.5M to settle false claims allegations</a></h3>
-        <p>Three home care agencies agreed to pay nearly $4.5 million to resolve allegations that they provided illegal...</p>
-    </div>
-    <div class="article">
-        <h3><a href="https://www.mcknightshomecare.com/news/cms-addresses-urinary-catheter-scandal-with-newly-proposed-rule/">CMS addresses urinary catheter scandal with newly proposed rule</a></h3>
-        <p>CMS proposed a rule Friday that would allow it to better monitor claims activity surrounding two billing codes for urinary...</p>
-    </div>
-    <div class="article">
-        <h3><a href="https://homehealthcarenews.com/2024/06/draconian-and-bewildering-inside-the-2025-home-health-proposed-payment-rule/">‘Draconian’ And ‘Bewildering’: Inside The 2025 Home Health Proposed Payment Rule</a></h3>
-        <p>Home health providers face significant cuts and scrutiny as CMS proposes a new payment rule for 2025. 
-...</p>
-    </div>
-    <div class="article">
-        <h3><a href="https://homehealthcarenews.com/2024/06/cms-proposes-over-4-cut-to-home-health-medicare-payments-in-2025/">[Updated] CMS Proposes Over 4% Cut To Home Health Medicare Payments In 2025</a></h3>
-        <p>CMS proposes a significant cut to Medicare payments for home health agencies in 2025, raising concerns about access to care and the financial sustainability of...</p>
-    </div>
-    <div class="article">
-        <h3><a href="https://nahc.org/today-2025-home-health-prospective-payment-system-rate-update-proposed-rule/">TODAY! 2025 Home Health Prospective Payment System Rate Update, Proposed Rule</a></h3>
-        <p>The latest NAHC Report dives into the proposed 2025 Home Health Prospective Payment System rate update, offering insights for home health providers. 
-...</p>
-    </div>
-    <div class="article">
-        <h3><a href="https://homehealthcarenews.com/2024/06/nahc-re-files-lawsuit-against-hhs-cms-over-home-health-cuts/">NAHC Re-Files Lawsuit Against HHS, CMS Over Home Health Cuts</a></h3>
-        <p>The National Association for Home Care &amp; Hospice refiles a lawsuit against HHS and CMS over home health payment cuts, citing a Supreme Court ruling...</p>
-    </div>
-    <div class="article">
-        <h3><a href="https://nahc.org/nahc-nhpco-alliance-transition-board-met-for-1st-time-last-week/">NAHC-NHPCO Alliance Transition Board Met for 1st Time Last Week</a></h3>
-        <p>The NAHC-NHPCO Alliance Transition Board&#x27;s first meeting marks a significant step in the integration of these two leading home care and hospice organizations. 
-...</p>
-    </div>
-    <div class="article">
-        <h3><a href="https://news.bloomberglaw.com/health-law-and-business/home-health-agencies-to-renew-suit-over-medicare-payment-rates">Home Health Agencies to Renew Suit Over Medicare Payment Rates</a></h3>
-        <p>Home health agencies are preparing to fight another proposed Medicare payment cut, arguing it will harm access to care and worsen staffing shortages. 
-...</p>
-    </div>
-    <div class="article">
-        <h3><a href="https://nahc.org/2025-home-health-prospective-payment-system-rate-update-proposed-rule/">2025 Home Health Prospective Payment System Rate Update, Proposed Rule</a></h3>
-        <p>The proposed rule outlines significant changes to the 2025 Home Health Prospective Payment System rates, impacting home health agencies nationwide. 
-...</p>
-    </div>
-    
-    
+    <nav>
+        <h1>Trolly Care</h1>
+        <div class="nav-links">
+            <a>Contact Us</a>
+            <a>Share</a>
+        </div>
+    </nav>
+
+    <main>
+
+    </main>
+
+    TODO
     <footer>
         <p>Thank you for subscribing to our newsletter. For more news and updates, visit our website.</p>
     </footer>
 </body>
+
 </html>

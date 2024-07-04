@@ -6,9 +6,11 @@ import debug from "debug";
 import puppeteer from "puppeteer";
 
 import type { ValidArticleData } from "../types";
-import { fetchArticles } from "./data/data-fetching";
-import { filterAllArticles, filterPageArticles } from "./data/data-filtering";
-import { processArticles } from "./data/format-articles";
+import {
+	filterArticlesByPage,
+	rankAndFilterArticles,
+} from "./data/data-filtering";
+import { enrichArticlesData } from "./data/format-articles";
 import { renderTemplate } from "./display/template";
 import { initializeGenAI } from "./lib/ai";
 import { SPECIFIC_PAGES } from "./lib/constants";
@@ -28,8 +30,8 @@ export async function generateNewsletterData() {
 		const results: ValidArticleData[] = [];
 		// specific pages
 		for (const page of SPECIFIC_PAGES) {
-			const articleLinks = await fetchArticles(page, browserPage);
-			const relevantArticles = await filterPageArticles(articleLinks, page);
+			const articleLinks = await scrapeArticles(page, browserPage);
+			const relevantArticles = await filterArticlesByPage(articleLinks, page);
 			results.push(...relevantArticles);
 		}
 
@@ -44,9 +46,12 @@ export async function generateNewsletterData() {
 			throw new Error("No valid articles found");
 		}
 
-		const relevantArticles = await filterAllArticles(results);
+		const relevantArticles = await rankAndFilterArticles(results);
 
-		const newsletterData = await processArticles(relevantArticles, browserPage);
+		const newsletterData = await enrichArticlesData(
+			relevantArticles,
+			browserPage,
+		);
 
 		log("newsletter data generated");
 
@@ -89,6 +94,7 @@ main().catch((error) => {
 
 import { Resend } from "resend";
 import {} from "../types";
+import { scrapeArticles } from "./data/data-fetching";
 import { searchNews } from "./data/google-search";
 const resend = new Resend(process.env.RESEND_API_KEY);
 

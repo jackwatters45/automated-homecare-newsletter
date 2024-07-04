@@ -6,89 +6,118 @@ import robotsParser from "robots-parser";
 
 import type { ArticleData, PageToScrape } from "../../types";
 import {
-	combineUrlParts,
-	convertHttpToHttps,
+	constructFullUrl,
+	ensureHttps,
+	fetchPageContent,
 	retry,
-	tryFetchPageHTML,
 } from "../lib/utils";
 
-const log = debug(`${process.env.APP_NAME}:data-fetching.ts`);
+const logger = debug(`${process.env.APP_NAME}:web-scraper.ts`);
 
-export async function fetchArticles(page: PageToScrape, browserPage: Page) {
+export async function scrapeArticles(
+	targetPage: PageToScrape,
+	browserInstance: Page,
+) {
 	try {
-		const isScrapeable = await canScrape(page.url);
-		if (!isScrapeable) {
-			log(`Can't scrape ${page.url} - robots.txt disallows it`);
+		const isScrapingAllowed = await checkRobotsTxtPermission(targetPage.url);
+		if (!isScrapingAllowed) {
+			logger(`Scraping disallowed by robots.txt for ${targetPage.url}`);
 			return [];
 		}
 
-		const html = await retry(() => tryFetchPageHTML(page.url, browserPage));
+		const pageContent = await retry(() =>
+			fetchPageContent(targetPage.url, browserInstance),
+		);
 
-		if (!html) {
-			log("html is empty");
+		if (!pageContent) {
+			logger("Page content is empty");
 			return [];
 		}
 
-		const $ = cheerio.load(html);
+		const $ = cheerio.load(pageContent);
 
-		return $(page.articleContainerSelector)
-			.map((_, el) => getArticlePreview({ page, $, el }))
+		return $(targetPage.articleContainerSelector)
+			.map((_, element) => extractArticleData({ targetPage, $, element }))
 			.get() as ArticleData[];
 	} catch (error) {
-		console.error("Error in fetchArticleLinksAndDates:", error);
+		console.error("Error in scrapeArticles:", error);
 		return [];
 	}
 }
 
-interface GetArticlePreviewParams {
-	page: PageToScrape;
+interface ArticleExtractionParams {
+	targetPage: PageToScrape;
 	$: cheerio.CheerioAPI;
-	el: cheerio.AnyNode;
+	element: cheerio.AnyNode;
 }
 
-function getArticlePreview({ page, $, el }: GetArticlePreviewParams) {
-	const href = $(el).find(page.linkSelector).attr("href");
+function extractArticleData({
+	targetPage,
+	$,
+	element,
+}: ArticleExtractionParams) {
+	const rawHref = $(element).find(targetPage.linkSelector).attr("href");
 
-	let link = href ? convertHttpToHttps(href) : undefined;
-	if (!link?.startsWith("https://")) link = combineUrlParts(page.url, link);
+	let fullUrl = rawHref ? ensureHttps(rawHref) : undefined;
+	if (!fullUrl?.startsWith("https://"))
+		fullUrl = constructFullUrl(targetPage.url, fullUrl);
 
 	return {
-		url: page.url,
-		link,
-		title: $(el).find(page.titleSelector).length
-			? $(el).find(page.titleSelector).text().trim()
-			: undefined,
-		description: $(el).find(page.descriptionSelector).length
-			? $(el).find(page.descriptionSelector).text().trim()
-			: undefined,
-		date: $(el).find(page.dateSelector).length
-			? new Date($(el).find(page.dateSelector).text().trim())
-			: undefined,
+		url: targetPage.url,
+		link: fullUrl,
+		title: extractTextContent($, element, targetPage.titleSelector),
+		description: extractTextContent($, element, targetPage.descriptionSelector),
+		date: extractDate($, element, targetPage.dateSelector),
 	};
 }
 
-async function canScrape(pageToScrape: string) {
+function extractTextContent(
+	$: cheerio.CheerioAPI,
+	element: cheerio.AnyNode,
+	selector: string | undefined,
+): string | undefined {
+	return $(element).find(selector).length
+		? $(element).find(selector).text().trim()
+		: undefined;
+}
+
+function extractDate(
+	$: cheerio.CheerioAPI,
+	element: cheerio.AnyNode,
+	selector: string | undefined,
+): Date | undefined {
+	return $(element).find(selector).length
+		? new Date($(element).find(selector).text().trim())
+		: undefined;
+}
+
+async function checkRobotsTxtPermission(targetUrl: string) {
 	try {
-		const robotsUrl = new URL("/robots.txt", pageToScrape).toString();
+		const robotsTxtUrl = new URL("/robots.txt", targetUrl).toString();
 		const response = await retry(() =>
-			fetch(robotsUrl, {
+			fetch(robotsTxtUrl, {
 				redirect: "follow",
 			}),
 		);
 
 		if (!response || !response.ok) {
 			console.warn(
-				`Couldn't fetch robots.txt: ${response?.status} ${response?.statusText}`,
+				`Failed to fetch robots.txt: ${response?.status} ${response?.statusText}`,
 			);
-			return true; // Assume scraping is allowed if we can't fetch robots.txt
+			return true; // Assume scraping is allowed if robots.txt can't be fetched
 		}
 
-		const robotsTxt = await response.text();
-		const robots = robotsParser(pageToScrape, robotsTxt);
+		const robotsTxtContent = await response.text();
+		const robotsRules = robotsParser(targetUrl, robotsTxtContent);
 
-		return robots.isAllowed(pageToScrape);
+		return robotsRules.isAllowed(targetUrl);
 	} catch (error) {
-		console.error("Error in canScrape on page:", pageToScrape, "error:", error);
+		console.error(
+			"Error in checkRobotsTxtPermission for URL:",
+			targetUrl,
+			"Error:",
+			error,
+		);
 		return false; // Assume scraping is not allowed if there's an error
 	}
 }

@@ -60,7 +60,7 @@ describe("Google Custom Search", () => {
 				cse: { list: mockCseList },
 			} as any);
 
-			const result = await searchNews("test query");
+			const result = await searchNews(["test query"]);
 
 			// Check if the API was called with correct parameters
 			expect(mockCseList).toHaveBeenCalledWith({
@@ -88,7 +88,7 @@ describe("Google Custom Search", () => {
 				cse: { list: mockCseList },
 			} as any);
 
-			const result = await searchNews("test query");
+			const result = await searchNews(["test query"]);
 
 			expect(result).toBeUndefined();
 		});
@@ -100,7 +100,7 @@ describe("Google Custom Search", () => {
 				cse: { list: mockCseList },
 			} as any);
 
-			await expect(searchNews("test query")).rejects.toThrow("API Error");
+			await expect(searchNews(["test query"])).rejects.toThrow("API Error");
 		});
 	});
 });
