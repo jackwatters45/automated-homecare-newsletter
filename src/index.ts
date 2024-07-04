@@ -5,7 +5,7 @@ import path from "node:path";
 import debug from "debug";
 import puppeteer from "puppeteer";
 
-import type { ValidArticleData } from "../types";
+import type { ValidArticleData } from "types";
 import {
 	filterArticlesByPage,
 	rankAndFilterArticles,
@@ -93,7 +93,6 @@ main().catch((error) => {
 });
 
 import { Resend } from "resend";
-import {} from "../types";
 import { scrapeArticles } from "./data/data-fetching";
 import { searchNews } from "./data/google-search";
 const resend = new Resend(process.env.RESEND_API_KEY);

@@ -1,13 +1,12 @@
 import "dotenv/config";
 
-import { promises as fs } from "node:fs";
 import express from "express";
 import { engine } from "express-handlebars";
 
 import path from "node:path";
+import { generateNewsletterData } from "@/index";
 import debug from "debug";
-import { generateNewsletterData } from "..";
-import type { ArticleDisplayData } from "../../types";
+import type { ArticleDisplayData } from "types";
 
 const log = debug(`${process.env.APP_NAME}:generate-example.ts`);
 

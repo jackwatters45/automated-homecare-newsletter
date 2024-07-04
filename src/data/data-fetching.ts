@@ -1,16 +1,15 @@
-import Bottleneck from "bottleneck";
 import * as cheerio from "cheerio";
 import debug from "debug";
 import type { Page } from "puppeteer";
 import robotsParser from "robots-parser";
 
-import type { ArticleData, PageToScrape } from "../../types";
 import {
 	constructFullUrl,
 	ensureHttps,
 	fetchPageContent,
 	retry,
-} from "../lib/utils";
+} from "@/lib/utils";
+import type { ArticleData, PageToScrape } from "types";
 
 const logger = debug(`${process.env.APP_NAME}:web-scraper.ts`);
 

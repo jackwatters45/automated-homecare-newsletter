@@ -1,9 +1,9 @@
 import debug from "debug";
 
+import { model } from "@/index";
+import { DESCRIPTION_MAX_LENGTH } from "@/lib/constants";
 import Bottleneck from "bottleneck";
 import type { Page } from "puppeteer";
-import { model } from "..";
-import { DESCRIPTION_MAX_LENGTH } from "./constants";
 
 const log = debug(`${process.env.APP_NAME}:utils.ts`);
 

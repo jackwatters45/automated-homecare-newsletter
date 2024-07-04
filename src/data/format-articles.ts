@@ -4,13 +4,13 @@ import debug from "debug";
 import type { Page } from "puppeteer";
 
 import { DESCRIPTION_MAX_LENGTH } from "@/lib/constants";
-import type { ArticleDisplayData, ValidArticleData } from "../../types";
 import {
 	fetchPageContent,
 	generateStringResponse,
 	retry,
 	truncateDescription,
-} from "../lib/utils";
+} from "@/lib/utils";
+import type { ArticleDisplayData, ValidArticleData } from "types";
 
 const logger = debug(`${process.env.APP_NAME}:article-processor.ts`);
 
