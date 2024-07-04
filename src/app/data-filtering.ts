@@ -36,7 +36,10 @@ export async function filterArticlesByPage(
 			},
 		);
 
-		log(`Filtered ${articles.length} articles to ${filteredArticles.length}`);
+		log(
+			`${page.url}: Filtered ${articles.length} articles to ${filteredArticles.length}`,
+		);
+
 		return filteredArticles;
 	} catch (error) {
 		log(`Error in filterPageArticles: ${error}`);

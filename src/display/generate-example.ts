@@ -4,7 +4,7 @@ import express from "express";
 import { engine } from "express-handlebars";
 
 import path from "node:path";
-import { generateNewsletterData } from "@/index";
+import { generateNewsletterData } from "@/app/index";
 import debug from "debug";
 import type { ArticleDisplayData } from "types";
 

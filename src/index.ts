@@ -3,101 +3,51 @@ import "dotenv/config";
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import debug from "debug";
-import puppeteer from "puppeteer";
 
-import type { ValidArticleData } from "types";
-import {
-	filterArticlesByPage,
-	rankAndFilterArticles,
-} from "./data/data-filtering";
-import { enrichArticlesData } from "./data/format-articles";
-import { renderTemplate } from "./display/template";
-import { initializeGenAI } from "./lib/ai";
-import { SPECIFIC_PAGES } from "./lib/constants";
+import { renderTemplate } from "./app/template";
 import { runWeekly } from "./lib/cron";
 
 const log = debug(`${process.env.APP_NAME}:index.ts`);
 
-export const model = initializeGenAI();
-
-export async function generateNewsletterData() {
-	log("generating newsletter data");
-
-	const browser = await puppeteer.launch();
-	try {
-		const browserPage = await browser.newPage();
-
-		const results: ValidArticleData[] = [];
-		// specific pages
-		for (const page of SPECIFIC_PAGES) {
-			const articleLinks = await scrapeArticles(page, browserPage);
-			const relevantArticles = await filterArticlesByPage(articleLinks, page);
-			results.push(...relevantArticles);
-		}
-
-		// google search
-		const googleSearchResults = await searchNews([
-			"homecare news",
-			"home health news",
-		]);
-		results.push(...googleSearchResults);
-
-		if (results.length === 0) {
-			throw new Error("No valid articles found");
-		}
-
-		const relevantArticles = await rankAndFilterArticles(results);
-
-		const newsletterData = await enrichArticlesData(
-			relevantArticles,
-			browserPage,
-		);
-
-		log("newsletter data generated");
-
-		return newsletterData;
-	} catch (error) {
-		console.error(error);
-	} finally {
-		await browser.close();
-	}
-}
-
 async function main() {
 	runWeekly(async () => {
-		try {
-			const newsletterData = await generateNewsletterData();
+		retry(async () => {
+			try {
+				const newsletterData = await generateNewsletterData();
 
-			if (!newsletterData || newsletterData.length === 0) {
-				throw new Error("No newsletter data generated");
+				if (!newsletterData || newsletterData.length === 0) {
+					throw new Error("No newsletter data generated");
+				}
+
+				const template = await renderTemplate(newsletterData);
+
+				const outputPath = path.join(path.resolve(), "public", "newsletter.html");
+				await fs.writeFile(outputPath, template);
+				log(`Newsletter written to ${outputPath}`);
+
+				// TODO: Implement email sending
+				// const res = await sendEmail(result);
+				// log(`Email sent with response: ${JSON.stringify(res)}`);
+			} catch (error) {
+				console.error(error);
 			}
-
-			const template = await renderTemplate(newsletterData);
-
-			const outputPath = path.join(path.resolve(), "public", "newsletter.html");
-			await fs.writeFile(outputPath, template);
-			log(`Newsletter written to ${outputPath}`);
-
-			// TODO: Implement email sending
-			// const res = await sendEmail(result);
-			// log(`Email sent with response: ${JSON.stringify(res)}`);
-		} catch (error) {
-			console.error(error);
-		}
+		});
 	});
 }
 
-main().catch((error) => {
+retry(main).catch((error) => {
 	console.error("Unhandled error in main script:", error);
 	process.exit(1);
 });
 
 import { Resend } from "resend";
-import { scrapeArticles } from "./data/data-fetching";
-import { searchNews } from "./data/google-search";
+import { generateNewsletterData } from "./app";
+import { scrapeArticles } from "./app/data-fetching";
+import { searchNews } from "./app/google-search";
+import { retry } from "./lib/utils";
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-export async function sendEmail(html: string, to = "jack.watters@me.com") {
+async function sendEmail(html: string, to = "jack.watters@me.com") {
 	const date = new Date();
 	const formattedDate = date.toLocaleDateString("en-US", {
 		weekday: "long",

@@ -2,15 +2,18 @@
 
 ## TODO
 
-- fix tests
-
 - better styling...
   - more on theme with bcx
 
 - turn into rest api
  -> create/deploy separate example app
 
+---
+
 - show dad
+
+- tests
+
 - see if i can find epic api
 - cron job
 

@@ -1,6 +1,6 @@
 import debug from "debug";
 
-import { model } from "@/index";
+import { model } from "@/app/index";
 import { DESCRIPTION_MAX_LENGTH } from "@/lib/constants";
 import Bottleneck from "bottleneck";
 import type { Page } from "puppeteer";
@@ -81,7 +81,7 @@ export function convertStringDatesToDate<T extends { date?: string }>(
 }
 
 export function truncateDescription(description: string): string {
-	const words = description?.split(" ");
+	const words = description.trim()?.split(" ");
 	const truncatedContent = words.slice(0, DESCRIPTION_MAX_LENGTH).join(" ");
 	return truncatedContent.endsWith(".")
 		? truncatedContent
