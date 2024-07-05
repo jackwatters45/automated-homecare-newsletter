@@ -1,3 +1,7 @@
+import "dotenv/config";
+
+import { promises as fs } from "node:fs";
+import path from "node:path";
 import debug from "debug";
 import puppeteer from "puppeteer";
 
@@ -9,6 +13,7 @@ import { filterArticlesByPage, rankAndFilterArticles } from "./data-filtering";
 import type { ValidArticleData } from "types";
 import { enrichArticlesData } from "./format-articles";
 import { searchNews } from "./google-search";
+import { renderTemplate } from "./template";
 
 const log = debug(`${process.env.APP_NAME}:app:index.ts`);
 
@@ -54,5 +59,29 @@ export async function generateNewsletterData() {
 		console.error(error);
 	} finally {
 		await browser.close();
+	}
+}
+
+export async function GenerateNewsletter() {
+	try {
+		const newsletterData = await generateNewsletterData();
+
+		if (!newsletterData || newsletterData.length === 0) {
+			throw new Error("No newsletter data generated");
+		}
+
+		const template = await renderTemplate(newsletterData);
+
+		const outputPath = path.join(path.resolve(), "public", "newsletter.html");
+		await fs.writeFile(outputPath, template);
+		log(`Newsletter written to ${outputPath}`);
+
+		// TODO: Implement email sending
+		// const res = await sendEmail(result);
+		// log(`Email sent with response: ${JSON.stringify(res)}`);
+
+		return { message: "Newsletter generated successfully", path: outputPath };
+	} catch (error) {
+		console.error(error);
 	}
 }

@@ -9,7 +9,7 @@ import { engine } from "express-handlebars";
 const log = debug(`${process.env.APP_NAME}:server.ts`);
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT ?? 3000;
 
 const basepath = path.resolve();
 

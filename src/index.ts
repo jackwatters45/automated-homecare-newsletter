@@ -1,92 +1,125 @@
 import "dotenv/config";
 
-import { promises as fs } from "node:fs";
+import * as _ from "@/lib/instrument";
+
 import path from "node:path";
-import debug from "debug";
+import * as Sentry from "@sentry/node";
+import compression from "compression";
+import cors from "cors";
+import express from "express";
+import rateLimit from "express-rate-limit";
+import helmet from "helmet";
+import morgan from "morgan";
 
-import { renderTemplate } from "./app/template";
-import { runWeekly } from "./lib/cron";
+import { runWeekly } from "@/lib/cron";
+import { retry } from "@/lib/utils";
+import { GenerateNewsletter, generateNewsletterData } from "./app";
 
-const log = debug(`${process.env.APP_NAME}:index.ts`);
+const app = express();
+const port = process.env.PORT || 3000;
 
-async function main() {
-	runWeekly(async () => {
-		retry(async () => {
-			try {
-				const newsletterData = await generateNewsletterData();
+// Middleware
+app.use(helmet());
+app.use(compression());
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(morgan("combined"));
 
-				if (!newsletterData || newsletterData.length === 0) {
-					throw new Error("No newsletter data generated");
-				}
+// Rate limiting
+const limiter = rateLimit({
+	windowMs: 15 * 60 * 1000, // 15 minutes
+	max: 50,
+});
+app.use(limiter);
 
-				const template = await renderTemplate(newsletterData);
-
-				const outputPath = path.join(path.resolve(), "public", "newsletter.html");
-				await fs.writeFile(outputPath, template);
-				log(`Newsletter written to ${outputPath}`);
-
-				// TODO: Implement email sending
-				// const res = await sendEmail(result);
-				// log(`Email sent with response: ${JSON.stringify(res)}`);
-			} catch (error) {
-				console.error(error);
-			}
-		});
-	});
+class HttpException extends Error {
+	errorCode: number;
+	constructor(
+		errorCode: number,
+		public readonly message: string,
+	) {
+		super(message);
+		this.errorCode = errorCode;
+	}
 }
 
-retry(main).catch((error) => {
-	console.error("Unhandled error in main script:", error);
-	process.exit(1);
+app.use(express.static(path.join(path.resolve(), "public")));
+
+// API routes
+app.post("/generate-newsletter-data", async (_, res) => {
+	try {
+		const result = await retry(generateNewsletterData);
+		res.json(result);
+	} catch (error) {
+		res.status(500).json({ error: "Failed to generate newsletter data" });
+	}
 });
 
-import { Resend } from "resend";
-import { generateNewsletterData } from "./app";
-import { scrapeArticles } from "./app/data-fetching";
-import { searchNews } from "./app/google-search";
-import { retry } from "./lib/utils";
-const resend = new Resend(process.env.RESEND_API_KEY);
-
-async function sendEmail(html: string, to = "jack.watters@me.com") {
-	const date = new Date();
-	const formattedDate = date.toLocaleDateString("en-US", {
-		weekday: "long",
-		year: "numeric",
-		month: "long",
-		day: "numeric",
-	});
-
-	const { data, error } = await resend.emails.send({
-		from: "Yats Support <support@yatusabes.co>",
-		to,
-		subject: `Test Newsletter' - ${formattedDate}`,
-		html,
-	});
-
-	if (error) {
-		return console.error({ error });
+app.post("/generate-newsletter", async (_, res) => {
+	try {
+		const result = await retry(GenerateNewsletter);
+		res.json(result);
+	} catch (error) {
+		res.status(500).json({ error: "Failed to generate newsletter" });
 	}
+});
 
-	return new Response(
-		JSON.stringify({ message: "Email sent successfully", data }),
-	);
+app.get("/run-weekly", (_, res) => {
+	runWeekly(async () => {
+		try {
+			await retry(GenerateNewsletter);
+		} catch (error) {
+			console.error("Error in weekly run:", error);
+		}
+	});
+	res.json({ message: "Weekly task scheduled" });
+});
+
+// TODO test -> delete
+app.get("/debug-sentry", function mainHandler(req, res) {
+	throw new Error("My first Sentry error!");
+});
+
+// Error handling
+Sentry.setupExpressErrorHandler(app);
+
+app.use(
+	(
+		err: Error | HttpException,
+		req: express.Request,
+		res: express.Response,
+		next: express.NextFunction,
+	) => {
+		if (err instanceof HttpException) {
+			return res.status(err.errorCode).json(err.message);
+		}
+		res.status(500).json(err.message);
+	},
+);
+
+// Start the server
+app.listen(port, () => {
+	console.log(`Server is running on http://localhost:${port}`);
+});
+
+// Keep the main function for potential CLI usage
+async function main() {
+	runWeekly(async () => {
+		try {
+			await retry(GenerateNewsletter);
+		} catch (error) {
+			console.error("Error in main function:", error);
+		}
+	});
 }
 
-// "You are a homecare business operator. You are tasked with choosing which articles to include in a newsletter. You will be provided with a list of about 200 articles and their metadata. Your job is to filter out articles that are not relevant to the topic of home health. You should reduce the list to the 30 most relevant and interesting articles. Please order the articles by relevance score, with the highest score being the first in the list. Return the filtered list of articles as a JSON array.",
+// This can be used if you want to run the script directly
+if (require.main === module) {
+	retry(main).catch((error) => {
+		console.error("Unhandled error in main script:", error);
+		process.exit(1);
+	});
+}
 
-// async function analyzeAndRankArticles(
-// 	articles: Article[],
-// 	topic: string,
-// 	numTopArticles = 10,
-// ): Promise<Article[]> {
-// 	const rankedArticles = await Promise.all(
-// 		articles.map(async (article) => ({
-// 			...article,
-// 			relevanceScore: await rankArticle(article.content, topic),
-// 		})),
-// 	);
-
-// 	return rankedArticles
-// 		.sort((a, b) => (b.relevanceScore || 0) - (a.relevanceScore || 0))
-// 		.slice(0, numTopArticles);
-// }
+export { app };
