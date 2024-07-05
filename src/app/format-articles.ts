@@ -10,7 +10,7 @@ import {
 	retry,
 	truncateDescription,
 } from "@/lib/utils";
-import type { ArticleDisplayData, ValidArticleData } from "types";
+import type { ArticleDisplayData, ValidArticleData } from "@/types";
 
 const logger = debug(`${process.env.APP_NAME}:article-processor.ts`);
 

@@ -9,7 +9,7 @@ import {
 	fetchPageContent,
 	retry,
 } from "@/lib/utils";
-import type { ArticleData, PageToScrape } from "types";
+import type { ArticleData, PageToScrape } from "@/types";
 
 const logger = debug(`${process.env.APP_NAME}:web-scraper.ts`);
 

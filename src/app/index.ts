@@ -5,15 +5,18 @@ import path from "node:path";
 import debug from "debug";
 import puppeteer from "puppeteer";
 
+import { scrapeArticles } from "@/app/data-fetching";
+import {
+	filterArticlesByPage,
+	rankAndFilterArticles,
+} from "@/app/data-filtering";
 import { initializeGenAI } from "@/lib/ai";
 import { SPECIFIC_PAGES } from "@/lib/constants";
-import { scrapeArticles } from "./data-fetching";
-import { filterArticlesByPage, rankAndFilterArticles } from "./data-filtering";
 
-import type { ValidArticleData } from "types";
-import { enrichArticlesData } from "./format-articles";
-import { searchNews } from "./google-search";
-import { renderTemplate } from "./template";
+import { enrichArticlesData } from "@/app/format-articles";
+import { searchNews } from "@/app/google-search";
+import { renderTemplate } from "@/app/template";
+import type { ValidArticleData } from "@/types";
 
 const log = debug(`${process.env.APP_NAME}:app:index.ts`);
 

@@ -1,4 +1,4 @@
-import type { PageToScrape } from "types";
+import type { PageToScrape } from "@/types";
 
 export const TEST_PAGES: PageToScrape[] = [
 	{

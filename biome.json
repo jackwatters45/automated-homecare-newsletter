@@ -8,7 +8,7 @@
 		"rules": {
 			"recommended": true
 		},
-		"ignore": ["tests/**/*.ts"]
+		"ignore": ["tests/**/*", "dist/**/*"]
 	},
 	"vcs": {
 		"enabled": true,

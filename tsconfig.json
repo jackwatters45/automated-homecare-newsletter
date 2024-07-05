@@ -4,7 +4,8 @@
 		"allowJs": true,
 		"skipLibCheck": true,
 		"strict": true,
-		"noEmit": true,
+		"outDir": "./dist",
+		"rootDir": "./src",
 		"esModuleInterop": true,
 		"module": "esnext",
 		"target": "esnext",
@@ -19,21 +20,19 @@
 				"name": "next"
 			}
 		],
-		"baseUrl": "./src",
+		"baseUrl": "./",
 		"paths": {
-			"@/*": ["./*"],
-			"types": ["../types/index.ts"]
+			"@/*": ["./src/*"],
+			"types": ["./src/types/index.ts"]
 		},
 		"sourceMap": true,
 		"inlineSources": true,
-		// Set `sourceRoot` to  "/" to strip the build path prefix
-		// from generated source code references.
-		// This improves issue grouping in Sentry.
+
 		// Set `sourceRoot` to  "/" to strip the build path prefix
 		// from generated source code references.
 		// This improves issue grouping in Sentry.
 		"sourceRoot": "/"
 	},
-	"include": ["**/*.ts", "**/*.tsx"],
-	"exclude": ["node_modules"]
+	"include": ["src/**/*", "types/**/*"],
+	"exclude": ["node_modules", "**/*.spec.ts"]
 }

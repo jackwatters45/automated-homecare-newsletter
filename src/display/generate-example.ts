@@ -5,8 +5,8 @@ import { engine } from "express-handlebars";
 
 import path from "node:path";
 import { generateNewsletterData } from "@/app/index";
+import type { ArticleDisplayData } from "@/types";
 import debug from "debug";
-import type { ArticleDisplayData } from "types";
 
 const log = debug(`${process.env.APP_NAME}:generate-example.ts`);
 

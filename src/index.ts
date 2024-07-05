@@ -1,6 +1,6 @@
 import "dotenv/config";
-
-import * as _ from "@/lib/instrument";
+import "module-alias/register";
+import "@/lib/instrument";
 
 import path from "node:path";
 import * as Sentry from "@sentry/node";
@@ -11,9 +11,9 @@ import rateLimit from "express-rate-limit";
 import helmet from "helmet";
 import morgan from "morgan";
 
+import { GenerateNewsletter, generateNewsletterData } from "@/app";
 import { runWeekly } from "@/lib/cron";
 import { retry } from "@/lib/utils";
-import { GenerateNewsletter, generateNewsletterData } from "./app";
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -79,6 +79,10 @@ app.get("/run-weekly", (_, res) => {
 // TODO test -> delete
 app.get("/debug-sentry", function mainHandler(req, res) {
 	throw new Error("My first Sentry error!");
+});
+
+app.get("/", function mainHandler(req, res) {
+	res.send("Hello World!");
 });
 
 // Error handling

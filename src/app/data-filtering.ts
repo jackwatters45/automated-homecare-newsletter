@@ -7,7 +7,7 @@ import type {
 	PageToScrape,
 	ValidArticleData,
 	ValidArticleDataWithCount,
-} from "types";
+} from "@/types";
 
 const log = debug(`${process.env.APP_NAME}:date-filtering.ts`);
 

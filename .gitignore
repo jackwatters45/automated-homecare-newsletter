@@ -11,7 +11,7 @@ pnpm-lock.yaml
 /coverage
 
 # production
-/build
+/dist
 
 # misc
 .DS_Store

@@ -3,14 +3,16 @@
 	"version": "1.0.0",
 	"type": "module",
 	"description": "",
-	"main": "index.js",
+	"main": "dist/src/index.js",
 	"scripts": {
-		"build": "tsc -p tsconfig.json && pnpm sentry:sourcemaps && pnpm sentry:sourcemaps",
-		"test": "tsc -p tsconfig.test.json && vitest",
+		"build": "npx tsc && export VERSION=${VERSION:-$RAILWAY_GIT_COMMIT_SHA} && npm run sentry:sourcemaps",
+		"prestart": "npm run build",
+		"start": "node -r tsconfig-paths/register dist/src/index.js",
+		"test": "vitest",
 		"dev": "DEBUG=webscrape:* tsx watch src/index.ts",
 		"server": "DEBUG=webscrape:* tsx src/display/server.ts",
 		"example": "DEBUG=webscrape:* tsx src/display/generate-example.ts",
-		"sentry:sourcemaps": "sentry-cli sourcemaps inject --org yats-co --project bcx-newletter ./build && sentry-cli sourcemaps upload --org yats-co --project bcx-newletter ./build"
+		"sentry:sourcemaps": "sentry-cli releases files $VERSION upload-sourcemaps ./dist"
 	},
 	"keywords": [],
 	"author": "",
@@ -46,7 +48,12 @@
 		"@types/node": "^20.14.9",
 		"debug": "^4.3.5",
 		"lefthook": "^1.6.18",
+		"tsconfig-paths": "^4.2.0",
 		"tsx": "^4.15.7",
+		"typescript": "^5.5.3",
 		"vitest": "^1.6.0"
+	},
+	"_moduleAliases": {
+		"@": "dist/src"
 	}
 }

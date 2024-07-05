@@ -3,7 +3,7 @@ import { google } from "googleapis";
 
 import { RECURRING_FREQUENCY } from "@/lib/constants";
 import { retry } from "@/lib/utils";
-import type { ArticleData, ValidArticleData } from "types";
+import type { ArticleData, ValidArticleData } from "@/types";
 
 const log = debug(`${process.env.APP_NAME}:google-search.ts`);
 
