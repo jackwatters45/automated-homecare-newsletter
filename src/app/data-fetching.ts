@@ -8,8 +8,8 @@ import {
 	ensureHttps,
 	fetchPageContent,
 	retry,
-} from "@/lib/utils";
-import type { ArticleData, PageToScrape } from "@/types";
+} from "../lib/utils.js";
+import type { ArticleData, PageToScrape } from "../types/index.js";
 
 const logger = debug(`${process.env.APP_NAME}:web-scraper.ts`);
 
@@ -107,7 +107,7 @@ async function checkRobotsTxtPermission(targetUrl: string) {
 		}
 
 		const robotsTxtContent = await response.text();
-		const robotsRules = robotsParser(targetUrl, robotsTxtContent);
+		const robotsRules = robotsParser.default(targetUrl, robotsTxtContent);
 
 		return robotsRules.isAllowed(targetUrl);
 	} catch (error) {

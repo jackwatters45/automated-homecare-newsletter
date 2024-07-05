@@ -1,13 +1,13 @@
 import debug from "debug";
 
-import { RECURRING_FREQUENCY } from "@/lib/constants";
-import { generateJsonResponse, retry } from "@/lib/utils";
+import { RECURRING_FREQUENCY } from "../lib/constants.js";
+import { generateJsonResponse, retry } from "../lib/utils.js";
 import type {
 	ArticleData,
 	PageToScrape,
 	ValidArticleData,
 	ValidArticleDataWithCount,
-} from "@/types";
+} from "../types/index.js";
 
 const log = debug(`${process.env.APP_NAME}:date-filtering.ts`);
 

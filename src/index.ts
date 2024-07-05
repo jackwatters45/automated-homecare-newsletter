@@ -1,22 +1,24 @@
 import "dotenv/config";
-import "module-alias/register";
-import "@/lib/instrument";
+// import "./lib/instrument.js";
 
 import path from "node:path";
-import * as Sentry from "@sentry/node";
+// import * as Sentry from "@sentry/node";
 import compression from "compression";
 import cors from "cors";
+import debug from "debug";
 import express from "express";
 import rateLimit from "express-rate-limit";
 import helmet from "helmet";
 import morgan from "morgan";
 
-import { GenerateNewsletter, generateNewsletterData } from "@/app";
-import { runWeekly } from "@/lib/cron";
-import { retry } from "@/lib/utils";
+import { GenerateNewsletter, generateNewsletterData } from "./app/index.js";
+import { runWeekly } from "./lib/cron.js";
+import { retry } from "./lib/utils.js";
+
+const log = debug(`${process.env.APP_NAME}:index.ts`);
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 8080;
 
 // Middleware
 app.use(helmet());
@@ -27,11 +29,11 @@ app.use(express.urlencoded({ extended: true }));
 app.use(morgan("combined"));
 
 // Rate limiting
-const limiter = rateLimit({
-	windowMs: 15 * 60 * 1000, // 15 minutes
-	max: 50,
-});
-app.use(limiter);
+// const limiter = rateLimit({
+// 	windowMs: 15 * 60 * 1000, // 15 minutes
+// 	max: 50,
+// });
+// app.use(limiter);
 
 class HttpException extends Error {
 	errorCode: number;
@@ -77,16 +79,20 @@ app.get("/run-weekly", (_, res) => {
 });
 
 // TODO test -> delete
-app.get("/debug-sentry", function mainHandler(req, res) {
+app.get("/debug-sentry", (req, res) => {
 	throw new Error("My first Sentry error!");
 });
 
-app.get("/", function mainHandler(req, res) {
-	res.send("Hello World!");
+app.get("/", (req, res) => {
+	console.log("Root route accessed");
+
+	res.status(201).send("Hello World!");
+
+	// res.status(200).json({ message: "Hello World!" });
 });
 
 // Error handling
-Sentry.setupExpressErrorHandler(app);
+// Sentry.setupExpressErrorHandler(app);
 
 app.use(
 	(
@@ -104,26 +110,9 @@ app.use(
 
 // Start the server
 app.listen(port, () => {
-	console.log(`Server is running on http://localhost:${port}`);
+	const message = `Server is running on port ${port}`;
+	console.log(message);
+	log(message);
 });
-
-// Keep the main function for potential CLI usage
-async function main() {
-	runWeekly(async () => {
-		try {
-			await retry(GenerateNewsletter);
-		} catch (error) {
-			console.error("Error in main function:", error);
-		}
-	});
-}
-
-// This can be used if you want to run the script directly
-if (require.main === module) {
-	retry(main).catch((error) => {
-		console.error("Unhandled error in main script:", error);
-		process.exit(1);
-	});
-}
 
 export { app };

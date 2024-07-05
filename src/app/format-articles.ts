@@ -3,14 +3,14 @@ import * as cheerio from "cheerio";
 import debug from "debug";
 import type { Page } from "puppeteer";
 
-import { DESCRIPTION_MAX_LENGTH } from "@/lib/constants";
+import { DESCRIPTION_MAX_LENGTH } from "../lib/constants.js";
 import {
 	fetchPageContent,
 	generateStringResponse,
 	retry,
 	truncateDescription,
-} from "@/lib/utils";
-import type { ArticleDisplayData, ValidArticleData } from "@/types";
+} from "../lib/utils.js";
+import type { ArticleDisplayData, ValidArticleData } from "../types/index.js";
 
 const logger = debug(`${process.env.APP_NAME}:article-processor.ts`);
 

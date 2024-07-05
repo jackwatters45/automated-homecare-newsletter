@@ -4,14 +4,14 @@ import express from "express";
 import { engine } from "express-handlebars";
 
 import path from "node:path";
-import { generateNewsletterData } from "@/app/index";
-import type { ArticleDisplayData } from "@/types";
 import debug from "debug";
+import { generateNewsletterData } from "../app/index.js";
+import type { ArticleDisplayData } from "../types/index.js";
 
 const log = debug(`${process.env.APP_NAME}:generate-example.ts`);
 
 const app = express();
-const port = 3000;
+const port = 8080;
 
 const basepath = path.resolve();
 

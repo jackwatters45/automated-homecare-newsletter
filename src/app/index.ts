@@ -5,18 +5,20 @@ import path from "node:path";
 import debug from "debug";
 import puppeteer from "puppeteer";
 
-import { scrapeArticles } from "@/app/data-fetching";
+import { initializeGenAI } from "../lib/ai.js";
+import { SPECIFIC_PAGES } from "../lib/constants.js";
+import { scrapeArticles } from "./data-fetching.js";
 import {
 	filterArticlesByPage,
 	rankAndFilterArticles,
-} from "@/app/data-filtering";
-import { initializeGenAI } from "@/lib/ai";
-import { SPECIFIC_PAGES } from "@/lib/constants";
+} from "./data-filtering.js";
 
-import { enrichArticlesData } from "@/app/format-articles";
-import { searchNews } from "@/app/google-search";
-import { renderTemplate } from "@/app/template";
-import type { ValidArticleData } from "@/types";
+import { runWeekly } from "../lib/cron.js";
+import { retry } from "../lib/utils.js";
+import type { ValidArticleData } from "../types/index.js";
+import { enrichArticlesData } from "./format-articles.js";
+import { searchNews } from "./google-search.js";
+import { renderTemplate } from "./template.js";
 
 const log = debug(`${process.env.APP_NAME}:app:index.ts`);
 

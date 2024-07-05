@@ -7,27 +7,15 @@
 		"outDir": "./dist",
 		"rootDir": "./src",
 		"esModuleInterop": true,
-		"module": "esnext",
+		"module": "NodeNext",
+		"moduleResolution": "NodeNext",
 		"target": "esnext",
-		"moduleResolution": "bundler",
 		"resolveJsonModule": true,
 		"isolatedModules": true,
-		"jsx": "preserve",
-		"jsxImportSource": "hono/jsx",
 		"incremental": true,
-		"plugins": [
-			{
-				"name": "next"
-			}
-		],
 		"baseUrl": "./",
-		"paths": {
-			"@/*": ["./src/*"],
-			"types": ["./src/types/index.ts"]
-		},
 		"sourceMap": true,
 		"inlineSources": true,
-
 		// Set `sourceRoot` to  "/" to strip the build path prefix
 		// from generated source code references.
 		// This improves issue grouping in Sentry.
