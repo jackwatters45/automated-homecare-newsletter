@@ -77,15 +77,11 @@ export async function GenerateNewsletter() {
 
 		const template = await renderTemplate(newsletterData);
 
-		const outputPath = path.join(path.resolve(), "public", "newsletter.html");
-		await fs.writeFile(outputPath, template);
-		log(`Newsletter written to ${outputPath}`);
-
 		// TODO: Implement email sending
 		// const res = await sendEmail(result);
 		// log(`Email sent with response: ${JSON.stringify(res)}`);
 
-		return { message: "Newsletter generated successfully", path: outputPath };
+		return { message: "Newsletter generated successfully", html: template };
 	} catch (error) {
 		console.error(error);
 	}

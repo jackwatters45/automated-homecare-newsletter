@@ -33,7 +33,7 @@ app.use(morgan("combined"));
 // Set up view engine
 app.engine("hbs", engine({ extname: "hbs", defaultLayout: false }));
 app.set("view engine", "hbs");
-app.set("views", path.join(path.resolve(), "src", "views"));
+app.set("views", path.join(path.resolve(), "views"));
 
 // Rate limiting
 // const limiter = rateLimit({

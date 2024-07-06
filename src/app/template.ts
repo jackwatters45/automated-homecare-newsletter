@@ -9,7 +9,7 @@ export async function renderTemplate<T>(
 	fileName = "newsletter.hbs",
 ): Promise<string> {
 	const source = await fs.readFile(
-		path.join(basepath, "src", "views", fileName),
+		path.join(basepath, "views", fileName),
 		"utf-8",
 	);
 
