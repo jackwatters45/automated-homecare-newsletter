@@ -1,8 +1,7 @@
 import "dotenv/config";
-// import "./lib/instrument.js";
 
 import path from "node:path";
-// import * as Sentry from "@sentry/node";
+import * as Sentry from "@sentry/node";
 import compression from "compression";
 import cors from "cors";
 import debug from "debug";
@@ -86,13 +85,11 @@ app.get("/debug-sentry", (req, res) => {
 app.get("/", (req, res) => {
 	console.log("Root route accessed");
 
-	res.status(201).send("Hello World!");
-
-	// res.status(200).json({ message: "Hello World!" });
+	res.status(200).json({ message: "Hello World!" });
 });
 
 // Error handling
-// Sentry.setupExpressErrorHandler(app);
+Sentry.setupExpressErrorHandler(app);
 
 app.use(
 	(

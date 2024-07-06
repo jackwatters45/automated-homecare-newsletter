@@ -2,6 +2,7 @@
 
 ## TODO
 
+- add sentry
 - create/deploy separate example app
 
 - better styling...
