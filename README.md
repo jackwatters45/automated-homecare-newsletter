@@ -2,8 +2,7 @@
 
 ## TODO
 
-- add sentry
-- create/deploy separate example app
+- example + server api
 
 - better styling...
   - more on theme with bcx

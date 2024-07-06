@@ -9,7 +9,10 @@ import express from "express";
 import rateLimit from "express-rate-limit";
 import helmet from "helmet";
 import morgan from "morgan";
+import exampleRouter from "./routes/example-router.js";
+import serverRouter from "./routes/server.js";
 
+import { engine } from "express-handlebars";
 import { GenerateNewsletter, generateNewsletterData } from "./app/index.js";
 import { runWeekly } from "./lib/cron.js";
 import { retry } from "./lib/utils.js";
@@ -26,6 +29,11 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan("combined"));
+
+// Set up view engine
+app.engine("hbs", engine({ extname: "hbs", defaultLayout: false }));
+app.set("view engine", "hbs");
+app.set("views", path.join(path.resolve(), "src", "views"));
 
 // Rate limiting
 // const limiter = rateLimit({
@@ -77,6 +85,9 @@ app.get("/run-weekly", (_, res) => {
 	res.json({ message: "Weekly task scheduled" });
 });
 
+app.use("/example", exampleRouter);
+app.use("/server", serverRouter);
+
 // TODO test -> delete
 app.get("/debug-sentry", (req, res) => {
 	throw new Error("My first Sentry error!");
@@ -107,7 +118,12 @@ app.use(
 
 // Start the server
 app.listen(port, () => {
-	const message = `Server is running on port ${port}`;
+	const url =
+		process.env.NODE_ENV === "production"
+			? "automated-homecare-newsletter-production.up.railway.app"
+			: `http://localhost:${port}`;
+
+	const message = `Server is running at ${url}`;
 	console.log(message);
 	log(message);
 });
