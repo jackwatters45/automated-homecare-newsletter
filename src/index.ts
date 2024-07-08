@@ -42,17 +42,6 @@ app.set("views", path.join(path.resolve(), "views"));
 // });
 // app.use(limiter);
 
-class HttpException extends Error {
-	errorCode: number;
-	constructor(
-		errorCode: number,
-		public readonly message: string,
-	) {
-		super(message);
-		this.errorCode = errorCode;
-	}
-}
-
 app.use(express.static(path.join(path.resolve(), "public")));
 
 // API routes
