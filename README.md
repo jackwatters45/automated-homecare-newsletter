@@ -3,8 +3,6 @@
 ## TODO
 
 - add summary to newsletter
-- test health
-- test cron job
 
 - tests
 

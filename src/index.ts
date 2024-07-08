@@ -1,5 +1,6 @@
 import "dotenv/config";
 
+import fs from "node:fs";
 import path from "node:path";
 import * as Sentry from "@sentry/node";
 import compression from "compression";
@@ -29,7 +30,15 @@ app.use(compression());
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(morgan("combined"));
+
+// Create a write stream (in append mode)
+const accessLogStream = fs.createWriteStream(
+	path.join(__dirname, "access.log"),
+	{ flags: "a" },
+);
+
+// Setup the logger
+app.use(morgan("combined", { stream: accessLogStream }));
 
 // Set up view engine
 app.engine("hbs", engine({ extname: "hbs", defaultLayout: false }));
@@ -64,12 +73,14 @@ app.post("/generate-newsletter", async (_, res) => {
 	}
 });
 
-app.get("/", (req, res) => {
+app.get("/", (_, res) => {
 	res.redirect("/health");
 });
 
-app.get("/health", (req, res) => {
-	res.status(200).send("OK - Server is up and running");
+app.get("/health", (_, res) => {
+	res
+		.status(200)
+		.json({ message: "OK - Server is up and running", status: "OK" });
 });
 
 app.use("/example", exampleRouter);

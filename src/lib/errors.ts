@@ -18,7 +18,9 @@ export function handleErrors(
 	next: express.NextFunction,
 ) {
 	if (err instanceof HttpException) {
-		return res.status(err.errorCode).json(err.message);
+		res.status(err.errorCode).json(err.message);
+		throw new Error(err.message);
 	}
 	res.status(500).json(err.message);
+	throw new Error(err.message);
 }
