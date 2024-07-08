@@ -9,18 +9,19 @@ import express from "express";
 import rateLimit from "express-rate-limit";
 import helmet from "helmet";
 import morgan from "morgan";
-import exampleRouter from "./routes/example-router.js";
-import serverRouter from "./routes/server.js";
 
 import { engine } from "express-handlebars";
 import { GenerateNewsletter, generateNewsletterData } from "./app/index.js";
-import { runWeekly } from "./lib/cron.js";
+import { API_URL, PORT } from "./lib/constants.js";
+import { setupCronJobs } from "./lib/cron.js";
+import { handleErrors } from "./lib/errors.js";
 import { retry } from "./lib/utils.js";
+import exampleRouter from "./routes/example-router.js";
+import serverRouter from "./routes/server.js";
 
 const log = debug(`${process.env.APP_NAME}:index.ts`);
 
 const app = express();
-const port = process.env.PORT || 8080;
 
 // Middleware
 app.use(helmet());
@@ -63,56 +64,28 @@ app.post("/generate-newsletter", async (_, res) => {
 	}
 });
 
-app.get("/run-weekly", (_, res) => {
-	runWeekly(async () => {
-		try {
-			await retry(GenerateNewsletter);
-		} catch (error) {
-			console.error("Error in weekly run:", error);
-		}
-	});
-	res.json({ message: "Weekly task scheduled" });
+app.get("/", (req, res) => {
+	res.redirect("/health");
+});
+
+app.get("/health", (req, res) => {
+	res.status(200).send("OK - Server is up and running");
 });
 
 app.use("/example", exampleRouter);
 app.use("/server", serverRouter);
 
-// TODO test -> delete
-app.get("/debug-sentry", (req, res) => {
-	throw new Error("My first Sentry error!");
-});
-
-app.get("/", (req, res) => {
-	console.log("Root route accessed");
-
-	res.status(200).json({ message: "Hello World!" });
-});
+// Setup cron jobs
+setupCronJobs();
 
 // Error handling
 Sentry.setupExpressErrorHandler(app);
 
-app.use(
-	(
-		err: Error | HttpException,
-		req: express.Request,
-		res: express.Response,
-		next: express.NextFunction,
-	) => {
-		if (err instanceof HttpException) {
-			return res.status(err.errorCode).json(err.message);
-		}
-		res.status(500).json(err.message);
-	},
-);
+app.use(handleErrors);
 
 // Start the server
-app.listen(port, () => {
-	const url =
-		process.env.NODE_ENV === "production"
-			? "automated-homecare-newsletter-production.up.railway.app"
-			: `http://localhost:${port}`;
-
-	const message = `Server is running at ${url}`;
+app.listen(PORT, () => {
+	const message = `Server is running at ${API_URL}`;
 	console.log(message);
 	log(message);
 });

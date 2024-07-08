@@ -36,9 +36,5 @@ yarn-error.log*
 # Sentry Config File
 .sentryclirc
 
-# JS
-*.js
-*.js.map
-
 # Sentry Config File
 .sentryclirc

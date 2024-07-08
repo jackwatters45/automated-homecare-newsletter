@@ -2,9 +2,13 @@
 
 ## TODO
 
-- something should test health of the app more than just when sending
+- add summary to newsletter
+- test health
+- test cron job
 
 - tests
+
+---
 
 - talk to mom + dad about it
   - determine good way to group newsletter content  
