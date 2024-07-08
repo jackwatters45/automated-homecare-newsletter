@@ -4,92 +4,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home Health & Hospice News</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            padding: 0;
-        }
-
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 2px solid #3498db;
-            padding-bottom: 10px;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-
-            a {
-                color: #2c3e50;
-            }
-        }
-
-        h1 {
-            color: #2c3e50;
-            margin: 0;
-        }
-
-        h2 {
-            color: #2980b9;
-        }
-
-        .article {
-            margin-bottom: 20px;
-            border-bottom: 1px solid #ecf0f1;
-            padding-bottom: 15px;
-        }
-
-        .article:last-child {
-            border-bottom: none;
-        }
-
-        a {
-            color: #3498db;
-            text-decoration: none;
-        }
-
-        a:hover {
-            text-decoration: underline;
-        }
-    </style>
+    <title>Trolly Care Newsletter</title>
+    <link rel="stylesheet" href="styles/globals.css">
 </head>
 
 <body>
     <nav>
-        <h1>Trolly Care</h1>
+        <div class="header">
+
+            <h1>Homecare News <span>by Trolly Care</span></h1>
+        </div>
         <div class="nav-links">
-            <a>Contact Us</a>
-            <a>Share</a>
+            <a href="https://www.trollycare.com/">Contact Us</a>
         </div>
     </nav>
 
     <main>
-
-        {{#each articles }}
-        <div class="article">
-            <h3><a href="{{link}}">{{title}}</a></h3>
-            <p>{{description}}</p>
+        <div class="articles">
+            {{#each articles }}
+            <article class="article">
+                <h3 class="article-title"><a class="article-link" href="{{link}}">{{title}}</a></h3>
+                <p class="article-description">{{description}}</p>
+            </article>
+            {{/each}}
         </div>
-        {{/each}}
     </main>
 
-    TODO
+
     <footer>
-        <p>Thank you for subscribing to our newsletter. For more news and updates, visit our website.</p>
+        <p>
+            <b>TrollyCare Insurance is a division of
+                <a href="https://www.insurancebcx.com/">
+                    Insurance BCX
+                </a>
+            </b>
+        </p>
+        <p>
+            +1 (833)-419-3093 | Proudly based in El Paso, TX
+        </p>
+        <p>
+            © {{dates.year}} Trolly Care. All rights reserved.
+        </p>
     </footer>
 </body>
 

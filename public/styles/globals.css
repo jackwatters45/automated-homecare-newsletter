@@ -1,0 +1,129 @@
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('/fonts/InterVariable.ttf') format('truetype-variations');
+}
+
+
+:root {
+  --background: hsl(0, 0%, 100%);
+  --foreground: hsl(222.2 84% 4.9%);
+  --card: hsl(0, 0%, 100%);
+  --card-foreground: hsl(222.2 84% 4.9%);
+  --popover: hsl(0, 0%, 100%);
+  --popover-foreground: hsl(222.2 84% 4.9%);
+  --primary: hsl(204, 70%, 53%);
+  --primary-foreground: hsl(210 40% 98%);
+  --secondary: hsl(201 50% 66%);
+  --secondary-foreground: hsl(222.2 47.4% 11.2%);
+  --muted: hsl(201 50% 66%);
+  --muted-foreground: hsl(215.4 16.3% 46.9%);
+  --accent: hsl(201 50% 66%);
+  --accent-foreground: hsl(222.2 47.4% 11.2%);
+  --destructive: hsl(0 84.2% 60.2%);
+  --destructive-foreground: hsl(210 40% 98%);
+  --border: hsl(214.3 31.8% 91.4%);
+  --input: hsl(214.3 31.8% 91.4%);
+  --ring: hsl(204, 70%, 53%);
+  --radius: 0.5rem;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: 'Inter', sans-serif;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 1.25rem;
+  line-height: 1.5;
+}
+
+@supports (font-variation-settings: normal) {
+  body {
+    font-family: 'Inter', sans-serif;
+    font-optical-sizing: auto;
+  }
+}
+
+a {
+  color: var(--primary);
+  text-decoration: none;
+  text-decoration-thickness: 2px;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid var(--secondary);
+  padding-bottom: .75rem;
+
+  .header {
+    span {
+      font-weight: normal;
+      font-size: .875rem;
+    }
+
+  }
+
+  .nav-links {
+    font-size: 1.5em;
+    display: block;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    unicode-bidi: isolate;
+
+    a {
+      font-size: .875rem;
+      color: var(--foreground);
+    }
+  }
+}
+
+.articles {
+  padding: 1.25rem 0;
+}
+
+.article {
+  padding: 1.5rem 0 2rem;
+  border-bottom: 1px solid var(--border);
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  .article-title {
+    font-size: large;
+    color: var(--primary);
+  }
+
+  .article-description {
+    padding-top: 1.25rem;
+    font-size: smaller;
+  }
+}
+
+footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.25rem;
+  gap: .5rem;
+  font-size: .75rem;
+
+  p {
+    color: var(--muted-foreground);
+  }
+}

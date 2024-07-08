@@ -15,5 +15,13 @@ export async function renderTemplate<T>(
 
 	const template = Handlebars.compile(source);
 
-	return template({ articles: data });
+	return template({
+		articles: data,
+		date: new Date().toLocaleDateString("en-US", {
+			weekday: "long",
+			year: "numeric",
+			month: "long",
+			day: "numeric",
+		}),
+	});
 }

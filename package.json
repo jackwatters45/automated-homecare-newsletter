@@ -5,13 +5,11 @@
 	"description": "",
 	"main": "dist/index.js",
 	"scripts": {
-		"build": "npx tsc",
-		"prestart": "npm run build",
-		"start": "node --import ./instrument.mjs ./dist/index.js",
 		"test": "vitest",
 		"dev": "DEBUG=webscrape:* tsx watch src/index.ts",
-		"server": "DEBUG=webscrape:* tsx src/display/server.ts",
-		"example": "DEBUG=webscrape:* tsx src/display/generate-example.ts"
+		"build": "npx tsc",
+		"prestart": "npm run build",
+		"start": "node --import ./instrument.mjs ./dist/index.js"
 	},
 	"keywords": [],
 	"author": "",
