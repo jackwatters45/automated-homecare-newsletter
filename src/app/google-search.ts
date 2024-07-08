@@ -22,7 +22,10 @@ export function getLastWeekQuery(q: string): string {
 	}
 }
 
-export async function searchNews(qs: string[]): Promise<ValidArticleData[]> {
+export async function searchNews(
+	qs: string[],
+	num = 30,
+): Promise<ValidArticleData[]> {
 	const allResults: ArticleData[] = [];
 
 	for (const q of qs) {
@@ -32,6 +35,7 @@ export async function searchNews(qs: string[]): Promise<ValidArticleData[]> {
 					cx: process.env.CUSTOM_ENGINE_ID,
 					auth: process.env.CUSTOM_SEARCH_API_KEY,
 					q: getLastWeekQuery(q),
+					num,
 				}),
 			);
 
