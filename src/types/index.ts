@@ -1,3 +1,5 @@
+import type { generateNewsletterData } from "../app/index.js";
+
 export interface PageToScrape {
 	url: string;
 	type: "client" | "server";
@@ -32,3 +34,5 @@ export interface ArticleDisplayData {
 export interface ValidArticleDataWithCount extends ValidArticleData {
 	count: number;
 }
+
+export type NewsletterData = Awaited<ReturnType<typeof generateNewsletterData>>;

@@ -2,53 +2,52 @@ import { promises as fs } from "node:fs";
 import path from "node:path";
 import debug from "debug";
 import express from "express";
-import { RECURRING_FREQUENCY } from "src/lib/constants.js";
+import { BASE_PATH } from "../lib/constants.js";
+import { getPastWeekDate } from "../lib/utils.js";
+import type { ArticleDisplayData } from "../types/index.js";
 
 const router = express.Router();
 const log = debug(`${process.env.APP_NAME}:display-router`);
-const basepath = path.resolve();
 
 const loadArticles = async () => {
 	try {
 		const articlesJson = await fs.readFile(
-			path.join(basepath, "tests", "data", "display-article-data.json"),
+			path.join(BASE_PATH, "tests", "data", "display-article-data.json"),
 			"utf8",
 		);
-		return JSON.parse(articlesJson);
+		const articlesData = JSON.parse(articlesJson) as
+			| ArticleDisplayData[]
+			| undefined;
+
+		const articlesSummary = await fs.readFile(
+			path.join(BASE_PATH, "tests", "data", "display-article-summary.json"),
+			"utf8",
+		);
+		const summary = JSON.parse(articlesSummary) as string | undefined;
+
+		return { articlesData, summary };
 	} catch (error) {
 		log("Error loading articles:", error);
-		return [];
+		return undefined;
 	}
 };
 
-function getPastWeekDate(): { start: string; end: string; year: number } {
-	const pastWeek = new Date().getTime() - RECURRING_FREQUENCY;
-	const formattedPastWeek = new Date(pastWeek).toLocaleDateString("en-US", {
-		year: "numeric",
-		month: "long",
-		day: "numeric",
-	});
-
-	const today = new Date();
-	const formattedToday = new Date(today).toLocaleDateString("en-US", {
-		year: "numeric",
-		month: "long",
-		day: "numeric",
-	});
-
-	return {
-		start: formattedPastWeek,
-		end: formattedToday,
-		year: today.getFullYear(),
-	};
-}
-
 router.get("/", async (_, res) => {
-	const articles = await loadArticles();
+	const newsletterData = await loadArticles();
+
+	if (
+		!newsletterData ||
+		!newsletterData.articlesData ||
+		!newsletterData.summary
+	) {
+		res.status(500).send("Error loading newsletter data");
+		return;
+	}
+
 	res.render("newsletter", {
-		articles,
+		articles: newsletterData?.articlesData,
+		summary: newsletterData?.summary,
 		dates: getPastWeekDate(),
-		summary: "This week, we've seen...",
 	});
 });
 

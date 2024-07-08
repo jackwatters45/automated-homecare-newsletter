@@ -1,7 +1,5 @@
 import "dotenv/config";
 
-import { promises as fs } from "node:fs";
-import path from "node:path";
 import debug from "debug";
 import puppeteer from "puppeteer";
 
@@ -13,10 +11,8 @@ import {
 	rankAndFilterArticles,
 } from "./data-filtering.js";
 
-import { runWeekly } from "../lib/cron.js";
-import { retry } from "../lib/utils.js";
-import type { ValidArticleData } from "../types/index.js";
-import { enrichArticlesData } from "./format-articles.js";
+import type { ArticleDisplayData, ValidArticleData } from "../types/index.js";
+import { enrichArticlesData, generateSummary } from "./format-articles.js";
 import { searchNews } from "./google-search.js";
 import { renderTemplate } from "./template.js";
 
@@ -52,14 +48,13 @@ export async function generateNewsletterData() {
 
 		const relevantArticles = await rankAndFilterArticles(results);
 
-		const newsletterData = await enrichArticlesData(
-			relevantArticles,
-			browserPage,
-		);
+		const articlesData = await enrichArticlesData(relevantArticles, browserPage);
 
 		log("newsletter data generated");
 
-		return newsletterData;
+		const summary = await generateSummary(articlesData);
+
+		return { articlesData, summary };
 	} catch (error) {
 		console.error(error);
 	} finally {
@@ -71,8 +66,12 @@ export async function GenerateNewsletter() {
 	try {
 		const newsletterData = await generateNewsletterData();
 
-		if (!newsletterData || newsletterData.length === 0) {
-			throw new Error("No newsletter data generated");
+		if (
+			!newsletterData ||
+			!newsletterData.summary ||
+			newsletterData.articlesData.length < 10
+		) {
+			throw new Error("Incomplete newsletter data");
 		}
 
 		const template = await renderTemplate(newsletterData);

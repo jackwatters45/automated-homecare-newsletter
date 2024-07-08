@@ -1,3 +1,4 @@
+import path from "node:path";
 import type { PageToScrape } from "../types/index.js";
 
 export const TEST_PAGES: PageToScrape[] = [
@@ -126,3 +127,5 @@ export const API_URL =
 	process.env.NODE_ENV === "production"
 		? "automated-homecare-newsletter-production.up.railway.app"
 		: `http://localhost:${PORT}`;
+
+export const BASE_PATH = path.resolve();

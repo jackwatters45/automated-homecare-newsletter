@@ -3,7 +3,10 @@ import debug from "debug";
 import Bottleneck from "bottleneck";
 import type { Page } from "puppeteer";
 import { model } from "../app/index.js";
-import { DESCRIPTION_MAX_LENGTH } from "../lib/constants.js";
+import {
+	DESCRIPTION_MAX_LENGTH,
+	RECURRING_FREQUENCY,
+} from "../lib/constants.js";
 
 const log = debug(`${process.env.APP_NAME}:utils.ts`);
 
@@ -125,4 +128,30 @@ export async function retry<T>(fn: () => Promise<T>, maxRetries = 3) {
 			await new Promise((resolve) => setTimeout(resolve, 2 ** retries * 1000));
 		}
 	}
+}
+
+export function getPastWeekDate(): {
+	start: string;
+	end: string;
+	year: number;
+} {
+	const pastWeek = new Date().getTime() - RECURRING_FREQUENCY;
+	const formattedPastWeek = new Date(pastWeek).toLocaleDateString("en-US", {
+		year: "numeric",
+		month: "long",
+		day: "numeric",
+	});
+
+	const today = new Date();
+	const formattedToday = new Date(today).toLocaleDateString("en-US", {
+		year: "numeric",
+		month: "long",
+		day: "numeric",
+	});
+
+	return {
+		start: formattedPastWeek,
+		end: formattedToday,
+		year: today.getFullYear(),
+	};
 }

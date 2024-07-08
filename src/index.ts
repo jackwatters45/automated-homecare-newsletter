@@ -13,7 +13,7 @@ import morgan from "morgan";
 
 import { engine } from "express-handlebars";
 import { GenerateNewsletter, generateNewsletterData } from "./app/index.js";
-import { API_URL, PORT } from "./lib/constants.js";
+import { API_URL, BASE_PATH, PORT } from "./lib/constants.js";
 import { setupCronJobs } from "./lib/cron.js";
 import { handleErrors } from "./lib/errors.js";
 import { retry } from "./lib/utils.js";
@@ -33,7 +33,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Create a write stream (in append mode)
 const accessLogStream = fs.createWriteStream(
-	path.join(__dirname, "access.log"),
+	path.join(BASE_PATH, "access.log"),
 	{ flags: "a" },
 );
 
@@ -43,7 +43,7 @@ app.use(morgan("combined", { stream: accessLogStream }));
 // Set up view engine
 app.engine("hbs", engine({ extname: "hbs", defaultLayout: false }));
 app.set("view engine", "hbs");
-app.set("views", path.join(path.resolve(), "views"));
+app.set("views", path.join(BASE_PATH, "views"));
 
 // Rate limiting
 // const limiter = rateLimit({
@@ -52,7 +52,7 @@ app.set("views", path.join(path.resolve(), "views"));
 // });
 // app.use(limiter);
 
-app.use(express.static(path.join(path.resolve(), "public")));
+app.use(express.static(path.join(BASE_PATH, "public")));
 
 // API routes
 app.post("/generate-newsletter-data", async (_, res) => {

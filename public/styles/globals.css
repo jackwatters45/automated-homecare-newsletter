@@ -56,7 +56,6 @@ body {
 a {
   color: var(--primary);
   text-decoration: none;
-  text-decoration-thickness: 2px;
 
   &:hover {
     text-decoration: underline;
@@ -67,14 +66,13 @@ nav {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 2px solid var(--secondary);
+  border-bottom: 2px solid var(--border);
   padding-bottom: .75rem;
 
   span {
     font-weight: normal;
     font-size: .875rem;
   }
-
 
   .nav-links {
     font-size: 1.5em;
@@ -94,7 +92,7 @@ nav {
   padding: 1.25rem 0;
 
   .intro {
-    h2 {
+    .intro-header {
       font-style: italic;
       font-size: 1rem;
       color: var(--muted-foreground);
@@ -103,7 +101,16 @@ nav {
     }
   }
 
-  .articles {}
+  .summary {
+    font-size: .875rem;
+    padding-bottom: 2rem;
+  }
+}
+
+.articles {
+  .articles-header {
+    font-size: 1.25rem;
+  }
 }
 
 .article {

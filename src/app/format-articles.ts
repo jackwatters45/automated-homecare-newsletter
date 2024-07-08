@@ -3,7 +3,7 @@ import * as cheerio from "cheerio";
 import debug from "debug";
 import type { Page } from "puppeteer";
 
-import { DESCRIPTION_MAX_LENGTH } from "../lib/constants.js";
+import { BASE_PATH, DESCRIPTION_MAX_LENGTH } from "../lib/constants.js";
 import {
 	fetchPageContent,
 	generateStringResponse,
@@ -12,7 +12,7 @@ import {
 } from "../lib/utils.js";
 import type { ArticleDisplayData, ValidArticleData } from "../types/index.js";
 
-const logger = debug(`${process.env.APP_NAME}:article-processor.ts`);
+const log = debug(`${process.env.APP_NAME}:format-articles.ts`);
 
 const rateLimiter = new Bottleneck({
 	maxConcurrent: 10,
@@ -58,7 +58,7 @@ const enrichArticleData = async (
 			description: truncateDescription(generatedDescription),
 		};
 	} catch (error) {
-		logger(`Error enriching article ${articleData.link}: ${error}`);
+		log(`Error enriching article ${articleData.link}: ${error}`);
 		return {
 			title: articleData.title,
 			link: articleData.link,
@@ -92,10 +92,61 @@ export const enrichArticlesData = async (
 			),
 		);
 
-		logger(`Enriched ${enrichedArticles.length} articles successfully`);
+		log(`Enriched ${enrichedArticles.length} articles successfully`);
 		return enrichedArticles;
 	} catch (error) {
-		logger(`Error in enrichArticlesData: ${error}`);
+		log(`Error in enrichArticlesData: ${error}`);
 		return [];
 	}
 };
+
+import { promises as fs } from "node:fs";
+import path from "node:path";
+
+export async function generateSummary(articles: ValidArticleData[]) {
+	const prompt = `Analyze the following articles and create a concise, engaging summary:
+
+	${JSON.stringify(articles, null, 2)}
+	
+	Your task:
+	1. Generate a single paragraph summary of approximately 3 sentences.
+	2. Focus on the most compelling and relevant information from the articles.
+	3. Capture the overall theme or message conveyed by the collection of articles.
+	4. Highlight any significant trends, innovations, or important updates in homecare.
+	
+	Guidelines:
+	- Do not include any article titles, links, or direct references to specific articles.
+	- Avoid mentioning time periods (e.g., "this month's" or "this week's").
+	- Do not use the term "newsletter" in your summary.
+	- Write in a neutral, informative tone.
+	- Aim to pique the reader's interest and encourage them to read the full articles.
+	- Assume the reader has intermediate knowledge of homecare news and is familiar with the topic.
+	
+	Your summary should provide a quick, informative overview that gives readers a clear sense of the valuable content available, without revealing all the details.`;
+
+	const generatedDescription = await retry(() => generateStringResponse(prompt));
+
+	if (!generatedDescription) {
+		throw new Error("Error generating summary");
+	}
+
+	log(`Generated summary: ${generatedDescription}`);
+
+	await fs.writeFile(
+		path.join(BASE_PATH, "tests", "data", "display-article-summary.json"),
+		JSON.stringify(generatedDescription),
+	);
+
+	return generatedDescription;
+}
+
+async function writeSummaryToFile() {
+	const articles = await fs.readFile(
+		path.join(BASE_PATH, "tests", "data", "display-article-data.json"),
+		"utf8",
+	);
+
+	const summary = await generateSummary(JSON.parse(articles));
+
+	log(`Generated summary: ${summary}`);
+}

@@ -1,7 +1,7 @@
 import debug from "debug";
 import cron from "node-cron";
 
-import { GenerateNewsletter } from "src/app/index.js";
+import { GenerateNewsletter } from "../app/index.js";
 import { pingServer } from "./health.js";
 import { retry } from "./utils.js";
 

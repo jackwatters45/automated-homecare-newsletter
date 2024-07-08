@@ -2,21 +2,20 @@
 
 ## TODO
 
-- add summary to newsletter
-
-- tests
-
----
-
 - talk to mom + dad about it
   - determine good way to group newsletter content  
   - add source to links?
   - styling preferences
 
----
+- fixes
 
-- cron job
-- see if i can find epic api
+- tests
+
+- cron job testing
+  - test with a shorter period
+  - set up mock function to use for actual cron job test
+
+- Distribution channel
 
 ## Roadmap
 
