@@ -10,23 +10,30 @@
 
 <body>
     <nav>
-        <div class="header">
-
-            <h1>Homecare News <span>by Trolly Care</span></h1>
-        </div>
+        <h1>Homecare News <span>by Trolly Care</span></h1>
         <div class="nav-links">
             <a href="https://www.trollycare.com/">Contact Us</a>
         </div>
     </nav>
 
     <main>
-        <div class="articles">
-            {{#each articles }}
-            <article class="article">
-                <h3 class="article-title"><a class="article-link" href="{{link}}">{{title}}</a></h3>
-                <p class="article-description">{{description}}</p>
-            </article>
-            {{/each}}
+        <div class="container">
+            <div class="intro">
+                <h2>
+                    This Week in Homecare - {{dates.start}} to {{dates.end}}
+                </h2>
+                <p class="summary">
+                    {{summary}}
+                </p>
+            </div>
+            <div class="articles">
+                {{#each articles }}
+                <article class="article">
+                    <h3 class="article-title"><a class="article-link" href="{{link}}">{{title}}</a></h3>
+                    <p class="article-description">{{description}}</p>
+                </article>
+                {{/each}}
+            </div>
         </div>
     </main>
 

@@ -45,12 +45,11 @@ function getPastWeekDate(): { start: string; end: string; year: number } {
 
 router.get("/", async (_, res) => {
 	const articles = await loadArticles();
-	res.render("newsletter", { articles, dates: getPastWeekDate() });
-});
-
-router.get("/old", async (_, res) => {
-	const articles = await loadArticles();
-	res.render("newsletter-old", { articles });
+	res.render("newsletter", {
+		articles,
+		dates: getPastWeekDate(),
+		summary: "This week, we've seen...",
+	});
 });
 
 export default router;

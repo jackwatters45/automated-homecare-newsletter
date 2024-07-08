@@ -119,3 +119,10 @@ export const SPECIFIC_PAGES: PageToScrape[] = [
 export const RECURRING_FREQUENCY = 7 * 24 * 60 * 60 * 1000; // 7 days in milliseconds
 
 export const DESCRIPTION_MAX_LENGTH = 25;
+
+export const PORT = process.env.PORT || 8080;
+
+export const API_URL =
+	process.env.NODE_ENV === "production"
+		? "automated-homecare-newsletter-production.up.railway.app"
+		: `http://localhost:${PORT}`;
