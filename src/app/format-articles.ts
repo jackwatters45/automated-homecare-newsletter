@@ -109,18 +109,28 @@ export async function generateSummary(articles: ValidArticleData[]) {
 	${JSON.stringify(articles, null, 2)}
 	
 	Your task:
-	1. Generate a single paragraph summary of approximately 3 sentences.
+	1. Generate a single paragraph summary of approximately 3 sentences - they should not use conjunctions and should be at most 500 characters.
 	2. Focus on the most compelling and relevant information from the articles.
 	3. Capture the overall theme or message conveyed by the collection of articles.
 	4. Highlight any significant trends, innovations, or important updates in homecare.
+
 	
 	Guidelines:
 	- Do not include any article titles, links, or direct references to specific articles.
+	- Do not be general or vague. Focus on the most compelling and relevant information from the articles. The first sentence should not be generic.
+	- Every sentence should include examples if making a general statement.
+	- This is part of a weekly newsletter, so should understand the context of the articles and the week in general. It should be specific to the week's news.
 	- Avoid mentioning time periods (e.g., "this month's" or "this week's").
+	- DO NOT include any mention of "this week" or any other time period.
 	- Do not use the term "newsletter" in your summary.
 	- Write in a neutral, informative tone.
 	- Aim to pique the reader's interest and encourage them to read the full articles.
 	- Assume the reader has intermediate knowledge of homecare news and is familiar with the topic.
+
+	Examples of Bad Sentences (these are all too general):
+
+	- "Home care providers face a complex landscape of challenges and opportunities."
+	- "The homecare industry faces significant challenges and opportunities.
 	
 	Your summary should provide a quick, informative overview that gives readers a clear sense of the valuable content available, without revealing all the details.`;
 

@@ -53,6 +53,10 @@ body {
   }
 }
 
+p {
+  line-height: 1.8;
+}
+
 a {
   color: var(--primary);
   text-decoration: none;
@@ -69,9 +73,11 @@ nav {
   border-bottom: 2px solid var(--border);
   padding-bottom: .75rem;
 
-  span {
+  .company-name,
+  a {
     font-weight: normal;
     font-size: .875rem;
+    color: var(--muted-foreground);
   }
 
   .nav-links {
@@ -81,9 +87,13 @@ nav {
     margin-inline-end: 0px;
     unicode-bidi: isolate;
 
+    @media (max-width: 475px) {
+      display: none;
+    }
+
     a {
       font-size: .875rem;
-      color: var(--foreground);
+      color: var(--muted-foreground);
     }
   }
 }
@@ -92,18 +102,22 @@ nav {
   padding: 1.25rem 0;
 
   .intro {
+    padding: .75rem 0 1.25rem;
+
     .intro-header {
-      font-style: italic;
       font-size: 1rem;
       color: var(--muted-foreground);
-      font-weight: normal;
-      margin-bottom: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      font-size: .875rem;
     }
-  }
 
-  .summary {
-    font-size: .875rem;
-    padding-bottom: 2rem;
+    .summary {
+      font-style: italic;
+      font-size: .875rem;
+      padding-bottom: 1.25rem;
+      color: var(--muted-foreground);
+    }
   }
 }
 
@@ -136,9 +150,10 @@ footer {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 1.25rem;
+  padding: 1.25rem 0;
   gap: .5rem;
   font-size: .75rem;
+  text-align: center;
 
   p {
     color: var(--muted-foreground);

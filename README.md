@@ -2,12 +2,13 @@
 
 ## TODO
 
-- talk to mom + dad about it
-  - determine good way to group newsletter content  
-  - add source to links?
-  - styling preferences
+- determine good way to group newsletter content  
+- add source to links?
 
-- fixes
+- function to add groups to articles
+
+- responsive design
+- theme
 
 - tests
 

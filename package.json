@@ -6,7 +6,7 @@
 	"main": "dist/index.js",
 	"scripts": {
 		"test": "vitest",
-		"dev": "DEBUG=webscrape:* tsx watch src/index.ts",
+		"dev": "DEBUG=webscrape:* tsx src/index.ts",
 		"build": "npx tsc",
 		"prestart": "npm run build",
 		"start": "node --import ./instrument.mjs ./dist/index.js"

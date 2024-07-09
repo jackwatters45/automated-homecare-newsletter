@@ -2,7 +2,7 @@ import path from "node:path";
 import debug from "debug";
 import express from "express";
 import { generateNewsletterData } from "../app/index.js";
-import { BASE_PATH } from "../lib/constants.js";
+import { BASE_PATH, COMPANY_NAME } from "../lib/constants.js";
 import { getPastWeekDate } from "../lib/utils.js";
 import type { NewsletterData } from "../types/index.js";
 
@@ -39,6 +39,7 @@ router.get("/newsletter", async (req, res) => {
 
 	try {
 		res.render("newsletter", {
+			name: COMPANY_NAME,
 			articles: data?.articlesData,
 			summary: data?.summary,
 			dates: getPastWeekDate(),

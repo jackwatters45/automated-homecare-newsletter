@@ -4,13 +4,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trolly Care Newsletter</title>
+    <title>{{name}} Newsletter</title>
     <link rel="stylesheet" href="styles/globals.css">
 </head>
 
 <body>
     <nav>
-        <h1>Homecare News <span>by Trolly Care</span></h1>
+        <h1>Homecare News <span class="company-name">by
+                <a href="https: //www.trollycare.com/">
+                    </href>{{name}}
+                </a>
+            </span>
+        </h1>
         <div class="nav-links">
             <a href="https://www.trollycare.com/">Contact Us</a>
         </div>
@@ -20,7 +25,7 @@
         <div class="container">
             <div class="intro">
                 <div class="intro-header">
-                    This Week in Homecare - {{dates.start}} to {{dates.end}}
+                    {{dates.start}} to {{dates.end}}
                 </div>
                 <p class="summary">
                     {{summary}}
@@ -52,7 +57,7 @@
             +1 (833)-419-3093 | Proudly based in El Paso, TX
         </p>
         <p>
-            © {{dates.year}} Trolly Care. All rights reserved.
+            © {{dates.year}} {{name}}. All rights reserved.
         </p>
     </footer>
 </body>

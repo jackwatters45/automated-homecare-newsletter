@@ -121,6 +121,8 @@ export const RECURRING_FREQUENCY = 7 * 24 * 60 * 60 * 1000; // 7 days in millise
 
 export const DESCRIPTION_MAX_LENGTH = 25;
 
+export const COMPANY_NAME = "TrollyCare";
+
 export const PORT = process.env.PORT || 8080;
 
 export const API_URL =
