@@ -2,13 +2,12 @@
 
 ## TODO
 
-- determine good way to group newsletter content  
-- add source to links?
-
-- function to add groups to articles
-
-- responsive design
-- theme
+- determine good way to group newsletter content -> implement groups
+  - Industry trends & news
+  - Caregiving & Family Support
+  
+  - Senior Care Tips & Resources
+  - In-Home Care Services & Solutions
 
 - tests
 
@@ -20,6 +19,7 @@
 
 ## Roadmap
 
+- [ ] add desc before ranking to improve ranking
 - [ ] use ai to parse articles
 - [ ] use actual machine learning
 - [ ] Generic version of app that user can set up

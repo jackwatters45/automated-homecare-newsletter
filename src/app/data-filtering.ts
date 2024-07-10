@@ -1,9 +1,15 @@
 import debug from "debug";
 
-import { RECURRING_FREQUENCY } from "../lib/constants.js";
-import { generateJsonResponse, retry } from "../lib/utils.js";
+import { RECURRING_FREQUENCY, TOPIC } from "../lib/constants.js";
+import {
+	generateJSONResponseFromModel,
+	retry,
+	shuffleArray,
+	writeTestData,
+} from "../lib/utils.js";
 import type {
 	ArticleData,
+	ArticleFilteringData,
 	PageToScrape,
 	ValidArticleData,
 	ValidArticleDataWithCount,
@@ -16,7 +22,13 @@ export async function filterArticlesByPage(
 	page: PageToScrape,
 ) {
 	try {
-		const filteredArticles = articles.filter(
+		if (!articles.length) {
+			throw new Error(
+				"No articles found. Please check the scraping process and try again.",
+			);
+		}
+
+		const filteredArticles = articles?.filter(
 			(article): article is ValidArticleData => {
 				try {
 					const weekAgo = new Date().getTime() - RECURRING_FREQUENCY;
@@ -37,7 +49,7 @@ export async function filterArticlesByPage(
 		);
 
 		log(
-			`${page.url}: Filtered ${articles.length} articles to ${filteredArticles.length}`,
+			`${page.url}: Filtered ${articles.length} articles to ${filteredArticles.length} usimg non-AI filtering`,
 		);
 
 		return filteredArticles;
@@ -47,74 +59,133 @@ export async function filterArticlesByPage(
 	}
 }
 
-export async function rankAndFilterArticles(
-	articles: ValidArticleData[],
-	numberOfArticles = 30,
-): Promise<ValidArticleDataWithCount[]> {
+async function filterArticles(
+	articles: ArticleFilteringData[],
+): Promise<ArticleFilteringData[]> {
 	try {
-		const uniqueArticles = deduplicateAndCountArticles(articles);
+		const aiFilteringPrompt = `Filter the following list of articles related to ${TOPIC}:
 
-		const aiFilteringInput = extractAIFilteringData(uniqueArticles);
+		${JSON.stringify(articles, null, 2)}
 
-		const topic = "homecare (medical)";
-		const aiFilteringPrompt = `Filter, refine, and rank the following list of articles related to ${topic}:
+		Filtering criteria:
+		1. Relevance: Ensure articles are directly related to ${TOPIC} news. Remove any articles that are not specifically about homecare or home health.
+		2. Recency: Keep articles published within the last week. If two articles cover the same event, keep only the most recent one.
+		3. Credibility: Retain articles from reputable healthcare news sources and industry publications.
+		4. Exclusions: 
+			- Remove articles about DME (Durable Medical Equipment) or Hospice care unless they have a direct and significant impact on homecare or home health.
+			- Exclude non-news content such as opinions, editorials, briefs, or promotional material. The articles need to be newsworthy and provide substantial information about homecare or home health. They should not be generic or unrelated to homecare or home health. An example of a non-news article would be "Home Care briefs for Tuesday, July 9"
+			- Remove duplicate or similar articles.
 
-    ${JSON.stringify(aiFilteringInput, null, 2)}
+		Additional Instructions:
+		- Analyze the article titles and descriptions to ensure they provide substantial, newsworthy information about homecare or home health.
+		- Pay attention to keywords in the titles and descriptions that indicate relevance to homecare and home health industry trends, regulations, or significant events.
 
-    Filtering and ranking criteria:
-    1. Remove articles irrelevant to ${topic} news
-    2. Exclude non-news content (e.g., opinions, editorials)
-    3. If two articles are very similar or cover the same event, keep only the most recent one
-    4. Rank the articles by relevance and importance to the topic
+		Output Instructions:
+		- Return the filtered list as a JSON array in the exact format of the original list.
+		- If all articles are irrelevant, return an empty array.
+		- Ensure the output strictly adheres to the original JSON structure.
 
-    Instructions:
-    - Return the filtered and ranked list as a JSON array in the exact format of the original list
-    - If all articles are irrelevant, return an empty array
-    - If all articles are relevant and unique, return the original list
-    - Ensure the output strictly adheres to the original JSON structure
-    - Limit the list to the top ${numberOfArticles} articles
+		Example of expected output format:
+		[
+			{
+				"title": "Example Title",
+				"link": "https://example.com",
+				"date": "2023-07-01T12:00:00Z",
+				"description": "Example description",
+				"url": "https://example.com"
+			},
+			// ... more articles
+		]`;
 
-      Example of expected output format:
-      [
-        {
-          "title": "Example Title",
-          "link": "https://example.com",
-          "date": "2023-07-01T12:00:00Z",
-          "description": "Example description"
-        },
-        // ... more articles
-      ]
-      `;
-
-		const aiFilteredArticles =
+		const filteredArticles =
 			(await retry(() =>
-				generateJsonResponse<ValidArticleData>(aiFilteringPrompt),
+				generateJSONResponseFromModel<ValidArticleData[]>(aiFilteringPrompt),
 			)) ?? [];
 
-		const rankedArticlesWithCount = mergeFilteredArticles(
-			uniqueArticles,
-			aiFilteredArticles,
-		);
+		await writeTestData("filtered-article-data.json", filteredArticles);
 
-		return rankedArticlesWithCount.slice(0, numberOfArticles);
+		return filteredArticles;
 	} catch (error) {
 		log(`Error in filterAllArticles: ${error}`);
 		return [];
 	}
 }
 
-interface ArticleDataForAIFiltering {
-	title: string;
-	description?: string;
+async function rankArticles(
+	filteredArticles: ArticleFilteringData[],
+	numberOfArticles = 40,
+): Promise<ArticleFilteringData[]> {
+	const aiRankingPrompt = `Rank the following list of filtered articles related to ${TOPIC}:
+
+	${JSON.stringify(filteredArticles, null, 2)}
+	
+	Ranking criteria:
+	1. Impact: Prioritize articles that discuss significant industry changes, policy updates, or innovations in homecare and home health.
+	2. Diversity of Content: Ensure a mix of articles covering different aspects of homecare and home health (e.g., technology, policy, patient care, business developments).
+	3. Source Variety: Use a diverse range of sources. Limit articles from any single source to a maximum of 3.
+	4. Relevance: Prioritize articles that are directly related to ${TOPIC}.
+	
+	Additional Instructions:
+	- Consider the potential impact of the news on homecare providers, patients, or the industry as a whole when ranking articles.
+	- Ensure a balance between national and local news, favoring stories with broader impact.
+	
+	Output Instructions:
+	- Return the ranked list as a JSON array in the exact format of the input list.
+	- Include the top ${numberOfArticles} most relevant articles in the output.
+	- If fewer than ${numberOfArticles} articles are in the input, return all of them in ranked order.
+	- Ensure the output strictly adheres to the original JSON structure.
+	- Sort the articles by impact and diversity of content where the most impactful articles are at the top.
+	
+	Example of expected output format:
+	[
+		{
+			"title": "Example Title",
+			"link": "https://example.com",
+			"date": "2023-07-01T12:00:00Z",
+			"description": "Example description",
+			"url": "https://example.com"
+		},
+		// ... more articles
+	]`;
+
+	const rankedArticles =
+		(await retry(() =>
+			generateJSONResponseFromModel<ValidArticleData[]>(aiRankingPrompt),
+		)) ?? [];
+
+	await writeTestData("ranked-article-data.json", rankedArticles);
+
+	return rankedArticles;
 }
 
-export function extractAIFilteringData(
+export async function filterAndRankArticles(
 	articles: ValidArticleData[],
-): ArticleDataForAIFiltering[] {
+	numberOfArticles = 40,
+): Promise<ValidArticleDataWithCount[]> {
+	const uniqueArticles = deduplicateAndCountArticles(articles);
+
+	const shuffledArticles = shuffleArray(uniqueArticles);
+
+	const aiFilteringInput = extractArticleFilteringData(shuffledArticles);
+
+	const filteredArticles = await filterArticles(aiFilteringInput);
+	const rankedArticles = await rankArticles(filteredArticles, numberOfArticles);
+
+	const rankedArticlesWithCount = mergeFilteredArticles(
+		shuffledArticles,
+		rankedArticles,
+	);
+
+	return rankedArticlesWithCount.slice(0, numberOfArticles);
+}
+
+function extractArticleFilteringData(
+	articles: ValidArticleData[],
+): ArticleFilteringData[] {
 	try {
 		return articles.map((article) => ({
 			title: article.title,
-			description: article.description,
+			description: article.description ?? article.snippet,
 		}));
 	} catch (error) {
 		log(`Error in getDataForAIFiltering: ${error}`);
@@ -122,20 +193,29 @@ export function extractAIFilteringData(
 	}
 }
 
-export function mergeFilteredArticles(
+function mergeFilteredArticles(
 	articleData: ValidArticleDataWithCount[],
-	filteredArticles: ArticleDataForAIFiltering[],
+	filteredArticles: ArticleFilteringData[],
 ): ValidArticleDataWithCount[] {
 	try {
-		const filteredTitles = new Set(filteredArticles.map((a) => a.title));
-		return articleData.filter((article) => filteredTitles.has(article.title));
+		return filteredArticles.reduce<ValidArticleDataWithCount[]>(
+			(acc, { title }) => {
+				const article = articleData.find((a) => a.title === title);
+				if (article) {
+					const { snippet: _, ...rest } = article;
+					acc.push(rest);
+				}
+				return acc;
+			},
+			[],
+		);
 	} catch (error) {
 		log(`Error in getOriginalArticleData: ${error}`);
 		return [];
 	}
 }
 
-export function deduplicateAndCountArticles(
+function deduplicateAndCountArticles(
 	arr: ValidArticleData[],
 	fields: (keyof ValidArticleData)[] = ["title", "link"],
 ): ValidArticleDataWithCount[] {
@@ -145,15 +225,12 @@ export function deduplicateAndCountArticles(
 		for (const item of arr) {
 			const key = fields.map((field) => `${field}:${item[field]}`).join("|");
 
-			if (uniqueMap.has(key)) {
-				const existingItem = uniqueMap.get(key) as ValidArticleDataWithCount;
-				existingItem.count++;
-			} else {
+			if (!uniqueMap.has(key)) {
 				uniqueMap.set(key, { ...item, count: 1 });
 			}
 		}
 
-		return Array.from(uniqueMap.values()).sort((a, b) => b.count - a.count);
+		return Array.from(uniqueMap.values());
 	} catch (error) {
 		log(`Error in removeDuplicatesAndCount: ${error}`);
 		return [];

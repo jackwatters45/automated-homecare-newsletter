@@ -1,3 +1,5 @@
+import { promises as fs } from "node:fs";
+import path from "node:path";
 import Bottleneck from "bottleneck";
 import * as cheerio from "cheerio";
 import debug from "debug";
@@ -6,11 +8,16 @@ import type { Page } from "puppeteer";
 import { BASE_PATH, DESCRIPTION_MAX_LENGTH } from "../lib/constants.js";
 import {
 	fetchPageContent,
-	generateStringResponse,
+	generateJSONResponseFromModel,
 	retry,
 	truncateDescription,
+	writeTestData,
 } from "../lib/utils.js";
-import type { ArticleDisplayData, ValidArticleData } from "../types/index.js";
+import type {
+	ArticleDisplayData,
+	Category,
+	ValidArticleData,
+} from "../types/index.js";
 
 const log = debug(`${process.env.APP_NAME}:format-articles.ts`);
 
@@ -24,7 +31,7 @@ const enrichArticleData = async (
 	browserInstance: Page,
 ): Promise<ArticleDisplayData> => {
 	try {
-		if (articleData.description) {
+		if (articleData.description && articleData.description.length > 120) {
 			return {
 				title: articleData.title,
 				link: articleData.link,
@@ -36,26 +43,36 @@ const enrichArticleData = async (
 			fetchPageContent(articleData.link, browserInstance),
 		);
 
-		if (!pageContent)
+		if (!pageContent) {
+			log("Page content is empty");
 			return { title: articleData.title, link: articleData.link, description: "" };
+		}
 
 		const $ = cheerio.load(pageContent);
+		const fullArticleText =
+			$("body").text() ?? pageContent ?? articleData.description;
 
-		const fullArticleText = $("body").text();
+		if (!fullArticleText) {
+			log("Full article text is empty");
+			return { title: articleData.title, link: articleData.link, description: "" };
+		}
 
 		const descriptionPrompt = createDescriptionPrompt(fullArticleText);
 
 		const generatedDescription = await retry(() =>
-			generateStringResponse(descriptionPrompt),
+			generateJSONResponseFromModel<string>(descriptionPrompt),
 		);
 
-		if (!generatedDescription)
+		const description = generatedDescription?.trim();
+		if (!description) {
+			log("Generated description is empty");
 			return { title: articleData.title, link: articleData.link, description: "" };
+		}
 
 		return {
 			title: articleData.title,
 			link: articleData.link,
-			description: truncateDescription(generatedDescription),
+			description: truncateDescription(description),
 		};
 	} catch (error) {
 		log(`Error enriching article ${articleData.link}: ${error}`);
@@ -67,7 +84,7 @@ const enrichArticleData = async (
 	}
 };
 
-function createDescriptionPrompt(articleText: string): string {
+export function createDescriptionPrompt(articleText: string): string {
 	return `Generate a subtitle description for the following article:
 
     ${articleText}
@@ -78,7 +95,17 @@ function createDescriptionPrompt(articleText: string): string {
     - Highlight a key insight, finding, or angle of the article
     - Use engaging language that complements the title
     - Assume the reader has basic familiarity with the topic
-    - Do not use colons or semicolons`;
+    - Do not use colons or semicolons
+		- If you cannot generate a description, return an empty string.
+
+		Content Guidelines:
+		- Do not include any article titles, links, or direct references to specific articles.
+		- Do not be general or vague. Focus on the most compelling and relevant information from the articles.
+		- Assume the reader has basic familiarity with the topic.
+		- Do not use the term "newsletter" in your summary.
+		- Write in a neutral, informative tone.
+		- Aim to pique the reader's interest and encourage them to read the full articles.
+		`;
 }
 
 export const enrichArticlesData = async (
@@ -100,21 +127,17 @@ export const enrichArticlesData = async (
 	}
 };
 
-import { promises as fs } from "node:fs";
-import path from "node:path";
-
 export async function generateSummary(articles: ValidArticleData[]) {
 	const prompt = `Analyze the following articles and create a concise, engaging summary:
 
 	${JSON.stringify(articles, null, 2)}
 	
 	Your task:
-	1. Generate a single paragraph summary of approximately 3 sentences - they should not use conjunctions and should be at most 500 characters.
+	1. Generate a single paragraph summary of approximately 3 sentences - they should not use conjunctions and should be at most 450 characters.
 	2. Focus on the most compelling and relevant information from the articles.
 	3. Capture the overall theme or message conveyed by the collection of articles.
 	4. Highlight any significant trends, innovations, or important updates in homecare.
 
-	
 	Guidelines:
 	- Do not include any article titles, links, or direct references to specific articles.
 	- Do not be general or vague. Focus on the most compelling and relevant information from the articles. The first sentence should not be generic.
@@ -134,20 +157,20 @@ export async function generateSummary(articles: ValidArticleData[]) {
 	
 	Your summary should provide a quick, informative overview that gives readers a clear sense of the valuable content available, without revealing all the details.`;
 
-	const generatedDescription = await retry(() => generateStringResponse(prompt));
+	const generatedDescription = await retry(() =>
+		generateJSONResponseFromModel<string>(prompt),
+	);
 
-	if (!generatedDescription) {
+	const formattedDescription = generatedDescription?.trim();
+
+	if (!formattedDescription) {
 		throw new Error("Error generating summary");
 	}
 
-	log(`Generated summary: ${generatedDescription}`);
+	log(`Generated summary: ${formattedDescription}`);
+	await writeTestData("summary.json", formattedDescription);
 
-	await fs.writeFile(
-		path.join(BASE_PATH, "tests", "data", "display-article-summary.json"),
-		JSON.stringify(generatedDescription),
-	);
-
-	return generatedDescription;
+	return formattedDescription;
 }
 
 async function writeSummaryToFile() {
@@ -156,7 +179,74 @@ async function writeSummaryToFile() {
 		"utf8",
 	);
 
-	const summary = await generateSummary(JSON.parse(articles));
+	await generateSummary(JSON.parse(articles));
+}
 
-	log(`Generated summary: ${summary}`);
+export async function generateCategories(articles: ValidArticleData[]) {
+	const prompt = `Analyze the following articles and create meaningful categories to group them:
+
+	${JSON.stringify(articles, null, 2)}
+	
+	Please follow these guidelines:
+	1. Create 3-5 distinct categories based on the main themes or topics of the articles.
+	2. Ensure each category is broad enough to encompass multiple articles but specific enough to be meaningful.
+	3. Assign each article to at least one category. An article can belong to multiple categories if appropriate.
+	4. For each category, provide:
+		 a) A clear, concise name (2-5 words)
+	5. If any articles don't fit well into the main categories, create a "Miscellaneous" category for them.
+	
+	Format your response as a JSON object with the following structure:
+	[
+			{
+				"name": "Category Name",
+				"articles": [
+					{
+						"title": "Article Title",
+						"link": "Article Link",
+						"description": "Article Description"
+					},
+					...
+				]
+			},
+			{
+				"name": "Category Name 2",
+				"articles": [
+					{
+						"title": "Article Title",
+						"link": "Article Link",
+						"description": "Article Description"
+					},
+					...
+				]
+			},
+			...
+		]
+
+	
+	Ensure your response is valid JSON that can be parsed programmatically.`;
+
+	const generatedCategories = await retry(() =>
+		generateJSONResponseFromModel<Category[]>(prompt),
+	);
+
+	if (!generatedCategories) {
+		log("Error generating summary");
+	}
+
+	return generatedCategories;
+}
+
+async function writeCategoriesToFile() {
+	const articleData = JSON.parse(
+		await fs.readFile(
+			path.join(BASE_PATH, "tests", "data", "display-article-data.json"),
+			"utf8",
+		),
+	);
+
+	const categories = await generateCategories(articleData);
+
+	log(categories);
+
+	await writeTestData("categories.json", categories);
 }

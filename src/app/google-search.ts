@@ -14,6 +14,8 @@ export function getLastWeekQuery(q: string): string {
 		const pastWeek = new Date().getTime() - RECURRING_FREQUENCY;
 		const formattedPastWeek = new Date(pastWeek).toISOString().split("T")[0];
 
+		log(`google search query: ${q} after:${formattedPastWeek}`);
+
 		return `${q} after:${formattedPastWeek}`;
 	} catch (error) {
 		log(`Error in getLastWeekQuery: ${error}`);
@@ -22,43 +24,47 @@ export function getLastWeekQuery(q: string): string {
 	}
 }
 
-export async function searchNews(
-	qs: string[],
-	num = 30,
-): Promise<ValidArticleData[]> {
+export async function searchNews(qs: string[]): Promise<ValidArticleData[]> {
 	const allResults: ArticleData[] = [];
 
 	for (const q of qs) {
-		try {
-			const res = await retry(() =>
-				customsearch.cse.list({
-					cx: process.env.CUSTOM_ENGINE_ID,
-					auth: process.env.CUSTOM_SEARCH_API_KEY,
-					q: getLastWeekQuery(q),
-					num,
-				}),
-			);
+		for (let i = 0; i < 4; i++) {
+			const startIndex = i * 10 + 1;
 
-			if (!res) {
-				log(`Error searching for query "${q}": no response`);
-				continue;
+			try {
+				let retryCount = 0;
+				const res = await retry(() => {
+					log(`Google search query retry count: ${retryCount++}`);
+					return customsearch.cse.list({
+						cx: process.env.CUSTOM_ENGINE_ID,
+						auth: process.env.CUSTOM_SEARCH_API_KEY,
+						q: getLastWeekQuery(q),
+						start: startIndex,
+					});
+				});
+
+				if (!res) {
+					log(`Error searching for query "${q}": no response`);
+					continue;
+				}
+
+				if (!res.data.items) {
+					log(`No results found for query: ${q}`);
+					continue;
+				}
+
+				const formattedResults = res.data.items.map((item) => ({
+					title: item.title,
+					link: item.link,
+					description: undefined,
+					snippet: item.snippet,
+				})) as ArticleData[];
+
+				allResults.push(...formattedResults);
+			} catch (error) {
+				log(`Error searching for query "${q}": ${error}`);
+				// Continue with the next query even if this one fails
 			}
-
-			if (!res.data.items) {
-				log(`No results found for query: ${q}`);
-				continue;
-			}
-
-			const formattedResults = res.data.items.map((item) => ({
-				title: item.title,
-				link: item.link,
-				description: item.snippet,
-			})) as ArticleData[];
-
-			allResults.push(...formattedResults);
-		} catch (error) {
-			log(`Error searching for query "${q}": ${error}`);
-			// Continue with the next query even if this one fails
 		}
 	}
 

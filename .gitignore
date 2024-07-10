@@ -38,3 +38,6 @@ yarn-error.log*
 
 # Sentry Config File
 .sentryclirc
+
+# Access log
+access.log

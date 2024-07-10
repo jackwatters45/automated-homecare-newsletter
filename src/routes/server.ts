@@ -20,7 +20,7 @@ const loadArticles = async () => {
 			| undefined;
 
 		const articlesSummary = await fs.readFile(
-			path.join(BASE_PATH, "tests", "data", "display-article-summary.json"),
+			path.join(BASE_PATH, "tests", "data", "summary.json"),
 			"utf8",
 		);
 		const summary = JSON.parse(articlesSummary) as string | undefined;

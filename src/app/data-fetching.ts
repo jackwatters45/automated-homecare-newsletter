@@ -11,7 +11,7 @@ import {
 } from "../lib/utils.js";
 import type { ArticleData, PageToScrape } from "../types/index.js";
 
-const logger = debug(`${process.env.APP_NAME}:web-scraper.ts`);
+const log = debug(`${process.env.APP_NAME}:web-scraper.ts`);
 
 export async function scrapeArticles(
 	targetPage: PageToScrape,
@@ -20,7 +20,7 @@ export async function scrapeArticles(
 	try {
 		const isScrapingAllowed = await checkRobotsTxtPermission(targetPage.url);
 		if (!isScrapingAllowed) {
-			logger(`Scraping disallowed by robots.txt for ${targetPage.url}`);
+			log(`Scraping disallowed by robots.txt for ${targetPage.url}`);
 			return [];
 		}
 
@@ -29,7 +29,7 @@ export async function scrapeArticles(
 		);
 
 		if (!pageContent) {
-			logger("Page content is empty");
+			log("Page content is empty");
 			return [];
 		}
 
@@ -107,7 +107,8 @@ async function checkRobotsTxtPermission(targetUrl: string) {
 		}
 
 		const robotsTxtContent = await response.text();
-		const robotsRules = robotsParser.default(targetUrl, robotsTxtContent);
+		// @ts-ignore
+		const robotsRules = robotsParser(targetUrl, robotsTxtContent);
 
 		return robotsRules.isAllowed(targetUrl);
 	} catch (error) {

@@ -5,14 +5,18 @@ import puppeteer from "puppeteer";
 
 import { initializeGenAI } from "../lib/ai.js";
 import { SPECIFIC_PAGES } from "../lib/constants.js";
+import { writeTestData } from "../lib/utils.js";
+import type { ValidArticleData } from "../types/index.js";
 import { scrapeArticles } from "./data-fetching.js";
 import {
+	filterAndRankArticles,
 	filterArticlesByPage,
-	rankAndFilterArticles,
 } from "./data-filtering.js";
-
-import type { ArticleDisplayData, ValidArticleData } from "../types/index.js";
-import { enrichArticlesData, generateSummary } from "./format-articles.js";
+import {
+	enrichArticlesData,
+	generateCategories,
+	generateSummary,
+} from "./format-articles.js";
 import { searchNews } from "./google-search.js";
 import { renderTemplate } from "./template.js";
 
@@ -37,22 +41,36 @@ export async function generateNewsletterData() {
 
 		// google search
 		const googleSearchResults = await searchNews([
-			"homecare news",
-			"home health news",
+			"homecare news medical",
+			"home health news medical",
 		]);
+
 		results.push(...googleSearchResults);
 
 		if (results.length === 0) {
 			throw new Error("No valid articles found");
 		}
 
-		const relevantArticles = await rankAndFilterArticles(results);
+		await writeTestData("raw-article-data.json", results);
+		log("raw articles generated", results.length);
 
-		const articlesData = await enrichArticlesData(relevantArticles, browserPage);
+		const articles = await filterAndRankArticles(results);
 
-		log("newsletter data generated");
+		await writeTestData("filtered-ranked-article-data.json", articles);
+		log("filtered articles generated", articles.length);
+
+		const articlesData = await enrichArticlesData(articles, browserPage);
+
+		await writeTestData("display-article-data.json", articlesData);
+		log("enriched articles generated", articlesData.length);
 
 		const summary = await generateSummary(articlesData);
+		log("summary generated");
+
+		const categories = await generateCategories(articlesData);
+		log("categories generated", categories);
+
+		log("newsletter data generated");
 
 		return { articlesData, summary };
 	} catch (error) {
@@ -85,3 +103,13 @@ export async function GenerateNewsletter() {
 		console.error(error);
 	}
 }
+
+async function main() {
+	try {
+		await generateNewsletterData();
+	} catch (error) {
+		console.error("An error occurred in main:", error);
+	}
+}
+
+// main();

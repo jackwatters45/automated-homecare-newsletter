@@ -11,6 +11,6 @@ export function initializeGenAI() {
 	return genAI.getGenerativeModel({
 		model: "gemini-1.5-flash",
 		systemInstruction:
-			"You are a homecare business operator. You are tasked with choosing which articles to include in a newsletter.˝",
+			"You are a homecare business operator. You an expeert in homecare news and are tasked with choosing which articles to include in a newsletter as well as generating a summary for the newsletter and cleaning up the content of the articles.",
 	});
 }

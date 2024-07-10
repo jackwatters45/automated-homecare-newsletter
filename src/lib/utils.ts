@@ -1,9 +1,12 @@
-import debug from "debug";
-
+import { promises as fs } from "node:fs";
+import path from "node:path";
 import Bottleneck from "bottleneck";
+import debug from "debug";
 import type { Page } from "puppeteer";
+
 import { model } from "../app/index.js";
 import {
+	BASE_PATH,
 	DESCRIPTION_MAX_LENGTH,
 	RECURRING_FREQUENCY,
 } from "../lib/constants.js";
@@ -13,41 +16,38 @@ const log = debug(`${process.env.APP_NAME}:utils.ts`);
 let aiCallCount = 0;
 function logAiCall(prompt: string) {
 	aiCallCount++;
-	log("AI model called", aiCallCount, prompt.slice(0, 20));
+	log(`AI model called ${aiCallCount} times. Prompt: ${prompt.slice(0, 50)}...`);
 }
 
-export async function generateStringResponse(prompt: string): Promise<string> {
-	const result = await model.generateContent(prompt);
-	logAiCall(prompt);
-	const response = await result.response;
-	return response.text();
-}
-
-export async function generateJsonResponse<T>(prompt: string): Promise<T[]> {
+export async function generateJSONResponseFromModel<T>(
+	prompt: string,
+): Promise<T> {
 	const result = await model.generateContent(prompt);
 	logAiCall(prompt);
 	const response = await result.response;
 
 	const text = response.text();
 
-	log(response.usageMetadata);
-
-	return parseJsonString<T>(text);
+	return parseJsonString(text);
 }
 
-function parseJsonString<T = unknown>(jsonString: string): T[] {
+function parseJsonString(jsonString: string) {
 	// Remove the ```json and ``` markers
 	const cleanedString = jsonString
-		.trim()
 		.replace(/^```json\n/, "")
-		.replace(/\n```$/, "");
+		.replace(/\n```$/, "")
+		.trim();
 
 	// Parse the JSON string
 	try {
 		return JSON.parse(cleanedString);
 	} catch (error) {
-		console.error("Error parsing JSON:", error);
-		throw error;
+		// If parsing fails, check if it's a simple string
+		if (cleanedString.startsWith('"') && cleanedString.endsWith('"')) {
+			return cleanedString.slice(1, -1);
+		}
+
+		return cleanedString;
 	}
 }
 
@@ -84,11 +84,21 @@ export function convertStringDatesToDate<T extends { date?: string }>(
 }
 
 export function truncateDescription(description: string): string {
-	const words = description.trim()?.split(" ");
-	const truncatedContent = words.slice(0, DESCRIPTION_MAX_LENGTH).join(" ");
-	return truncatedContent.endsWith(".")
-		? truncatedContent
-		: `${truncatedContent}...`;
+	const words = description
+		.trim()
+		.split(/[\p{P}\s]+/u)
+		.slice(0, DESCRIPTION_MAX_LENGTH);
+
+	// Remove trailing punctuation or spaces
+	while (words.length > 0 && /^[\p{P}\s]+$/u.test(words[words.length - 1])) {
+		words.pop();
+	}
+
+	// Join the words and add ellipsis if truncated
+	const truncated = words.join(" ");
+	return truncated.length < description.trim().length
+		? `${truncated}...`
+		: truncated;
 }
 
 export async function fetchPageContent(
@@ -154,4 +164,19 @@ export function getPastWeekDate(): {
 		end: formattedToday,
 		year: today.getFullYear(),
 	};
+}
+
+export function shuffleArray<T>(array: T[]): T[] {
+	for (let i = array.length - 1; i > 0; i--) {
+		const j = Math.floor(Math.random() * (i + 1));
+		[array[i], array[j]] = [array[j], array[i]];
+	}
+	return array;
+}
+
+export async function writeTestData<T>(name: string, data: T) {
+	await fs.writeFile(
+		path.join(BASE_PATH, "tests", "data", name),
+		JSON.stringify(data, null, 2),
+	);
 }

@@ -1,664 +1,275 @@
 [
 	{
-		"url": "https://pqhh.org/media-center/",
-		"link": "https://pqhh.org/article/home-health-lobby-slams-proposed-2025-home-health-pay-rule/",
-		"title": "Home Health Lobby Slams Proposed 2025 Home Health Pay Rule",
-		"date": "2024-06-27T07:00:00.000Z"
-	},
-	{
-		"url": "https://pqhh.org/media-center/",
-		"link": "https://pqhh.org/article/medicare-seeks-280-million-pay-cut-for-home-health-agencies/",
-		"title": "Medicare Seeks $280 Million Pay Cut for Home Health Agencies",
-		"date": "2024-06-26T07:00:00.000Z"
-	},
-	{
-		"url": "https://pqhh.org/media-center/",
-		"link": "https://pqhh.org/article/cms-proposes-1-7-percent-medicare-home-health-payment-decrease-for-2025/",
-		"title": "CMS proposes -1.7 percent Medicare home health payment decrease for 2025",
-		"date": "2024-06-26T07:00:00.000Z"
-	},
-	{
-		"url": "https://pqhh.org/media-center/",
-		"link": "https://pqhh.org/article/cms-proposes-over-4-cut-to-home-health-medicare-payments-in-2025/",
-		"title": "CMS Proposes Over 4% Cut To Home Health Medicare Payments In 2025",
-		"date": "2024-06-26T07:00:00.000Z"
-	},
-	{
-		"url": "https://pqhh.org/media-center/",
-		"link": "https://pqhh.org/article/cms-proposes-1-7-medicare-cut-for-home-health-providers/",
-		"title": "CMS proposes 1.7% Medicare cut for home health providers",
-		"date": "2024-06-26T07:00:00.000Z"
-	},
-	{
-		"url": "https://pqhh.org/media-center/",
-		"link": "https://pqhh.org/article/home-health-leaders-more-home-health-cuts-in-2025-further-undermine-patient-access-to-care/",
-		"title": "Home Health Leaders: More Home Health Cuts in 2025 Further Undermine Patient Access to Care",
-		"date": "2024-06-26T07:00:00.000Z"
-	},
-	{
-		"url": "https://www.homecaremag.com/news",
-		"link": "https://www.homecaremag.com/news/gao-report-finds-millions-seniors-are-not-getting-homecare-they-need",
-		"title": "GAO Report Finds Millions of Seniors Are Not Getting the Homecare They Need",
-		"description": "Four out of five seniors who needed a home delivered or congregate meal in 2021 did not receive one"
-	},
-	{
-		"url": "https://www.homecaremag.com/news",
-		"link": "https://www.homecaremag.com/news/dynarex-unveils-distribution-center-wallkill-new-york",
-		"title": "Dynarex Unveils Distribution Center in Wallkill, New York",
-		"description": "Expansive new warehouse broadens fulfillment capabilities of medical supply company"
-	},
-	{
-		"url": "https://www.homecaremag.com/news",
-		"link": "https://www.homecaremag.com/news/choice-health-home-joins-forces-resilient-healthcare",
-		"title": "Choice Health at Home Joins Forces With Resilient Healthcare",
-		"description": "The partnership ill provide Choice access to a suite of digital health technologies"
-	},
-	{
-		"url": "https://www.homecaremag.com/news",
-		"link": "https://www.homecaremag.com/news/vns-health-settles-lawsuit-billing-services-they-failed-provide-document",
-		"title": "VNS Health Settles Lawsuit For Billing For Services They Failed to Provide, Document",
-		"description": "Defendants will pay nearly $1M & admit they sought & received payments for assertive community treatment services they failed to provide or document"
-	},
-	{
-		"url": "https://www.homecaremag.com/news",
-		"link": "https://www.homecaremag.com/news/ardo-launches-free-wearable-breast-pump-most-insurance-plans",
-		"title": "Ardo Launches Free Wearable Breast Pump for Most Insurance Plans",
-		"description": "Ardo medical, Inc., announced the “Ardo Melia” wearable breast pump, now available through breastpumps.com"
-	},
-	{
-		"url": "https://www.homecaremag.com/news",
-		"link": "https://www.homecaremag.com/news/cms-proposes-4-payment-cut-home-health",
-		"title": "CMS Proposes 4% Payment Cut for Home Health",
-		"description": "Advocates say move would continue to hurt patients, providers and limit access to care in the home."
-	},
-	{
-		"url": "https://www.homecaremag.com/news",
-		"link": "https://www.homecaremag.com/news/drive-devilbiss-acquires-mobility-designed-inc-portfolio-products",
-		"title": "Drive DeVilbiss Acquires Mobility Designed, Inc. Portfolio of Products",
-		"description": "Chief Innovation Officer Max Younger will head industrial design at medical equipment manufacturer"
-	},
-	{
-		"url": "https://www.homecaremag.com/news",
-		"link": "https://www.homecaremag.com/news/right-home-looks-expand-midland-texas",
-		"title": "Right at Home Looks to Expand in Midland, Texas",
-		"description": "Right at Home offers investment opportunity backed by decades of experience & a 700-unit system for visionaries in the community of Midland"
-	},
-	{
-		"url": "https://www.homecaremag.com/news",
-		"link": "https://www.homecaremag.com/news/david-chandler-named-aahomecare-vp-payer-relations",
-		"title": "David Chandler Named AAHomecare VP of Payer Relations",
-		"description": "Chandler has five-plus years with the association and experience with multiple state associations"
-	},
-	{
-		"url": "https://www.homecaremag.com/news",
-		"link": "https://www.homecaremag.com/news/compass-health-becomes-diamond-level-sponsor-aahomecare",
-		"title": "Compass Health Becomes Diamond Level Sponsor of AAHomecare",
-		"description": "Compass Health has been a supporter of AAHomecare for the past seven years"
-	},
-	{
-		"url": "https://www.homecaremag.com/news",
-		"link": "https://www.homecaremag.com/news/nahc-nhpco-release-signing-affiliation-agreement-statement",
-		"title": "NAHC, NHPCO Release Signing of Affiliation Agreement Statement",
-		"description": "NAHC, NHPCO are the two largest organizations representing & advocating for providers of care in the home"
-	},
-	{
-		"url": "https://www.homecaremag.com/news",
-		"link": "https://www.homecaremag.com/news/gilgal-medical-supplies-expands-florida-cities-address-absence-dme-providers",
-		"title": "Gilgal Medical Supplies Expands into Florida Cities to Address the Absence of DME Providers",
-		"description": "The expansion aims to address the need for DME providers in the region"
-	},
-	{
-		"url": "https://www.homecaremag.com/news",
-		"link": "https://www.homecaremag.com/news/element-care-pace-opens-new-site-massachusetts",
-		"title": "Element Care PACE Opens New Site in Massachusetts",
-		"description": "Massachusetts-based nonprofit expands PACE program offerings to underserved adults over 55 in Lynn and surrounding areas"
-	},
-	{
-		"url": "https://www.homecaremag.com/news",
-		"link": "https://www.homecaremag.com/news/axxess-simitree-partner-launch-platforms-empower-home-health-hospice-growth",
-		"title": "Axxess, SimiTree Partner to Launch Platforms to Empower Home Health, Hospice Growth",
-		"description": "Key market, referral & utilization data available for streamlined decision-making"
-	},
-	{
-		"url": "https://www.homecaremag.com/news",
-		"link": "https://www.homecaremag.com/news/accentcare-names-chris-mayne-president-home-health",
-		"title": "AccentCare Names Chris Mayne President of Home Health",
-		"description": "Mayne joins AccentCare from Optum where he was most recently president of its California care delivery unit"
-	},
-	{
-		"url": "https://www.homecaremag.com/news",
-		"link": "https://www.homecaremag.com/news/nymbl-systems-launches-single-page-patient-intake-transform-op-crt-hme-efficiency",
-		"title": "Nymbl Systems Launches Single-Page Patient Intake to Transform O&P, CRT, HME Efficiency",
-		"description": "O&P, CRT & HME providers experience an average of 20% efficiency gains with more streamlined & automated patient intake workflow"
-	},
-	{
-		"url": "https://www.homecaremag.com/news",
-		"link": "https://www.homecaremag.com/news/axxess-and-simitree-partner-launch-platforms-empower-growth",
-		"title": "Axxess and SimiTree Partner to Launch Platforms to Empower Growth",
-		"description": "Key market, referral & utilization data available for streamlined decision-making"
-	},
-	{
-		"url": "https://www.homecaremag.com/news",
-		"link": "https://www.homecaremag.com/news/cost-longevity-long-term-care-insurance-us",
-		"title": "The Cost of Longevity: Long-term Care Insurance in the US",
-		"description": "This FedTalk will discuss long-term care insurance"
-	},
-	{
-		"url": "https://www.homecaremag.com/news",
-		"link": "https://www.homecaremag.com/news/medtrade-2025-call-speakers-now-open",
-		"title": "Medtrade 2025 Call For Speakers Is Now Open",
-		"description": "Deadline for speakers is July 5"
-	},
-	{
-		"url": "https://www.homecaremag.com/news",
-		"link": "https://www.homecaremag.com/news/canopy-expands-real-time-wearable-safety-hospitals-home-health",
-		"title": "Canopy Expands Real-Time Wearable Safety from Hospitals to Home Health",
-		"description": "Leading health systems expand staff safety initiatives by deploying Canopy's real-time support network beyond hospital walls"
-	},
-	{
-		"url": "https://www.homecaremag.com/news",
-		"link": "https://www.homecaremag.com/news/webinars/patient-satisfaction-surveys-are-much-more-cms-requirement",
-		"title": "Patient Satisfaction Surveys Are Much More Than a CMS Requirement",
-		"description": "Patient satisfaction surveys are critical to learning how to improve your services and operations."
-	},
-	{
-		"url": "https://www.homecaremag.com/news",
-		"link": "https://www.homecaremag.com/news/webinars/successfully-implementing-outsourced-staffing-solution",
-		"title": "Successfully Implementing an Outsourced Staffing Solution",
-		"description": "Learn from staffing providers and utilizers what it takes to successfully implement a staffing outsource solution."
-	},
-	{
-		"url": "https://www.homecaremag.com/news",
-		"link": "https://www.homecaremag.com/news/webinars/understanding-auto-coverage-what-you-need-protect-your-team",
-		"title": "Understanding Auto Coverage: What You Need to Protect Your Team",
-		"description": "We’ll discuss the key points you need to know about employees driving to and from clients’ homes—and transporting clients."
-	},
-	{
-		"url": "https://www.homecaremag.com/news",
-		"link": "https://www.homecaremag.com/news/webinars/overcoming-top-rcm-challenges-home-based-care",
-		"title": "Overcoming Top RCM Challenges in Home-Based Care",
-		"description": "The intersection of financial viability, operational stability & compliance"
-	},
-	{
-		"url": "https://www.homecaremag.com/news",
-		"link": "https://www.homecaremag.com/news/webinars/pivotal-role-homecare-providers-successful-home-enteral-nutrition-program-transition",
-		"title": "The Pivotal Role of Homecare Providers in a Successful Home Enteral Nutrition Program: Transition from Hospital to Home",
-		"description": "How to achieve and maintain the highest quality of life for the patient receiving home enteral nutrition (HEN)."
+		"url": "https://www.mcknightshomecare.com/home/news/",
+		"link": "https://www.mcknightshomecare.com/news/harmonycares-to-use-200m-investment-to-significantly-upgrade-home-care-technology-ceo-says/",
+		"title": "HarmonyCares to use $200M investment ‘to significantly upgrade’ home care technology, CEO says",
+		"description": "HarmonyCares recently raised $200 million of capital to leverage new technology to produce better outcomes for patients and clinicians.",
+		"date": "2024-07-09T07:00:00.000Z"
 	},
 	{
 		"url": "https://www.mcknightshomecare.com/home/news/",
-		"link": "https://www.mcknightshomecare.com/news/san-francisco-franchise-owner-wins-firstlight-home-care-franchisee-of-the-year-award/",
-		"title": "San Francisco franchise owner wins FirstLight Home Care Franchisee of the Year Award",
-		"description": "In 2019, Jim Carteris sold his staffing business after 25 years. Around that time, he was out motorcycling with a friend from high school when he was referred to another old peer, Mark Paretchan, the general...",
-		"date": "2024-06-28T07:00:00.000Z"
+		"link": "https://www.mcknightshomecare.com/news/people-perceive-hospital-at-home-to-be-effective-safe-convenient-study-finds/",
+		"title": "People perceive hospital-at-home to be effective, safe, convenient, study finds",
+		"description": "The implied comfort, convenience and effectiveness of hospital-at-home care makes it more appealing than an inpatient stay.",
+		"date": "2024-07-09T07:00:00.000Z"
 	},
 	{
 		"url": "https://www.mcknightshomecare.com/home/news/",
-		"link": "https://www.mcknightshomecare.com/news/with-guide-model-kickoff-medicare-may-now-pay-for-respite-services-for-family-caregivers/",
-		"title": "With GUIDE model kickoff, Medicare may now pay for respite services for family caregivers",
-		"description": "The GUIDE model, an innovative dementia care model that aims to reduce strains for unpaid caregivers, begins July 1.",
-		"date": "2024-06-28T07:00:00.000Z"
+		"link": "https://www.mcknightshomecare.com/news/cms-releases-names-of-home-care-hospice-firms-participating-in-guide-model/",
+		"title": "CMS releases names of home care, hospice firms participating in GUIDE model",
+		"description": "CMS unveiled the nearly 400 organizations participating in the Guiding an Improved Dementia Experience (GUIDE) model.",
+		"date": "2024-07-09T07:00:00.000Z"
 	},
 	{
 		"url": "https://www.mcknightshomecare.com/home/news/",
-		"link": "https://www.mcknightshomecare.com/news/study-reveals-impact-of-smooth-hospital-to-home-transitions-on-care-satisfaction-length-of-stay/",
-		"title": "Study reveals impact of smooth hospital-to-home transitions on care satisfaction, length of stay",
-		"description": "Easing patients’ transition out of the hospital and into home health care can significantly improve care satisfaction and reduce length of stay.",
-		"date": "2024-06-28T07:00:00.000Z"
+		"link": "https://www.mcknightshomecare.com/news/home-care-briefs-for-wednesday-july-10/",
+		"title": "Home Care briefs for Wednesday, July 10",
+		"description": "WelbeHealth opens PACE centers in Riverside and Coachella Valley in California … HHCAHPS offers tips to increase response rates … Cigna Group releases environmental, social and governance report",
+		"date": "2024-07-09T07:00:00.000Z"
 	},
 	{
 		"url": "https://www.mcknightshomecare.com/home/news/",
-		"link": "https://www.mcknightshomecare.com/news/ai-could-open-doors-to-advances-in-care-operations-in-aging-services/",
-		"title": "AI could open doors to advances in care, operations in aging services",
-		"description": "Aging services organizations already are using artificial intelligence, whether or not they realize it, experts said.",
-		"date": "2024-06-28T07:00:00.000Z"
+		"link": "https://www.mcknightshomecare.com/news/ahead-of-shareholder-vote-enhabit-calls-activist-investors-bid-for-control-reckless/",
+		"title": "Ahead of shareholder vote, Enhabit calls activist investor’s bid for control ‘reckless’",
+		"description": "With the future of its management hanging in the balance, Enhabit has continued to refute claims by activist shareholder AREX Capital.",
+		"date": "2024-07-08T07:00:00.000Z"
 	},
 	{
 		"url": "https://www.mcknightshomecare.com/home/news/",
-		"link": "https://www.mcknightshomecare.com/news/home-care-briefs-for-monday-july-1/",
-		"title": "Home Care briefs for Monday, July 1",
-		"description": "Supreme Court’s overturning of Chevron decision calls CMS rules into question … Elara Caring expands reach into Kansas, Iowa with acquisition of Caregivers Home hHealth … Visiting...",
-		"date": "2024-06-28T07:00:00.000Z"
+		"link": "https://www.mcknightshomecare.com/news/texas-court-stalls-ftcs-implementation-of-noncompete-ban/",
+		"title": "Texas court stalls FTC’s implementation of noncompete ban",
+		"description": "A recent US court decision may derail a ban on noncompete agreements recently finalized by the Federal Trade Commission.",
+		"date": "2024-07-08T07:00:00.000Z"
 	},
 	{
 		"url": "https://www.mcknightshomecare.com/home/news/",
-		"link": "https://www.mcknightshomecare.com/news/cms-proposes-paying-for-in-home-dialysis-for-patients-with-acute-kidney-injury/",
-		"title": "CMS proposes paying for in-home dialysis for patients with acute kidney injury",
-		"description": "The Centers for Medicare & Medicaid Services late Thursday issued an end-stage renal disease (ESRD) proposed rule for calendar year 2025 that offers to extend Medicare payment to dialysis in the home setting...",
-		"date": "2024-06-28T07:00:00.000Z"
+		"link": "https://www.mcknightshomecare.com/news/home-care-workforce-drops-by-3500-in-june-bls-reports/",
+		"title": "Home care workforce drops by 3,500 in June, BLS reports",
+		"description": "The exit of several thousand from the home care workforce last month partially contributed to slower-than-average job growth across healthcare.",
+		"date": "2024-07-08T07:00:00.000Z"
 	},
 	{
 		"url": "https://www.mcknightshomecare.com/home/news/",
-		"link": "https://www.mcknightshomecare.com/news/villagemd-makes-strong-contribution-to-walgreens-earnings-in-fiscal-q3/",
-		"title": "Walgreens to cut stake in VillageMD, reduce footprint",
-		"description": "While it acknowledged that its US Healthcare segment, which includes VillageMD, contributed to fiscal third quarter earnings, Walgreens said Thursday it is planning to reduce its reduce its stake in the...",
-		"date": "2024-06-27T07:00:00.000Z"
+		"link": "https://www.mcknightshomecare.com/news/home-care-briefs-for-tuesday-july-9/",
+		"title": "Home Care briefs for Tuesday, July 9",
+		"description": "HarmonyCares raises $200 million for expansion plans … Senator expresses concern about how HHS will adapt to Chevron decision … NY home care providers push back in face of CDPAP shakeup …...",
+		"date": "2024-07-08T07:00:00.000Z"
 	},
 	{
 		"url": "https://www.mcknightshomecare.com/home/news/",
-		"link": "https://www.mcknightshomecare.com/news/congress-urges-cms-to-prohibit-use-of-ai-for-coverage-determinations/",
-		"title": "Congress urges CMS to prohibit use of AI for coverage determinations",
-		"description": "Lawmakers are urging greater oversight of Medicare Advantage companies’ use of artificial intelligence in making coverage decisions.",
-		"date": "2024-06-27T07:00:00.000Z"
+		"link": "https://www.mcknightshomecare.com/news/web-search-confusion-reduce-seniors-access-to-valuable-home-care-navigation-tools-study-finds/",
+		"title": "Web search confusion reduces seniors’ access to home care resources, study finds",
+		"description": "Navigating online resources can be tricky for many seniors. Oftentimes, the best sources do not rise to the top of search engine results.",
+		"date": "2024-07-03T07:00:00.000Z"
 	},
 	{
 		"url": "https://www.mcknightshomecare.com/home/news/",
-		"link": "https://www.mcknightshomecare.com/news/senior-care-experts-detail-how-to-build-a-coveted-destination-workplace/",
-		"title": "Senior care experts detail how to build a coveted ‘destination workplace’",
-		"description": "Faced with today’s complex array of financial, staffing and regulatory challenges, senior care operators need to rely on a broad range of solutions, a panel of experts said Thursday.",
-		"date": "2024-06-27T07:00:00.000Z"
-	},
-	{
-		"url": "https://www.mcknightshomecare.com/home/news/",
-		"link": "https://www.mcknightshomecare.com/news/home-care-briefs-for-friday-june-28/",
-		"title": "Home Care briefs for Friday, June 28",
-		"description": "Hackensack Meridian partners with Medically Home to launch hospital-at-home program … Senior Helpers receives new CHAP Age-Friendly Care at Home certification … Addus begins proposed public...",
-		"date": "2024-06-27T07:00:00.000Z"
+		"link": "https://www.mcknightshomecare.com/news/clutter-hoarding-prevents-home-health-providers-from-helping-seniors-senate-aging-committee-report/",
+		"title": "Hoarding prevents home health providers from helping seniors: Senate Aging Committee report",
+		"description": "Seniors who have hoarding disorders or excessive amounts of clutter in their homes often face barriers when trying to access home care.",
+		"date": "2024-07-03T07:00:00.000Z"
 	},
 	{
 		"url": "https://homehealthcarenews.com/",
-		"link": "https://homehealthcarenews.com/2024/06/how-the-supreme-courts-chevron-decision-could-help-stop-home-health-cuts/",
-		"title": "How The Supreme Court’s Chevron Decision Could Help Stop Home Health Cuts",
-		"date": "2024-06-28T07:00:00.000Z"
+		"link": "https://homehealthcarenews.com/2024/07/senior-helpers-accordcare-see-results-from-enhanced-training-programs/",
+		"title": "Senior Helpers, AccordCare See Results From Enhanced Training Programs",
+		"date": "2024-07-09T07:00:00.000Z"
 	},
 	{
 		"url": "https://homehealthcarenews.com/",
-		"link": "https://homehealthcarenews.com/2024/06/draconian-and-bewildering-inside-the-2025-home-health-proposed-payment-rule/",
-		"title": "‘Draconian’ And ‘Bewildering’: Inside The 2025 Home Health Proposed Payment Rule",
-		"date": "2024-06-27T07:00:00.000Z"
+		"link": "https://homehealthcarenews.com/2024/07/senior-helpers-accordcare-see-results-from-enhanced-training-programs/",
+		"title": "Senior Helpers, AccordCare See Results From Enhanced Training Programs",
+		"date": "2024-07-09T07:00:00.000Z"
 	},
 	{
 		"url": "https://homehealthcarenews.com/",
-		"link": "https://homehealthcarenews.com/2024/06/we-need-to-try-different-things-how-6-home-care-providers-stand-out-in-a-crowded-market/",
-		"title": "‘We Need To Try Different Things’: How 6 Home Care Providers Stand Out In A Crowded Market",
-		"date": "2024-06-26T07:00:00.000Z"
+		"link": "https://homehealthcarenews.com/2024/07/the-duality-of-in-home-health-risk-assessments/",
+		"title": "The Duality Of In-Home Health Risk Assessments",
+		"date": "2024-07-09T07:00:00.000Z"
 	},
 	{
 		"url": "https://homehealthcarenews.com/",
-		"link": "https://homehealthcarenews.com/2024/06/cms-proposes-over-4-cut-to-home-health-medicare-payments-in-2025/",
-		"title": "[Updated] CMS Proposes Over 4% Cut To Home Health Medicare Payments In 2025",
-		"date": "2024-06-26T07:00:00.000Z"
+		"link": "https://homehealthcarenews.com/2024/07/dozens-of-in-home-care-providers-unveiled-as-participants-in-cms-guide-model/",
+		"title": "Dozens Of In-Home Care Providers Unveiled As Participants In CMS’ GUIDE Model",
+		"date": "2024-07-08T07:00:00.000Z"
 	},
 	{
 		"url": "https://homehealthcarenews.com/",
-		"link": "https://homehealthcarenews.com/2024/06/lot-of-work-to-be-done-what-home-health-leaders-expect-from-payment-rulemaking-in-2024/",
-		"title": "‘Lot Of Work To Be Done’: What Home Health Leaders Expect From Payment Rulemaking In 2024",
-		"date": "2024-06-24T07:00:00.000Z"
+		"link": "https://homehealthcarenews.com/2024/07/in-home-care-company-harmonycares-raises-200-million/",
+		"title": "In-Home Care Company HarmonyCares Raises $200 Million",
+		"date": "2024-07-08T07:00:00.000Z"
 	},
 	{
 		"url": "https://homehealthcarenews.com/",
-		"link": "https://homehealthcarenews.com/2024/06/amedisys-to-divest-certain-home-health-locations-to-vitalcaring-clearing-path-for-unitedhealth-group-deal/",
-		"title": "Amedisys To Divest Certain Home Health Locations To VitalCaring, Clearing Path For UnitedHealth Group Deal",
-		"date": "2024-06-28T07:00:00.000Z"
+		"link": "https://homehealthcarenews.com/2024/07/all-the-payment-factors-included-in-the-2025-home-health-proposed-rule/",
+		"title": "All The Payment Factors Included In The 2025 Home Health Proposed Rule",
+		"date": "2024-07-08T07:00:00.000Z"
 	},
 	{
 		"url": "https://homehealthcarenews.com/",
-		"link": "https://homehealthcarenews.com/2024/06/how-the-supreme-courts-chevron-decision-could-help-stop-home-health-cuts/",
-		"title": "How The Supreme Court’s Chevron Decision Could Help Stop Home Health Cuts",
-		"date": "2024-06-28T07:00:00.000Z"
-	},
-	{
-		"url": "https://homehealthcarenews.com/",
-		"link": "https://homehealthcarenews.com/2024/06/elara-caring-acquires-caregivers-home-health-grows-midwest-footprint/",
-		"title": "Elara Caring Acquires Caregivers Home Health, Grows Midwest Footprint",
-		"date": "2024-06-28T07:00:00.000Z"
-	},
-	{
-		"url": "https://homehealthcarenews.com/",
-		"link": "https://homehealthcarenews.com/2024/06/nahc-re-files-lawsuit-against-hhs-cms-over-home-health-cuts/",
-		"title": "NAHC Re-Files Lawsuit Against HHS, CMS Over Home Health Cuts",
-		"date": "2024-06-28T07:00:00.000Z"
-	},
-	{
-		"url": "https://homehealthcarenews.com/",
-		"link": "https://homehealthcarenews.com/2024/06/draconian-and-bewildering-inside-the-2025-home-health-proposed-payment-rule/",
-		"title": "‘Draconian’ And ‘Bewildering’: Inside The 2025 Home Health Proposed Payment Rule",
-		"date": "2024-06-27T07:00:00.000Z"
-	},
-	{
-		"url": "https://homehealthcarenews.com/",
-		"link": "https://homehealthcarenews.com/2024/06/walgreens-to-reduce-physical-footprint-continue-healthcare-services-focus/",
-		"title": "Walgreens To Reduce Physical Footprint, Continue Health Care Services Focus",
-		"date": "2024-06-27T07:00:00.000Z"
-	},
-	{
-		"url": "https://hospicenews.com/",
-		"link": "https://hospicenews.com/2024/06/28/amedisys-divests-locations-in-advance-of-optum-deal/",
-		"title": "Amedisys Divests Locations in Advance of Optum Deal",
-		"date": "2024-06-28T07:00:00.000Z"
-	},
-	{
-		"url": "https://hospicenews.com/",
-		"link": "https://hospicenews.com/2024/06/28/supreme-court-ruling-could-complicate-cms-efforts-to-regulate-hospices/",
-		"title": "Supreme Court Ruling Could Complicate CMS Efforts to Regulate Hospices",
-		"date": "2024-06-28T07:00:00.000Z"
-	},
-	{
-		"url": "https://hospicenews.com/",
-		"link": "https://hospicenews.com/2024/06/28/the-aids-epidemics-lasting-impact-on-hospice-care-for-lgbtq-populations/",
-		"title": "The AIDS Epidemic’s Lasting Impact on Hospice Care for LGBTQ+ Populations",
-		"date": "2024-06-28T07:00:00.000Z"
-	},
-	{
-		"url": "https://hospicenews.com/",
-		"link": "https://hospicenews.com/2024/06/27/hospices-compliance-outlook-a-balancing-act/",
-		"title": "Hospices’ Compliance Outlook a ‘Balancing Act’",
-		"date": "2024-06-27T07:00:00.000Z"
-	},
-	{
-		"url": "https://hospicenews.com/",
-		"link": "https://hospicenews.com/2024/06/27/hospices-2024-public-policy-priorities/",
-		"title": "Hospices’ 2024 Public Policy Priorities",
-		"date": "2024-06-27T07:00:00.000Z"
-	},
-	{
-		"url": "https://hospicenews.com/",
-		"link": "https://hospicenews.com/2024/06/26/end-of-life-care-delivery-ripe-for-reform-in-rep-blumenhauers-hospice-care-act/",
-		"title": "End-of-Life Care Delivery ‘Ripe for Reform’ in Rep. Blumenauer’s Hospice CARE Act",
-		"date": "2024-06-26T07:00:00.000Z"
-	},
-	{
-		"url": "https://hospicenews.com/",
-		"link": "https://hospicenews.com/2024/06/29/2-ketamine-palliative-care-projects-explore-interdisciplinary-collaboration/",
-		"title": "2 Ketamine Palliative Care Projects Explore Interdisciplinary Collaboration",
-		"date": "2024-06-29T07:00:00.000Z"
-	},
-	{
-		"url": "https://hospicenews.com/",
-		"link": "https://hospicenews.com/2024/06/28/amedisys-divests-locations-in-advance-of-optum-deal/",
-		"title": "Amedisys Divests Locations in Advance of Optum Deal",
-		"date": "2024-06-28T07:00:00.000Z"
-	},
-	{
-		"url": "https://hospicenews.com/",
-		"link": "https://hospicenews.com/2024/06/28/supreme-court-ruling-could-complicate-cms-efforts-to-regulate-hospices/",
-		"title": "Supreme Court Ruling Could Complicate CMS Efforts to Regulate Hospices",
-		"date": "2024-06-28T07:00:00.000Z"
-	},
-	{
-		"url": "https://hospicenews.com/",
-		"link": "https://hospicenews.com/2024/06/28/the-aids-epidemics-lasting-impact-on-hospice-care-for-lgbtq-populations/",
-		"title": "The AIDS Epidemic’s Lasting Impact on Hospice Care for LGBTQ+ Populations",
-		"date": "2024-06-28T07:00:00.000Z"
-	},
-	{
-		"url": "https://hospicenews.com/",
-		"link": "https://hospicenews.com/2024/06/28/elara-caring-acquires-caregivers-home-health/",
-		"title": "Elara Caring Acquires Caregivers Home Health",
-		"date": "2024-06-28T07:00:00.000Z"
-	},
-	{
-		"url": "https://hospicenews.com/",
-		"link": "https://hospicenews.com/2024/06/27/hospices-compliance-outlook-a-balancing-act/",
-		"title": "Hospices’ Compliance Outlook a ‘Balancing Act’",
-		"date": "2024-06-27T07:00:00.000Z"
-	},
-	{
-		"url": "https://hospicenews.com/",
-		"link": "https://hospicenews.com/2024/06/27/hospices-2024-public-policy-priorities/",
-		"title": "Hospices’ 2024 Public Policy Priorities",
-		"date": "2024-06-27T07:00:00.000Z"
-	},
-	{
-		"url": "https://hospicenews.com/",
-		"link": "https://hospicenews.com/2024/06/26/end-of-life-care-delivery-ripe-for-reform-in-rep-blumenhauers-hospice-care-act/",
-		"title": "End-of-Life Care Delivery ‘Ripe for Reform’ in Rep. Blumenauer’s Hospice CARE Act",
-		"date": "2024-06-26T07:00:00.000Z"
-	},
-	{
-		"url": "https://hospicenews.com/",
-		"link": "https://hospicenews.com/2024/06/29/2-ketamine-palliative-care-projects-explore-interdisciplinary-collaboration/",
-		"title": "2 Ketamine Palliative Care Projects Explore Interdisciplinary Collaboration",
-		"date": "2024-06-29T07:00:00.000Z"
-	},
-	{
-		"url": "https://hospicenews.com/",
-		"link": "https://hospicenews.com/2024/06/28/amedisys-divests-locations-in-advance-of-optum-deal/",
-		"title": "Amedisys Divests Locations in Advance of Optum Deal",
-		"date": "2024-06-28T07:00:00.000Z"
-	},
-	{
-		"url": "https://hospicenews.com/",
-		"link": "https://hospicenews.com/2024/06/28/supreme-court-ruling-could-complicate-cms-efforts-to-regulate-hospices/",
-		"title": "Supreme Court Ruling Could Complicate CMS Efforts to Regulate Hospices",
-		"date": "2024-06-28T07:00:00.000Z"
-	},
-	{
-		"url": "https://hospicenews.com/",
-		"link": "https://hospicenews.com/2024/06/28/the-aids-epidemics-lasting-impact-on-hospice-care-for-lgbtq-populations/",
-		"title": "The AIDS Epidemic’s Lasting Impact on Hospice Care for LGBTQ+ Populations",
-		"date": "2024-06-28T07:00:00.000Z"
-	},
-	{
-		"url": "https://hospicenews.com/",
-		"link": "https://hospicenews.com/2024/06/28/elara-caring-acquires-caregivers-home-health/",
-		"title": "Elara Caring Acquires Caregivers Home Health",
-		"date": "2024-06-28T07:00:00.000Z"
-	},
-	{
-		"url": "https://hospicenews.com/",
-		"link": "https://hospicenews.com/2024/06/27/hospices-compliance-outlook-a-balancing-act/",
-		"title": "Hospices’ Compliance Outlook a ‘Balancing Act’",
-		"date": "2024-06-27T07:00:00.000Z"
-	},
-	{
-		"url": "https://valleyhca.com/our-blog/",
-		"link": "https://valleyhca.com/hot-weather-safety-for-older-adults/",
-		"title": "Hot Weather Safety For Older Adults",
-		"description": "Summer is a fun, active time for people who enjoy outdoor activities.  For people aged 60 and older, summer can also be a time of the year when their well-being is at greater risk because they are more prone to heat related illnesses.  Extreme or prolonged hot weather can be… Read More",
-		"date": "2024-06-24T07:00:00.000Z"
+		"link": "https://homehealthcarenews.com/2024/07/home-health-owner-to-pay-4-5-million-over-alleged-kickbacks-to-doctors-assisted-living-facilities/",
+		"title": "Home Health Owner To Pay $4.5 Million Over Alleged Kickbacks To Doctors, Assisted Living Facilities",
+		"date": "2024-07-05T07:00:00.000Z"
 	},
 	{
 		"url": "https://www.medicalnewstoday.com/news",
-		"link": "https://www.medicalnewstoday.com/articles/caffeine-cravings-genetic-or-learned-is-coffee-good-or-bad-for-you",
-		"title": "Do genetics determine whether coffee is good or bad for you?",
-		"description": "A new study explored the links between the genetics of coffee consumption, with outcomes of obesity and substance use, and mental health.",
-		"date": "2024-06-29T07:00:00.000Z"
+		"link": "https://www.medicalnewstoday.com/articles/carbs-fat-protein-which-one-triggers-more-insulin-release",
+		"title": "Carbs vs. fat vs. protein: Which one triggers more insulin release?",
+		"description": "The macronutrients that trigger the most insulin release may vary from person to person, a new study finds, contradicting the belief that carbs cause…",
+		"date": "2024-07-09T07:00:00.000Z"
 	},
 	{
 		"url": "https://www.medicalnewstoday.com/news",
-		"link": "https://www.medicalnewstoday.com/articles/multivitamins-may-not-help-you-live-longer",
-		"title": "Daily multivitamins may not promote longevity, study finds",
-		"description": "A new study suggests that daily multivitamin supplements may not improve longevity in otherwise generally healthy adults.",
-		"date": "2024-06-28T07:00:00.000Z"
+		"link": "https://www.medicalnewstoday.com/articles/researchers-successfully-rejuvenate-aging-livers-in-preclinical-study",
+		"title": "Researchers successfully rejuvenate aging livers in preclinical study",
+		"description": "A study conducted in mice and human cell samples suggests that a pharmacological intervention may help reverse age-related liver damage.",
+		"date": "2024-07-08T07:00:00.000Z"
 	},
 	{
 		"url": "https://www.medicalnewstoday.com/news",
-		"link": "https://www.medicalnewstoday.com/articles/gut-microbiome-may-influence-stress",
-		"title": "Gut microbiome may influence how we handle stress, study finds",
-		"description": "New research suggests a strong link between a healthy gut microbiome and greater resilience in the face of stress.",
-		"date": "2024-06-28T07:00:00.000Z"
+		"link": "https://www.medicalnewstoday.com/articles/eating-ultra-processed-foods-may-raise-risk-death-10",
+		"title": "Eating ultra-processed foods may raise risk of death by 10%",
+		"description": "A diet heavy in ultra-processed foods such as hot dogs, sausages, and sweetened drinks may increase the risk of death among older Americans, according…",
+		"date": "2024-07-08T07:00:00.000Z"
 	},
 	{
 		"url": "https://www.medicalnewstoday.com/news",
-		"link": "https://www.medicalnewstoday.com/articles/plastic-bottles-diabetes-risk",
-		"title": "BPAs in plastic bottles linked to type 2 diabetes risk, researchers say",
-		"description": "A new study has found that reducing exposure to the common chemical bisphenol A (BPA) can lower the risk of type 2 diabetes.",
-		"date": "2024-06-28T07:00:00.000Z"
+		"link": "https://www.medicalnewstoday.com/articles/possible-new-target-early-treatment-alzheimers-disease",
+		"title": "Study finds possible new target for early treatment of Alzheimer's disease",
+		"description": "New research has found that a protein that regulates cell repair could be a promising new target for treating Alzheimer’s disease.",
+		"date": "2024-07-08T07:00:00.000Z"
 	},
 	{
 		"url": "https://www.medicalnewstoday.com/news",
-		"link": "https://www.medicalnewstoday.com/articles/intermittent-fasting-myths-debunked",
-		"title": "Is intermittent fasting healthy? New study debunks common myths",
-		"description": "Researchers have debunked four myths about intermittent fasting to help lay common misconceptions to rest.",
-		"date": "2024-06-28T07:00:00.000Z"
+		"link": "https://www.medicalnewstoday.com/articles/how-does-a-ketogenic-diet-stave-off-weight-gain",
+		"title": "How does a ketogenic diet stave off weight gain?",
+		"description": "New research in mice and humans suggests that a ketogenic diet may protect against obesity by increasing specific bile acids and decreasing calorie…",
+		"date": "2024-07-08T07:00:00.000Z"
 	},
 	{
 		"url": "https://www.medicalnewstoday.com/news",
-		"link": "https://www.medicalnewstoday.com/articles/turmeric-black-pepper-supplements-linked-liver-injury",
-		"title": "Turmeric and black pepper supplements linked to liver injury in some people",
-		"description": "Doctors have raised concerns about the safety of taking turmeric and black pepper supplements after discovering a small group of patients have…",
-		"date": "2024-06-28T07:00:00.000Z"
+		"link": "https://www.medicalnewstoday.com/articles/gut-bacteria-viruses-increase-type-2-diabetes-risk-study",
+		"title": "Certain gut bacteria, viruses may increase type 2 diabetes risk, study finds",
+		"description": "A recent study found that certain bacterial strains and viruses can lead to changes in the gut microbiome and a heightened risk of type 2 diabetes.",
+		"date": "2024-07-08T07:00:00.000Z"
 	},
 	{
 		"url": "https://www.medicalnewstoday.com/news",
-		"link": "https://www.medicalnewstoday.com/articles/at-home-ketamine-tablet-may-alleviate-symptoms-severe-depression-trial",
-		"title": "At-home ketamine tablet may alleviate symptoms of severe depression, trial finds",
-		"description": "A new slow-release tablet form of ketamine, which can be safely taken at home, could help treat severe depression, according to a clinical trial.",
-		"date": "2024-06-28T07:00:00.000Z"
+		"link": "https://www.medicalnewstoday.com/articles/daily-sauna-time-help-prevent-weight-gain-menopause",
+		"title": "Could daily sauna time help prevent weight gain during menopause?",
+		"description": "Older female mice who underwent a daily 30-minute whole-body heat treatment gained less weight and showed improved insulin sensitivity, according to a…",
+		"date": "2024-07-07T07:00:00.000Z"
 	},
 	{
 		"url": "https://www.medicalnewstoday.com/news",
-		"link": "https://www.medicalnewstoday.com/articles/ovary-removal-before-menopause-cognitive-decline-dementia-risk",
-		"title": "Ovary removal before menopause linked to cognitive impairment, dementia risk",
-		"description": "A new study shows that full ovary removal before menopause is linked to decreased white matter in the brain later in life",
-		"date": "2024-06-27T07:00:00.000Z"
+		"link": "https://www.medicalnewstoday.com/articles/acupuncture-sleep-quality-parkinsons-disease",
+		"title": "Acupuncture can help boost sleep quality in Parkinson’s disease",
+		"description": "New research suggests that a 4-week treatment course of acupuncture — in addition to the typical medication — helped improve sleep quality in people…",
+		"date": "2024-07-06T07:00:00.000Z"
 	},
 	{
 		"url": "https://www.medicalnewstoday.com/news",
-		"link": "https://www.medicalnewstoday.com/articles/combining-flavonoid-vitamin-b6-may-help-preserve-cognitive-function",
-		"title": "Combining flavonoid with vitamin B6 may help preserve cognitive function",
-		"description": "A naturally occurring flavonoid can slow down the degradation of vitamin B6 in the brain, theoretically preserving cognitive function, according to a…",
-		"date": "2024-06-27T07:00:00.000Z"
+		"link": "https://www.medicalnewstoday.com/articles/study-pinpoints-3-common-antidepressants-tied-to-the-most-weight-gain",
+		"title": "Study pinpoints 3 common antidepressants tied to the most weight gain",
+		"description": "Researchers have found that escitalopram, paroxetine, and duloxetine are the antidepressants tied to the highest risk of weight gain.",
+		"date": "2024-07-05T07:00:00.000Z"
 	},
 	{
 		"url": "https://www.medicalnewstoday.com/news",
-		"link": "https://www.medicalnewstoday.com/articles/microplastic-found-in-penis-infertility-sperm-count-erectile-dysfunction",
-		"title": "Could microplastics found in penises affect fertility and sperm count?",
-		"description": "Researchers found microplastics in human penile tissue for the first time, sparking concerns about microplastics' potential impact on erectile…",
-		"date": "2024-06-26T07:00:00.000Z"
+		"link": "https://www.medicalnewstoday.com/articles/drugs-like-ozempic-wegovy-linked-to-eye-condition-causing-vision-loss",
+		"title": "Drugs like Ozempic, Wegovy linked to eye condition causing vision loss",
+		"description": "A recent study has suggested that semaglutide drugs like Ozempic and Wegovy are linked to a rare eye condition that can cause vision loss.",
+		"date": "2024-07-05T07:00:00.000Z"
 	},
 	{
 		"url": "https://www.medicalnewstoday.com/news",
-		"link": "https://www.medicalnewstoday.com/articles/new-dietary-guidelines-weight-loss-drugs",
-		"title": "Weight loss: New dietary guidelines for people taking Wegovy, Ozempic",
-		"description": "A new study has put together optimal nutritional recommendations to help guide people taking GLP-1 drugs for weight loss.",
-		"date": "2024-06-26T07:00:00.000Z"
+		"link": "https://www.medicalnewstoday.com/articles/smoking-education-interventions-may-help-decrease-dementia-incidence",
+		"title": "Smoking and education interventions may help decrease dementia incidence",
+		"description": "Scientists have linked a reduction in smoking and increases in education to reducing the incidence rate of dementia in some high-income countries.",
+		"date": "2024-07-05T07:00:00.000Z"
 	},
 	{
 		"url": "https://www.medicalnewstoday.com/news",
-		"link": "https://www.medicalnewstoday.com/articles/missing-specific-blood-group-may-genetically-predispose-people-obesity",
-		"title": "Missing a specific blood group may genetically predispose people to obesity",
-		"description": "Scientists have found that people missing a specific blood group due to a genetic variant may be genetically predisposed to having obesity or…",
-		"date": "2024-06-26T07:00:00.000Z"
+		"link": "https://www.medicalnewstoday.com/articles/natural-compound-olives-help-treat-obesity-diabetes",
+		"title": "Can a compound found in olives help treat obesity and diabetes?",
+		"description": "Findings from a mouse study suggest that a natural compound found in olives can promote weight loss and help lower blood sugar levels.",
+		"date": "2024-07-04T07:00:00.000Z"
 	},
 	{
 		"url": "https://www.medicalnewstoday.com/news",
-		"link": "https://www.medicalnewstoday.com/articles/peptide-treatment-could-reverse-cognitive-decline-alzheimers-disease",
-		"title": "Peptide treatment could reverse cognitive decline in Alzheimer's disease",
-		"description": "Researchers have successfully reversed the symptoms of Alzheimer’s disease in mice with a small, synthetic peptide called PHDP5.",
-		"date": "2024-06-26T07:00:00.000Z"
+		"link": "https://www.medicalnewstoday.com/articles/alzheimers-revised-diagnostic-criteria-place-blood-biomarkers-at-the-forefront",
+		"title": "Alzheimer's: Revised diagnostic criteria place blood biomarkers at the forefront",
+		"description": "Experts affiliated with the Alzheimer’s Association have recently published revised criteria for the diagnosis and staging of Alzheimer's disease that…",
+		"date": "2024-07-04T07:00:00.000Z"
 	},
 	{
 		"url": "https://www.medicalnewstoday.com/news",
-		"link": "https://www.medicalnewstoday.com/articles/a-hearty-debate-concludes-plant-based-meat-alternatives-are-healthier-for-your-heart-than-meat",
-		"title": "Plant-based meat alternatives better for your heart than real meat, study finds",
-		"description": "Researchers say many plant-based meat alternatives are ultra-processed and high in sodium, but they say they are still healthier for your heart than…",
-		"date": "2024-06-26T07:00:00.000Z"
+		"link": "https://www.medicalnewstoday.com/articles/ivf-research-what-are-the-latest-advances-and-what-obstacles-stand-in-the-way",
+		"title": "IVF research: What are the latest advances, and what obstacles stand in the way?",
+		"description": "This Special Feature looks at how legislation hinders further advances in IVF research, what some exciting ways forward might be, and what individuals…",
+		"date": "2024-07-04T07:00:00.000Z"
 	},
 	{
 		"url": "https://www.medicalnewstoday.com/news",
-		"link": "https://www.medicalnewstoday.com/articles/risk-of-parkinsons-disease-higher-for-people-over-50-with-anxiety",
-		"title": "Risk of Parkinson’s disease higher for people over 50 with anxiety",
-		"description": "Researchers say there may be a link between anxiety after age 50 and the risk of Parkinson's disease. Experts say doctors should monitor older adults…",
-		"date": "2024-06-26T07:00:00.000Z"
+		"link": "https://www.medicalnewstoday.com/articles/ai-model-may-predict-alzheimers-analyzing-speech-patterns",
+		"title": "AI model may predict Alzheimer’s by analyzing speech patterns",
+		"description": "Researchers have developed an AI tool that can predict with nearly 80% accuracy whether someone is at risk for developing Alzheimer’s disease based on…",
+		"date": "2024-07-04T07:00:00.000Z"
 	},
 	{
 		"url": "https://www.medicalnewstoday.com/news",
-		"link": "https://www.medicalnewstoday.com/articles/could-a-genetic-trait-delay-alzheimers",
-		"title": "A genetic trait may help delay early onset Alzheimer's",
-		"description": "Researchers have discovered a genetic variant that seems to help protect people genetically predisposed to developing early-onset Alzheimer's disease.",
-		"date": "2024-06-25T07:00:00.000Z"
-	},
-	{
-		"url": "https://www.medicalnewstoday.com/news",
-		"link": "https://www.medicalnewstoday.com/articles/drinking-coffee-may-help-lower-death-risk-being-sedentary",
-		"title": "Drinking coffee may help lower death risk from being sedentary",
-		"description": "Drinking coffee may help lower the mortality risk of those who sit for prolonged periods of time, a new study indicates.",
-		"date": "2024-06-25T07:00:00.000Z"
-	},
-	{
-		"url": "https://www.medicalnewstoday.com/news",
-		"link": "https://www.medicalnewstoday.com/articles/how-mri-scans-can-help-with-parkinsons-disease-diagnosis-treatments",
-		"title": "How MRI scans can help with Parkinson's disease diagnosis, treatments",
-		"description": "Researchers say MRI scans can help identify brain atrophy in people with Parkinson's and help predict the progression of the disease as well as what…",
-		"date": "2024-06-25T07:00:00.000Z"
-	},
-	{
-		"url": "https://www.medicalnewstoday.com/news",
-		"link": "https://www.medicalnewstoday.com/articles/study-suggests-2-vitamin-b-deficiencies-may-play-role-parkinsons-disease",
-		"title": "Study suggests 2 vitamin B deficiencies may play a role in Parkinson's disease",
-		"description": "A new study reveals a link between gut microbiota and Parkinson's disease, finding that people may have fewer bacteria that produce riboflavin…",
-		"date": "2024-06-24T07:00:00.000Z"
-	},
-	{
-		"url": "https://www.medicalnewstoday.com/news",
-		"link": "https://www.medicalnewstoday.com/articles/how-keto-diets-may-help-boost-memory-brain-health-later-in-life",
-		"title": "How keto diets may help boost memory, brain health later in life",
-		"description": "The most detailed study to date conducted in aging male mice reveals some of the mechanisms through which a ketogenic diet may help protect the aging…",
-		"date": "2024-06-23T07:00:00.000Z"
+		"link": "https://www.medicalnewstoday.com/articles/alzheimers-biomarkers-linked-blood-vessel-vascular-changes-brain",
+		"title": "Study identifies Alzheimer's biomarkers linked to blood vessel changes in the brain",
+		"description": "Researchers have found unique molecular changes in the blood-brain barrier of people with Alzheimer’s disease, markers of which can be detected in the…",
+		"date": "2024-07-03T07:00:00.000Z"
 	},
 	{
 		"url": "https://nahc.org/nahc-newsroom/",
-		"link": "https://news.bloomberglaw.com/health-law-and-business/home-health-agencies-to-renew-suit-over-medicare-payment-rates",
-		"title": "Home Health Agencies to Renew Suit Over Medicare Payment Rates",
-		"date": "2024-06-28T07:00:00.000Z"
+		"link": "https://nahc.org/cms-medicaid-updates/",
+		"title": "CMS Medicaid Updates",
+		"date": "2024-07-09T07:00:00.000Z"
 	},
 	{
 		"url": "https://nahc.org/nahc-newsroom/",
-		"link": "https://nahc.org/nahc-nhpco-alliance-update/",
-		"title": "NAHC-NHPCO Alliance Update",
-		"date": "2024-06-28T07:00:00.000Z"
+		"link": "https://nahc.org/bill-dombi-to-all-technology-leaders-apply-now-for-the-hctac-summit/",
+		"title": "Bill Dombi to All Technology Leaders: Apply Now for the HCTAC Summit",
+		"date": "2024-07-09T07:00:00.000Z"
 	},
 	{
 		"url": "https://nahc.org/nahc-newsroom/",
-		"link": "https://nahc.org/2025-home-health-prospective-payment-system-rate-update-proposed-rule/",
-		"title": "2025 Home Health Prospective Payment System Rate Update, Proposed Rule",
-		"date": "2024-06-28T07:00:00.000Z"
+		"link": "https://nahc.org/proposed-new-oasis-items/",
+		"title": "Proposed New OASIS Items",
+		"date": "2024-07-08T07:00:00.000Z"
 	},
 	{
 		"url": "https://nahc.org/nahc-newsroom/",
-		"link": "https://nahc.org/home-health-education-at-fmc-2024/",
-		"title": "Home Health Education at FMC 2024",
-		"date": "2024-06-27T07:00:00.000Z"
+		"link": "https://nahc.org/next-cms-open-door-forum-is-tomorrow-3/",
+		"title": "Next CMS Open Door Forum is Tomorrow",
+		"date": "2024-07-08T07:00:00.000Z"
 	},
 	{
 		"url": "https://nahc.org/nahc-newsroom/",
-		"link": "https://nahc.org/workforce-unplugged-live-qa-with-angelo-spinola-brandi-kurtyka/",
-		"title": "Workforce Unplugged: Live Q&A with Angelo Spinola & Brandi Kurtyka",
-		"date": "2024-06-27T07:00:00.000Z"
+		"link": "https://nahc.org/only-10-days-left-for-early-bird-prices-to-the-home-care-and-hospice-conference-expo/",
+		"title": "Only 10 Days Left for Early Bird Prices to the Home Care and Hospice Conference & Expo!",
+		"date": "2024-07-05T07:00:00.000Z"
 	},
 	{
 		"url": "https://nahc.org/nahc-newsroom/",
-		"link": "https://nahc.org/cms-home-health-proposed-rule-includes-another-big-rate-cut/",
-		"title": "CMS Home Health Proposed Rule Includes Another Big Rate Cut",
-		"date": "2024-06-26T07:00:00.000Z"
+		"link": "https://nahc.org/grant-opportunity-to-improve-senior-health/",
+		"title": "Grant Opportunity to Improve Senior Health",
+		"date": "2024-07-05T07:00:00.000Z"
 	},
 	{
 		"url": "https://nahc.org/nahc-newsroom/",
-		"link": "https://nahc.org/building-a-culture-of-inclusivity-for-lgbtq-clients-and-staff/",
-		"title": "Building a Culture of Inclusivity for LGBTQ+ Clients and Staff",
-		"date": "2024-06-26T07:00:00.000Z"
-	},
-	{
-		"url": "https://nahc.org/nahc-newsroom/",
-		"link": "https://nahc.org/home-care-hospice-news-review-69/",
+		"link": "https://nahc.org/home-care-hospice-news-review-70/",
 		"title": "Home Care & Hospice News Review",
-		"date": "2024-06-25T07:00:00.000Z"
+		"date": "2024-07-03T07:00:00.000Z"
 	},
 	{
 		"url": "https://nahc.org/nahc-newsroom/",
-		"link": "https://nahc.org/new-report-on-medicaid-eligibility-for-elderly-disabled/",
-		"title": "New Report on Medicaid Eligibility for Elderly, Disabled",
-		"date": "2024-06-25T07:00:00.000Z"
-	},
-	{
-		"url": "https://nahc.org/nahc-newsroom/",
-		"link": "https://www.mcknightshomecare.com/news/report-states-improving-medicaid-renewal-processes-for-seniors-people-with-disabilities/",
-		"title": "Report: States improving Medicaid renewal processes for seniors, people with disabilities",
-		"date": "2024-06-24T07:00:00.000Z"
-	},
-	{
-		"url": "https://nahc.org/nahc-newsroom/",
-		"link": "https://nahc.org/today-new-hospice-care-draft-legislation-learn-more-provide-feedback/",
-		"title": "TODAY! New Hospice CARE Draft Legislation: Learn More & Provide Feedback",
-		"date": "2024-06-24T07:00:00.000Z"
-	},
-	{
-		"url": "https://nahc.org/nahc-newsroom/",
-		"link": "https://nahc.org/what-the-new-managed-care-rule-means-for-care-at-home-providers/",
-		"title": "What the New Managed Care Rule Means for Care at Home Providers",
-		"date": "2024-06-24T07:00:00.000Z"
+		"link": "https://nahc.org/new-overtime-rule-goes-into-effect/",
+		"title": "New Overtime Rule Goes Into Effect",
+		"date": "2024-07-03T07:00:00.000Z"
 	},
 	{
 		"url": "https://dailycaring.com/",
@@ -674,6 +285,42 @@
 	},
 	{
 		"url": "https://dailycaring.com/",
+		"link": "https://dailycaring.com/3-tips-to-get-peace-of-mind-when-using-an-in-home-caregiver/",
+		"title": "3 Tips for Peace of Mind When Using an In-Home Caregiver",
+		"description": "Get peace of mind when getting caregiving help If you’re concerned or feeling guilty about hiring someone to help care..."
+	},
+	{
+		"url": "https://dailycaring.com/",
+		"link": "https://dailycaring.com/6-ways-to-help-someone-who-doesnt-know-theyre-ill-anosognosia-in-dementia/",
+		"title": "6 Ways to Help Someone Who Doesn’t Believe They Have Dementia",
+		"description": "Why wouldn’t someone believe they have dementia? Family caregivers often ask “how do you tell someone they have dementia”? And..."
+	},
+	{
+		"url": "https://dailycaring.com/",
+		"link": "https://dailycaring.com/why-its-good-to-find-humor-in-caregiving/",
+		"title": "Humor in Caregiving Eases Tension and Boosts Mood",
+		"description": "Funny moments can happen during caregiving Chronic illnesses and serious diseases like Alzheimer’s disease are certainly no laughing matter. But..."
+	},
+	{
+		"url": "https://dailycaring.com/",
+		"link": "https://dailycaring.com/low-cost-therapy-options-help-caregivers-cope/",
+		"title": "4 Affordable Counseling Services Help Reduce Caregiver Stress",
+		"description": "Counseling or therapy helps you manage caregiving stress Talking with a counselor or therapist is a shortcut to figuring out..."
+	},
+	{
+		"url": "https://dailycaring.com/",
+		"link": "https://dailycaring.com/6-affordable-products-that-help-seniors-stay-cool-in-hot-weather/",
+		"title": "7 Affordable Products Help Seniors Stay Cool in Hot Weather",
+		"description": "Simple products protect seniors from heat stroke Seniors are more vulnerable to overheating and heat stroke because older bodies don’t..."
+	},
+	{
+		"url": "https://dailycaring.com/",
+		"link": "https://dailycaring.com/4-reasons-dementia-activities-are-important-and-5-ways-to-adapt-everyday-tasks/",
+		"title": "4 Benefits of Activities for Dementia and 5 Ways to Adapt Daily Tasks",
+		"description": "Activities in dementia boost self-esteem When someone has Alzheimer’s disease or dementia, their cognitive function may be declining, but they..."
+	},
+	{
+		"url": "https://dailycaring.com/",
 		"link": "https://dailycaring.com/real-life-caregiver-stories-2/",
 		"title": "Real-life Caregiver Stories: Acceptance & Living in the Moment",
 		"description": "Caregiver stories let you know you’re not alone Real-life caregiver stories are important for caregivers to hear. Knowing that others..."
@@ -683,42 +330,6 @@
 		"link": "https://dailycaring.com/fantastic-4th-of-july-activities-for-seniors/",
 		"title": "16 Ways to Adapt 4th of July Activities for Seniors",
 		"description": "Date published: 2024-6-25 Make 4th of July activities fun for seniors When older adults are included in group celebrations like 4th..."
-	},
-	{
-		"url": "https://dailycaring.com/",
-		"link": "https://dailycaring.com/10-tips-to-keep-seniors-cool-in-hot-weather/",
-		"title": "How to Keep Seniors Cool in Hot Weather: 10 Tips",
-		"description": "Seniors are at risk for heat stroke during hot weather Seniors need to be more aware of overheating and heat..."
-	},
-	{
-		"url": "https://dailycaring.com/",
-		"link": "https://dailycaring.com/4-ways-to-overcome-caregiver-loneliness-in-dementia-care/",
-		"title": "4 Ways to Overcome Caregiver Loneliness in Dementia Care",
-		"description": "Caregiver loneliness makes dementia care more challenging When you’re caring for an older adult with Alzheimer’s disease or dementia, loneliness..."
-	},
-	{
-		"url": "https://dailycaring.com/",
-		"link": "https://dailycaring.com/simplify-complex-medication-routines-with-a-diy-pill-board/",
-		"title": "Simplify Complex Medication Routines with a DIY Pill Board",
-		"description": "When medication routines become complex or “non-standard,” it’s easy for mistakes or missed doses to happen. While caring for a..."
-	},
-	{
-		"url": "https://dailycaring.com/",
-		"link": "https://dailycaring.com/aging-at-home-essential-tips-for-safety-and-independence/",
-		"title": "Aging at Home: Essential Tips for Safety and Independence",
-		"description": "Many older adults wish to stay in their homes as they age. To make this a reality, a safe and..."
-	},
-	{
-		"url": "https://dailycaring.com/",
-		"link": "https://dailycaring.com/6-things-you-can-do-to-prevent-heat-stroke-in-seniors/",
-		"title": "6 Ways to Prevent Heat Stroke in Seniors",
-		"description": "Heat stroke in seniors is deadly In hot weather, heat stroke in seniors is a serious risk. Older bodies are..."
-	},
-	{
-		"url": "https://dailycaring.com/",
-		"link": "https://dailycaring.com/responding-to-4-common-dementia-accusations-stealing-poisoning-being-held-prisoner/",
-		"title": "4 Top Dementia Accusations: Stealing, Poisoning, Being Held Prisoner",
-		"description": "How to respond when falsely accused by someone with dementia It’s common for people with Alzheimer’s disease or dementia to..."
 	},
 	{
 		"url": "https://www.casacompanionhomecare.com/blog/",
@@ -781,63 +392,258 @@
 		"description": "In-home care provides a comforting and supportive environment where heart disease patients can receive the assistance they need while maintaining their independence. Living with heart disease is challenging but the right in home care lets patients manage their condition effectively. Home care aides offer personalized assistance tailored to the unique needs of heart disease patients,…"
 	},
 	{
-		"url": "https://www.healthcarefinancenews.com/news",
-		"link": "https://www.healthcarefinancenews.com/news/dialysis-facilities-get-22-payment-boost",
-		"title": "Dialysis providers get a 2.2% payment boost",
-		"description": "The rule also proposes to extend Medicare payment to dialysis in the home setting for beneficiaries with acute kidney ..."
+		"title": "Health",
+		"link": "https://news.yahoo.com/health/",
+		"snippet": "8 hours ago ... The latest news and headlines from Yahoo News. Get breaking news stories and in-depth coverage with videos and photos."
 	},
 	{
-		"url": "https://www.healthcarefinancenews.com/news",
-		"link": "https://www.healthcarefinancenews.com/news/challenges-facing-childrens-and-rural-hospitals",
-		"title": "The challenges facing children's and rural hospitals",
-		"description": "Akron Children's Hospital gets half its reimbursement from Medicaid, with all health systems facing a ..."
+		"title": "Newsroom | Mon Health Medical Center",
+		"link": "https://news.google.com/__i/rss/rd/articles/CBMiK2h0dHBzOi8vd3d3Lm1vbmhlYWx0aC5jb20vbWFpbi9uZXdzcm9vbS81NjXSAQA?oc=5",
+		"snippet": "8 hours ago ... Check out the latest news articles in healthcare at Mon General Hospital."
 	},
 	{
-		"url": "https://www.healthcarefinancenews.com/news",
-		"link": "https://www.healthcarefinancenews.com/news/rcm-accelerates-cash-and-secure-financial-health",
-		"title": "RCM accelerates cash and secures financial health",
-		"description": "Mike Vigo, chief revenue officer at UCSD, addresses the \"Revenue Cycle Management Technology Adoption ..."
+		"title": "Danbury, CT Classifieds",
+		"link": "https://news.google.com/__i/rss/rd/articles/CBMiXWh0dHBzOi8vcGF0Y2guY29tL2Nvbm5lY3RpY3V0L2RhbmJ1cnkvY2xhc3NpZmllZHMvam9icy8xMjUzNDMvb2ZmaWNlLXNwYWNlLWZvci1yZW50LWluLWRhcmllbtIBAA?oc=5",
+		"snippet": "5 days ago ... Local market ads for gigs & services, free stuff, for sale, announcements, housing, job listings and lost and found in Danbury, CT."
 	},
 	{
-		"url": "https://www.healthcarefinancenews.com/news",
-		"link": "https://www.healthcarefinancenews.com/news/arkansas-sues-optum-express-scripts-and-others-over-opioid-epidemic",
-		"title": "Arkansas sues Optum, Express Scripts and others over opioid epidemic",
-		"description": "The action of PBMs, combined with those of manufacturers, distributors and pharmacies created ..."
+		"title": "What to know about the latest COVID variants, Minnesota testing ...",
+		"link": "https://news.google.com/__i/rss/rd/articles/CBMieWh0dHBzOi8vd3d3LnN0YXJ0cmlidW5lLmNvbS93aGF0LXlvdS1uZWVkLXRvLWtub3ctYWJvdXQtY292aWQtZGVsdGEtdmFyaWFudC1tYXNrLW1pbm5lc290YS12YWNjaW5lLWNvcm9uYXZpcnVzLzYwMDA4NDc5My_SAQA?oc=5",
+		"snippet": "7 days ago ... ... patients until the end of 2024, according to the Minnesota Department of Health. There is also a new monoclonal antibody treatment called Pemgarda that has ..."
 	},
 	{
-		"url": "https://www.healthcarefinancenews.com/news",
-		"link": "https://www.healthcarefinancenews.com/news/hhs-announces-cost-savings-64-prescription-drugs",
-		"title": "HHS announces cost savings for 64 prescription drugs",
-		"description": "The drugs will have a lowered Part B coinsurance rate, since each drug company raised prices faster than the ..."
+		"title": "The Best Home Warranty for Veterans of 2024",
+		"link": "https://news.google.com/__i/rss/rd/articles/CBMiUWh0dHBzOi8vd3d3Lm1hcmtldHdhdGNoLmNvbS9waWNrcy9ndWlkZXMvZmluYW5jZS9iZXN0LWhvbWUtd2FycmFudHktZm9yLXZldGVyYW5zL9IBAA?oc=5",
+		"snippet": "6 days ago ... She has also guided content strategy and edited in the insurance, venture capital, financial and healthcare fields. More Home Warranty Resources:."
 	},
 	{
-		"url": "https://www.healthcarefinancenews.com/news",
-		"link": "https://www.healthcarefinancenews.com/news/lawmakers-ask-cms-greater-oversight-ma-coverage-decisions",
-		"title": "Lawmakers ask CMS for greater oversight of MA coverage decisions",
-		"description": "\"Plans continue to use AI tools to erroneously deny care and contradict provider assessment ..."
+		"title": "Calendar | The Newtown Bee",
+		"link": "https://news.google.com/__i/rss/rd/articles/CBMiPGh0dHBzOi8vd3d3Lm5ld3Rvd25iZWUuY29tL2NhbGVuZGFyLz9jYWxlbmRhcl9kYXk9MjAyMS0wMy0yMdIBAA?oc=5",
+		"snippet": "10 hours ago ... News · Business · Features · Police Reports · Sports · Education · Living · Cultural Events · Games · Health · Religion · Restaurants · Way We Were · Opinion."
 	},
 	{
-		"url": "https://www.healthcarefinancenews.com/news",
-		"link": "https://www.healthcarefinancenews.com/news/finance-executives-address-three-big-challenges-revenue-hfma",
-		"title": "Finance executives address the three big challenges for revenue",
-		"description": "AI and automation are being used wherever possible, say experts from Kaiser, CHS and King's ..."
+		"title": "Bendigo news, sport and weather | Bendigo Advertiser | Bendigo, VIC",
+		"link": "https://news.google.com/__i/rss/rd/articles/CBMiUmh0dHBzOi8vd3d3LmJlbmRpZ29hZHZlcnRpc2VyLmNvbS5hdS9zdG9yeS83NzkxOTQ0L3doZW4tc29jaWFsLWlzLXVuc29jaWFsLz9jcz0xNjTSAQA?oc=5",
+		"snippet": "2 days ago ... Some fear what this online home care platform could bring. Not Shelby. Bendigo health care workers are using it. Not everyone's a fan. Jonathon Magrath."
 	},
 	{
-		"url": "https://www.healthcarefinancenews.com/news",
-		"link": "https://www.healthcarefinancenews.com/news/former-blue-shield-california-employee-under-investigation-fraud",
-		"title": "Former Blue Shield of California employee under investigation for fraud",
-		"description": "The employee, reportedly an executive who was an interim medical director, allegedly ..."
+		"title": "Snapchat Partners With Ticketmaster to Match Users to Local ...",
+		"link": "https://news.google.com/__i/rss/rd/articles/CBMiNGh0dHBzOi8vZG90LmxhL3NuYXBjaGF0LXRpY2tldG1hc3Rlci0yNjU2NjkyMDg3Lmh0bWzSAQA?oc=5/",
+		"snippet": "5 days ago ... ... News Feature - dot.LA ... , a provider of durable medical equipment and single-use medical supplies to the home care market was acquired by SG Homecare."
 	},
 	{
-		"url": "https://www.healthcarefinancenews.com/news",
-		"link": "https://www.healthcarefinancenews.com/news/financial-disincentives-released-providers-who-commit-information-blocking",
-		"title": "Financial disincentives for providers who commit information blocking",
-		"description": "Final rule disincentives include hospitals not being able to earn three quarters of the ..."
+		"title": "AmazeVR Goes Global As VR Concerts Enter New Phase - dot.LA",
+		"link": "https://news.google.com/__i/rss/rd/articles/CBMiQ2h0dHBzOi8vZG90LmxhL3NtLWVudGVydGFpbm1lbnQtYW1hemV2ci12ci1jb25jZXJ0cy0yNjU3NjY5NjY3Lmh0bWzSAQA?oc=5",
+		"snippet": "5 days ago ... Western Drug Medical Supply, a provider of durable medical equipment and single-use medical supplies to the home care market was acquired by SG Homecare."
 	},
 	{
-		"url": "https://www.healthcarefinancenews.com/news",
-		"link": "https://www.healthcarefinancenews.com/news/healthcare-cyberattacks-are-costing-average-11-million-breach",
-		"title": "Healthcare cyberattacks are costing an average of $11 million per breach",
-		"description": "Ransomware attacks have dominated, accounting for over 70% of healthcare cyberattacks in the ..."
+		"title": "Canoo Unveils Electric Delivery Van a Week Before IPO - dot.LA",
+		"link": "https://news.google.com/__i/rss/rd/articles/CBMiJGh0dHBzOi8vZG90LmxhL2Nhbm9vLTI2NDk1MjE3NDQuaHRtbNIBAA?oc=5",
+		"snippet": "6 days ago ... ... news · Christine Rothacker · los angeles tech news · From Pitch Meetings to Power ... medical supplies to the home care market was acquired by SG Homecare."
+	},
+	{
+		"title": "Teaneck Events Calendar for July 8, 2024 - Teaneck, NJ Patch",
+		"link": "https://news.google.com/__i/rss/rd/articles/CBMibWh0dHBzOi8vcGF0Y2guY29tL25ldy1qZXJzZXkvdGVhbmVjay9hbXAvY2FsLzIwMjAwNzEyLzg1MTIzNi90ZWFuZWNrLWJsb29kLWRyaXZlLXVyZ2VudC1uZWVkLXdhbGstaW5zLXdlbGNvbWXSAQA?oc=5",
+		"snippet": "6 days ago ... July 8, 2024 Calendar of free events, paid events, and things to do in Teaneck, NJ."
+	},
+	{
+		"title": "Latest and Breaking News, Headlines, Live Updates ... - Yahoo News",
+		"link": "https://news.yahoo.com/health/",
+		"snippet": "8 hours ago ... Home · Phones · Science · TVs · Climate change · Health · Science · 2024 election ... Health·ABC News. Yale releases report critical of UK transgender youth care ..."
+	},
+	{
+		"title": "Newsroom | Mon Health Medical Center",
+		"link": "https://news.google.com/__i/rss/rd/articles/CBMiK2h0dHBzOi8vd3d3Lm1vbmhlYWx0aC5jb20vbWFpbi9uZXdzcm9vbS81NjXSAQA?oc=5",
+		"snippet": "8 hours ago ... Check out the latest news articles in healthcare at Mon General Hospital ... Home Care Equipment and Supplies · Hospitalist · Imaging Services/Radiology."
+	},
+	{
+		"title": "False reports claim Biden suffered medical emergency on Air Force ...",
+		"link": "https://apnews.com/article/fact-check-misinformation-biden-medical-emergency-5176f10443a286f581221fe994b5ad78",
+		"snippet": "4 days ago ... ... home in Delaware after a campaign stop in Wisconsin ... News' George Stephanopolous and getting into a car, all without issue. There were no signs of an ..."
+	},
+	{
+		"title": "Pittsburgh Post-Gazette",
+		"link": "https://news.google.com/newspapers/url?client=ca-print-news-pittsburgh_post_gazette&format=GNPP&num=0&channel=STN-ca-print-news-pittsburgh_post_gazette+STN-GNID:QX1G:19790223&q=http://www.post-gazette.com&source=gbs_pub_info&usg=AOvVaw0_VI9BA_DiVGgBkUawGx8H",
+		"snippet": "9 hours ago ... ... News Home · Crime & Courts · Election 2024 · Politics · Education · Health & Wellness · Transportation · State · Nation · World · Weather News · Obituaries."
+	},
+	{
+		"title": "OHSU coronavirus (COVID-19) response | OHSU News",
+		"link": "https://news.google.com/__i/rss/rd/articles/CBMiTGh0dHBzOi8vbmV3cy5vaHN1LmVkdS8yMDIyLzExLzAyL3ByZXBhcmluZy1mb3ItdGhlLW5vdmVsLWNvcm9uYXZpcnVzLWF0LW9oc3XSAQA?oc=5",
+		"snippet": "5 days ago ... OHSU Hospital and OHSU Health Hillsboro Medical Center hospitalization details: ... homes, limiting barriers to health care access. The service has ..."
+	},
+	{
+		"title": "Maine has no testing requirement for medical cannabis. Public ...",
+		"link": "https://apnews.com/us-news/marijuana-maine-general-news-31efc8f44535ffbf6fe57bae1243028c",
+		"snippet": "1 day ago ... Public health advocates and state officials want to see testing requirements ... home-based programs and make small batches, so extensive testing ..."
+	},
+	{
+		"title": "News | Imperial News | Imperial College London",
+		"link": "https://news.google.com/__i/rss/rd/articles/CBMiTmh0dHBzOi8vd3d3LmltcGVyaWFsLmFjLnVrL25ld3MvMjI2NTEzL21hbnktaWN1LXN0YWZmLWhhdmUtZXhwZXJpZW5jZWQtbWVudGFsL9IBUmh0dHBzOi8vd3d3LmltcGVyaWFsLmFjLnVrL25ld3MvMjI2NTEzL21hbnktaWN1LXN0YWZmLWhhdmUtZXhwZXJpZW5jZWQtbWVudGFsL2FtcC8?oc=5",
+		"snippet": "7 days ago ... Imperial News. Imperial College London. MenuHome College and Campus Science Engineering Health Business. Search field. Search begins for architects to design ..."
+	},
+	{
+		"title": "Joe Biden | AP News",
+		"link": "https://apnews.com/hub/joe-biden",
+		"snippet": "6 minutes ago ... The White House faces many questions about Biden's health and medical history. ... home in Delaware after a campaign stop in Wisconsin. July 6. Image · House ..."
+	},
+	{
+		"title": "Associated Press News: Breaking News, Latest Headlines and ...",
+		"link": "https://apnews.com/",
+		"snippet": "8 hours ago ... Read the latest headlines, breaking news, and videos at APNews.com, the definitive source for independent journalism from every corner of the globe."
+	},
+	{
+		"title": "Bangor Daily News - Maine news, sports, politics, and obituaries",
+		"link": "https://news.google.com/newspapers/url?client=ca-print-news-bangor_daily_news&format=GNPP&num=0&channel=STN-ca-print-news-bangor_daily_news+STN-GNID:7R30:19990112&q=http://www.bangordailynews.com/&source=gbs_pub_info&usg=AOvVaw1a1Et6sZNIhFgf_YYNg__G",
+		"snippet": "7 days ago ... Maine's premier news source. With local news from across the state, opinion, obits, and political coverage, The Bangor Daily News brings Maine together."
+	},
+	{
+		"title": "Practo buys healthcare analytics firm Enlightiks",
+		"link": "https://news.google.com/__i/rss/rd/articles/CBMib2h0dHBzOi8vd3d3LmxpdmVtaW50LmNvbS9Db21wYW5pZXMvbWFxWlFpQlozdE9wVnNuOFhra3VPTy9QcmFjdG8tYnV5cy1oZWFsdGhjYXJlLWFuYWx5dGljcy1maXJtLUVubGlnaHRpa3MuaHRtbNIBAA?oc=5",
+		"snippet": "4 days ago ... Practo is the most well-funded home-grown healthcare technology start-up ... Download The Mint News App to get Daily Market Updates & Live Business News."
+	},
+	{
+		"title": "Crisis in the occupied Palestinian territory: What is happening and ...",
+		"link": "https://news.google.com/__i/rss/rd/articles/CBMiQmh0dHBzOi8vd3d3LnJlc2N1ZS5vcmcvYXJ0aWNsZS9jcmlzaXMtcGFsZXN0aW5lLXdoYXQteW91LW5lZWQta25vd9IBAA",
+		"snippet": "5 days ago ... The International Rescue Committee (IRC) and partners in Gaza are delivering emergency and life-saving medical care, including direct medical care, in Gaza's ..."
+	},
+	{
+		"title": "The Best Home Warranty for Veterans of 2024",
+		"link": "https://news.google.com/__i/rss/rd/articles/CBMiUWh0dHBzOi8vd3d3Lm1hcmtldHdhdGNoLmNvbS9waWNrcy9ndWlkZXMvZmluYW5jZS9iZXN0LWhvbWUtd2FycmFudHktZm9yLXZldGVyYW5zL9IBAA?oc=5",
+		"snippet": "6 days ago ... She has also guided content strategy and edited in the insurance, venture capital, financial and healthcare fields. More Home Warranty Resources:."
+	},
+	{
+		"title": "10 Ways to Get Free Money From the Government - US News Money",
+		"link": "https://news.google.com/__i/rss/rd/articles/CBMic2h0dHBzOi8vbW9uZXkudXNuZXdzLmNvbS9tb25leS9wZXJzb25hbC1maW5hbmNlL2ZhbWlseS1maW5hbmNlL3NsaWRlc2hvd3MvaG93LXRvLWdldC1mcmVlLW1vbmV5LWZyb20tdGhlLWdvdmVybm1lbnTSAQA?oc=5/",
+		"snippet": "22 hours ago ... Emergency Rental Assistance. Low-Income Home Energy Assistance. The Lifeline Program. Child Care and Development Fund. Down Payment Assistance. Pell Grant."
+	},
+	{
+		"title": "Articles | Northside Hospital",
+		"link": "https://news.google.com/__i/rss/rd/articles/CBMifmh0dHBzOi8vd3d3Lm5vcnRoc2lkZS5jb20vYWJvdXQvbmV3cy1jZW50ZXIvYXJ0aWNsZXMvMjAyMi8xMi8xMi9ub3J0aHNpZGUtZ3dpbm5ldHQtZ2V0cy1vay10by1idWlsZC1hbGwtMTctZmxvb3JzLW9mLW5ldy10b3dlctIBAA?oc=5",
+		"snippet": "7 days ago ... Northside Hospital Home About News Center Articles. Share · Click to email ... Northside Hospital is committed to expanding access to leading health care across ..."
+	},
+	{
+		"title": "Reading Eagle – Reading, PA News, Sports, Weather, Things to Do",
+		"link": "https://news.google.com/newspapers/url?client=ca-print-news-reading_eagle&format=GNPP&num=0&channel=STN-ca-print-news-reading_eagle+STN-GNID:5FBY:19830705&q=http://readingeagle.com/&source=gbs_pub_info&usg=AOvVaw2RASbG_7fB7NZiFy0HsNSx",
+		"snippet": "8 hours ago ... Philadelphia sports radio host Howard Eskin suspended from Phillies home games over 'unwelcome kiss' · Reading man dies after kayak capsized on Schuylkill River ..."
+	},
+	{
+		"title": "Ashland University News Center | Ashland",
+		"link": "https://news.google.com/__i/rss/rd/articles/CBMiKGh0dHA6Ly93d3cuYXNobGFuZC5lZHUvYWJvdXQvbmV3cy1jZW50ZXLSAQA?oc=5",
+		"snippet": "7 days ago ... home · About; News Center. Title. News Center. News Center. Menu ... Health to advance his ongoing research on eye lens development. This latest ..."
+	},
+	{
+		"title": "Biden's ABC interview: What to know as president insists 'I am ...",
+		"link": "https://apnews.com/article/president-joe-biden-campaign-wisconsin-abc-news-e4657f86f5e82b10a5fefb526bc49b08",
+		"snippet": "4 days ago ... President Joe Biden has used a highly anticipated TV interview to repeatedly reject taking an independent medical ... news in all formats and the essential ..."
+	},
+	{
+		"title": "Implementation of the future regulations - GOV.UK",
+		"link": "https://news.google.com/__i/rss/rd/articles/CBMisQFodHRwczovL3d3dy5nb3YudWsvZ292ZXJubWVudC9wdWJsaWNhdGlvbnMvaW1wbGVtZW50YXRpb24tb2YtdGhlLWZ1dHVyZS1yZWd1bGF0aW9uLW9mLW1lZGljYWwtZGV2aWNlcy1hbmQtZXh0ZW5zaW9uLW9mLXN0YW5kc3RpbGwtcGVyaW9kL2ltcGxlbWVudGF0aW9uLW9mLXRoZS1mdXR1cmUtcmVndWxhdGlvbnPSAQA?oc=5",
+		"snippet": "7 days ago ... Home · Brexit · Implementation of medical devices future regime ... general medical devices, including custom-made devices, compliant with the EU medical ..."
+	},
+	{
+		"title": "What COVID-19 variants are going around in July 2024? | Nebraska ...",
+		"link": "https://news.google.com/__i/rss/rd/articles/CBMiSWh0dHBzOi8vd3d3Lm5lYnJhc2thbWVkLmNvbS9DT1ZJRC93aGF0LWNvdmlkLTE5LXZhcmlhbnRzLWFyZS1nb2luZy1hcm91bmTSAQA?oc=5",
+		"snippet": "1 day ago ... Get health information you can use, fact-checked by Nebraska Medicine experts. Breadcrumb. Home Advancing Health ... The great news is that these proven ..."
+	},
+	{
+		"title": "What COVID-19 variants are going around in July 2024? | Nebraska ...",
+		"link": "https://news.google.com/__i/rss/rd/articles/CBMiSWh0dHBzOi8vd3d3Lm5lYnJhc2thbWVkLmNvbS9DT1ZJRC93aGF0LWNvdmlkLTE5LXZhcmlhbnRzLWFyZS1nb2luZy1hcm91bmTSAQA?oc=5",
+		"snippet": "1 day ago ... Get health information you can use, fact-checked by Nebraska Medicine experts. Breadcrumb. Home Advancing Health ... The great news is that these proven ..."
+	},
+	{
+		"title": "The 2 Best Electric Vehicle Chargers for Home of 2024 | Reviews by ...",
+		"link": "https://news.google.com/__i/rss/rd/articles/CBMiU2h0dHBzOi8vd3d3Lm55dGltZXMuY29tL3dpcmVjdXR0ZXIvcmV2aWV3cy9iZXN0LWVsZWN0cmljLXZlaGljbGUtY2hhcmdlcnMtZm9yLWhvbWUv0gEA?oc=5",
+		"snippet": "7 days ago ... After 28 hours of research and 85 hours of testing, we've found the best ways to charge your electric vehicle at home ... Health. Medical · Blood pressure ..."
+	},
+	{
+		"title": "Danbury, CT Classifieds",
+		"link": "https://news.google.com/__i/rss/rd/articles/CBMiXWh0dHBzOi8vcGF0Y2guY29tL2Nvbm5lY3RpY3V0L2RhbmJ1cnkvY2xhc3NpZmllZHMvam9icy8xMjUzNDMvb2ZmaWNlLXNwYWNlLWZvci1yZW50LWluLWRhcmllbtIBAA?oc=5",
+		"snippet": "5 days ago ... Local market ads for gigs & services, free stuff, for sale, announcements, housing, job listings and lost and found in Danbury, CT."
+	},
+	{
+		"title": "Israel-Hamas war: Israeli bombardment in Gaza City forces medical ...",
+		"link": "https://apnews.com/article/israel-palestinians-hamas-war-news-07-09-2024-5c8eb2a36e22fb0ea7666b73e5c0b54c",
+		"snippet": "11 hours ago ... ... Health Ministry. Nearly the entire population has been driven from their homes. Many have been displaced multiple times. Hundreds of thousands are packed ..."
+	},
+	{
+		"title": "House keys carry symbolic weight for Palestinians families ...",
+		"link": "https://apnews.com/article/gaza-displacement-israel-war-900c4bacf70080249ea8e62f818c410f",
+		"snippet": "22 hours ago ... MUWASI, Gaza Strip (AP) — On his key chain, Hassan Nofal keeps the keys to two homes. One is to the house of his grandparents in what is now southern Israel ..."
+	},
+	{
+		"title": "Dominican Republic travel advice - GOV.UK",
+		"link": "https://news.google.com/__i/rss/rd/articles/CBMiR2h0dHBzOi8vd3d3Lmdvdi51ay9mb3JlaWduLXRyYXZlbC1hZHZpY2UvZG9taW5pY2FuLXJlcHVibGljL2Nvcm9uYXZpcnVz0gEA?oc=5",
+		"snippet": "5 days ago ... Health · Getting help. Subscriptions. Get email alerts. Warnings and insurance. Still current at: 9 July 2024; Updated: 5 July 2024; Latest update: Update on ..."
+	},
+	{
+		"title": "Most Johns Hopkins medical students will no longer pay tuition ...",
+		"link": "https://apnews.com/article/bloomberg-philanthropy-john-hopkins-university-53ed82c14c4d4b07cb2675a9ca1829f9",
+		"snippet": "2 days ago ... ... medical school and the school of nursing and public health.” Bloomberg Philanthropies previously gifted $1.8 billion to Johns Hopkins in 2018 to ensure that ..."
+	},
+	{
+		"title": "Man hurt when home in rural Wisconsin explodes has died ...",
+		"link": "https://apnews.com/article/lafayette-house-explosion-wisconsin-9c8a354c5b4e8653cba1ef9f926acd84",
+		"snippet": "6 days ago ... He was flown by medical helicopter to a local hospital trauma center where ... news business. More than half the world's population sees AP journalism ..."
+	},
+	{
+		"title": "Indian mother delivers baby on boat as her river island is inundated ...",
+		"link": "https://apnews.com/article/india-floods-river-birth-boat-bb281029d775694bedc79ad08254431e",
+		"snippet": "6 days ago ... Jahanara Khatoon, 25, had just given birth on the boat on their way to a healthcare center, surrounded by the raging floodwaters of the Brahmaputra River. “I am ..."
+	},
+	{
+		"title": "World News: Top & Breaking World News Today | AP News",
+		"link": "https://apnews.com/world-news",
+		"snippet": "7 hours ago ... All Rights Reserved. Live updates: Election 2024 · Biden's health · 'Rust ... Greek authorities have evacuated a children's hospital and a retirement home ..."
+	},
+	{
+		"title": "6 Best Biotech Stocks to Buy for 2024 | Investing | U.S. News",
+		"link": "https://news.google.com/__i/rss/rd/articles/CBMiYGh0dHBzOi8vbW9uZXkudXNuZXdzLmNvbS9pbnZlc3Rpbmcvc3RvY2stbWFya2V0LW5ld3Mvc2xpZGVzaG93cy9iZXN0LWJpb3RlY2gtc3RvY2tzLXRvLWJ1eS10b2RhedIBAA?oc=5",
+		"snippet": "7 days ago ... Best Medical Loans · Best Low Interest Personal Loans · See All Best Of Pages ... health care data and has exceptional revenue visibility. Argus has a \"buy ..."
+	},
+	{
+		"title": "Strike kills family as Israeli evacuation order sparks panicked flight ...",
+		"link": "https://apnews.com/article/israel-palestinians-hamas-war-news-07-02-2024-7ea786c949342f6c292984a926bf7620",
+		"snippet": "7 days ago ... Patients continued to be evacuated from a hospital in the southern Gaza city of Khan Younis on Tuesday, after an overnight strike hit a home nearby and ..."
+	},
+	{
+		"title": "Climate and environment | AP News",
+		"link": "https://apnews.com/climate-and-environment",
+		"snippet": "1 hour ago ... Overall health of Chesapeake Bay gets best grade in more than 2 decades ... Greek authorities have evacuated a children's hospital and a retirement home ..."
+	},
+	{
+		"title": "Home | Montreal Gazette | Montreal Gazette",
+		"link": "https://news.google.com/newspapers/url?client=ca-print-news-the_gazette&format=GNPP&num=0&channel=STN-ca-print-news-the_gazette+STN-GNID:T0PU:19800623&q=http://www.montrealgazette.com&source=gbs_pub_info&usg=AOvVaw3psPYlaz9IueyAGejt1pkJ",
+		"snippet": "3 days ago ... Read latest breaking news, updates, and headlines. Montreal Gazette offers ... West Island health authority using AI to offer more varied menus to patients."
+	},
+	{
+		"title": "Gabby Landsverk - Business Insider",
+		"link": "https://news.google.com/__i/rss/rd/articles/CBMiLmh0dHBzOi8vd3d3Lmluc2lkZXIuY29tL2F1dGhvci9nYWJieS1sYW5kc3ZlcmvSAQA?oc=5",
+		"snippet": "6 days ago ... Gabby has a background in investigative journalism (previously contributing research for an investigation on correctional healthcare for the New Yorker) and a ..."
+	},
+	{
+		"title": "US | Yahoo News - Latest News & Headlines",
+		"link": "https://news.yahoo.com/us/",
+		"snippet": "7 hours ago ... Health · Home · Phones · Science · TVs · Climate change · Health · Science · 2024 election · Originals · The 360 · Life · Health · COVID-19 · Fall allergies ..."
+	},
+	{
+		"title": "What to know about the latest COVID variants, Minnesota testing ...",
+		"link": "https://news.google.com/__i/rss/rd/articles/CBMieWh0dHBzOi8vd3d3LnN0YXJ0cmlidW5lLmNvbS93aGF0LXlvdS1uZWVkLXRvLWtub3ctYWJvdXQtY292aWQtZGVsdGEtdmFyaWFudC1tYXNrLW1pbm5lc290YS12YWNjaW5lLWNvcm9uYXZpcnVzLzYwMDA4NDc5My_SAQA?oc=5",
+		"snippet": "7 days ago ... You may find home rapid tests at pharmacies including Walgreens and CVS, grocery stores, health care providers and online. ADVERTISEMENT. Where can I see ..."
+	},
+	{
+		"title": "Cancer Prevention News",
+		"link": "https://news.google.com/articles/CBMiuAFodHRwczovL3d3dy5oZWFsaW8uY29tL2hlbWF0b2xvZ3ktb25jb2xvZ3kvY2FuY2VyLXByZXZlbnRpb24vbmV3cy9pbi10aGUtam91cm5hbHMvJTdCN2MxN2NiNTAtOGUxMC00ZWEwLTgzODQtOWI0Y2U0NWM0Yjc3JTdEL3JlZ3VsYXItYXNwaXJpbi11c2UtbWF5LWxvd2VyLXJpc2stZm9yLW92YXJpYW4tbGl2ZXItY2FuY2Vy0gEA?hl=en-PH&gl=PH&ceid=PH%3Aen",
+		"snippet": "2 days ago ... Find the latest Cancer Prevention news articles, videos, podcasts, and meeting coverage from medical experts and key opinion leaders you trust."
+	},
+	{
+		"title": "Cheapest Liability-Only Car Insurance Of 2024 – Forbes Advisor",
+		"link": "https://news.google.com/__i/rss/rd/articles/CBMiVWh0dHBzOi8vd3d3LmZvcmJlcy5jb20vYWR2aXNvci9jYXItaW5zdXJhbmNlL2Jlc3QtY2hlYXAtbGlhYmlsaXR5LW9ubHktY2FyLWluc3VyYW5jZS_SAQA?oc=5",
+		"snippet": "6 days ago ... He has covered insurance for a decade, including auto, home, life and health. Before covering insurance, Les was a news editor and reporter for Patch and ..."
+	},
+	{
+		"title": "Indian Rap Star Baba Sehgal Wants to Help You Sleep Better",
+		"link": "https://news.google.com/__i/rss/rd/articles/CBMiUGh0dHBzOi8vd3d3Lm1kZGlvbmxpbmUuY29tL21hcmtldHMvaW5kaWFuLXJhcC1zdGFyLWJhYmEtc2VoZ2FsLWRyb3BzLWJhcnMtcmVzbWVk0gEA?oc=5",
+		"snippet": "5 days ago ... It was a constant frustration on the set and at home with my family,” Moore said. “When I learned that I had a medical condition called dry eye disease, I ..."
 	}
 ]

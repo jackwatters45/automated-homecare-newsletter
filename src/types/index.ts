@@ -16,6 +16,7 @@ export interface ArticleData {
 	title?: string;
 	description?: string;
 	date?: Date;
+	snippet?: string;
 }
 
 export interface ValidArticleData {
@@ -23,6 +24,7 @@ export interface ValidArticleData {
 	title: string;
 	description?: string;
 	date?: Date;
+	snippet?: string;
 }
 
 export interface ArticleDisplayData {
@@ -31,8 +33,18 @@ export interface ArticleDisplayData {
 	description: string;
 }
 
+export interface ArticleFilteringData {
+	title: string;
+	description?: string;
+}
+
 export interface ValidArticleDataWithCount extends ValidArticleData {
 	count: number;
 }
 
 export type NewsletterData = Awaited<ReturnType<typeof generateNewsletterData>>;
+
+export interface Category {
+	name: string;
+	articles: ArticleDisplayData[];
+}

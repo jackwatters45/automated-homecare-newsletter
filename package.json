@@ -1,12 +1,12 @@
 {
-	"name": "webscrape",
+	"name": "automated-homecare-newsletter",
 	"version": "1.0.0",
 	"type": "module",
 	"description": "",
 	"main": "dist/index.js",
 	"scripts": {
 		"test": "vitest",
-		"dev": "DEBUG=webscrape:* tsx src/index.ts",
+		"dev": "DEBUG=automated-homecare-newsletter:* tsx src/index.ts",
 		"build": "npx tsc",
 		"prestart": "npm run build",
 		"start": "node --import ./instrument.mjs ./dist/index.js"

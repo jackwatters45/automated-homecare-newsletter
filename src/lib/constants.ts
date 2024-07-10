@@ -24,15 +24,6 @@ export const SPECIFIC_PAGES: PageToScrape[] = [
 		dateSelector: ".fl-post-meta",
 	},
 	{
-		url: "https://www.homecaremag.com/news",
-		type: "client",
-		articleContainerSelector: "article",
-		linkSelector: "a",
-		titleSelector: ".field-node--node-title",
-		descriptionSelector: ".field-node--field-subhead",
-		dateSelector: undefined,
-	},
-	{
 		url: "https://www.mcknightshomecare.com/home/news/",
 		type: "client",
 		articleContainerSelector: ".article-teaser",
@@ -43,16 +34,6 @@ export const SPECIFIC_PAGES: PageToScrape[] = [
 	},
 	{
 		url: "https://homehealthcarenews.com/",
-		type: "server",
-		articleContainerSelector: ".entry-block",
-		linkSelector: "h2 > a",
-		titleSelector: ".entry-title",
-		descriptionSelector: undefined,
-		dateSelector: ".entry-date",
-		removeIfNoDate: true,
-	},
-	{
-		url: "https://hospicenews.com/",
 		type: "server",
 		articleContainerSelector: ".entry-block",
 		linkSelector: "h2 > a",
@@ -106,20 +87,22 @@ export const SPECIFIC_PAGES: PageToScrape[] = [
 		descriptionSelector: "p",
 		dateSelector: undefined,
 	},
-	{
-		url: "https://www.healthcarefinancenews.com/news",
-		type: "server",
-		articleContainerSelector: ".views-row",
-		linkSelector: "a",
-		titleSelector: ".field-content > a",
-		descriptionSelector: ".teaser",
-		dateSelector: undefined,
-	},
+	// {
+	// 	url: "https://www.healthcarefinancenews.com/news",
+	// 	type: "server",
+	// 	articleContainerSelector: ".views-row",
+	// 	linkSelector: "a",
+	// 	titleSelector: ".field-content > a",
+	// 	descriptionSelector: ".teaser",
+	// 	dateSelector: undefined,
+	// },
 ];
+
+export const TOPIC = "homecare (medical) and home health (medical)";
 
 export const RECURRING_FREQUENCY = 7 * 24 * 60 * 60 * 1000; // 7 days in milliseconds
 
-export const DESCRIPTION_MAX_LENGTH = 25;
+export const DESCRIPTION_MAX_LENGTH = 35;
 
 export const COMPANY_NAME = "TrollyCare";
 
