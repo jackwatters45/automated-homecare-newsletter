@@ -43,6 +43,7 @@ export async function generateNewsletterData() {
 		const googleSearchResults = await searchNews([
 			"homecare news medical",
 			"home health news medical",
+			"home care news medical",
 		]);
 
 		results.push(...googleSearchResults);
@@ -68,11 +69,12 @@ export async function generateNewsletterData() {
 		log("summary generated");
 
 		const categories = await generateCategories(articlesData);
+		writeTestData("display-data-full.json", categories);
 		log("categories generated", categories);
 
 		log("newsletter data generated");
 
-		return { articlesData, summary };
+		return { categories, summary };
 	} catch (error) {
 		console.error(error);
 	} finally {
@@ -84,11 +86,7 @@ export async function GenerateNewsletter() {
 	try {
 		const newsletterData = await generateNewsletterData();
 
-		if (
-			!newsletterData ||
-			!newsletterData.summary ||
-			newsletterData.articlesData.length < 10
-		) {
+		if (!newsletterData || !newsletterData.summary || newsletterData.categories) {
 			throw new Error("Incomplete newsletter data");
 		}
 
@@ -111,5 +109,4 @@ async function main() {
 		console.error("An error occurred in main:", error);
 	}
 }
-
-// main();
+main();

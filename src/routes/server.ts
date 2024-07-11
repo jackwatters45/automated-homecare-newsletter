@@ -4,20 +4,18 @@ import debug from "debug";
 import express from "express";
 import { BASE_PATH, COMPANY_NAME } from "../lib/constants.js";
 import { getPastWeekDate } from "../lib/utils.js";
-import type { ArticleDisplayData } from "../types/index.js";
+import type { Category } from "../types/index.js";
 
 const router = express.Router();
-const log = debug(`${process.env.APP_NAME}:display-router`);
+const log = debug(`${process.env.APP_NAME}:server`);
 
 const loadArticles = async () => {
 	try {
-		const articlesJson = await fs.readFile(
-			path.join(BASE_PATH, "tests", "data", "display-article-data.json"),
+		const categoriesJson = await fs.readFile(
+			path.join(BASE_PATH, "tests", "data", "display-data-full.json"),
 			"utf8",
 		);
-		const articlesData = JSON.parse(articlesJson) as
-			| ArticleDisplayData[]
-			| undefined;
+		const categoriesData = JSON.parse(categoriesJson) as Category[] | undefined;
 
 		const articlesSummary = await fs.readFile(
 			path.join(BASE_PATH, "tests", "data", "summary.json"),
@@ -25,7 +23,7 @@ const loadArticles = async () => {
 		);
 		const summary = JSON.parse(articlesSummary) as string | undefined;
 
-		return { articlesData, summary };
+		return { categories: categoriesData, summary };
 	} catch (error) {
 		log("Error loading articles:", error);
 		return undefined;
@@ -35,18 +33,16 @@ const loadArticles = async () => {
 router.get("/", async (_, res) => {
 	const newsletterData = await loadArticles();
 
-	if (
-		!newsletterData ||
-		!newsletterData.articlesData ||
-		!newsletterData.summary
-	) {
+	if (!newsletterData || !newsletterData.categories || !newsletterData.summary) {
 		res.status(500).send("Error loading newsletter data");
 		return;
 	}
 
+	log(newsletterData.categories);
+
 	res.render("newsletter", {
 		name: COMPANY_NAME,
-		articles: newsletterData?.articlesData,
+		categories: newsletterData?.categories,
 		summary: newsletterData?.summary,
 		dates: getPastWeekDate(),
 	});

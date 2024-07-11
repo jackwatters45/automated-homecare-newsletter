@@ -9,7 +9,7 @@ import type { NewsletterData } from "../types/index.js";
 const router = express.Router();
 const log = debug(`${process.env.APP_NAME}:example-router`);
 
-let data: NewsletterData = { articlesData: [], summary: "" };
+let data: NewsletterData = { categories: [], summary: "" };
 
 router.get("/", (req, res) => {
 	log("GET /example");
@@ -19,7 +19,7 @@ router.get("/", (req, res) => {
 router.get("/generate", async (req, res) => {
 	log("GET /example/generate");
 	try {
-		data = (await generateNewsletterData()) ?? { articlesData: [], summary: "" };
+		data = (await generateNewsletterData()) ?? { categories: [], summary: "" };
 		res.json({ success: true, message: "Data generated successfully" });
 	} catch (error) {
 		res.status(500).json({
@@ -32,7 +32,7 @@ router.get("/generate", async (req, res) => {
 router.get("/newsletter", async (req, res) => {
 	log("GET /example/newsletter");
 
-	if (!data || !data.articlesData || !data.summary) {
+	if (!data || !data.categories || !data.summary) {
 		res.status(500).send("Error loading newsletter data");
 		return;
 	}
@@ -40,7 +40,7 @@ router.get("/newsletter", async (req, res) => {
 	try {
 		res.render("newsletter", {
 			name: COMPANY_NAME,
-			articles: data?.articlesData,
+			categories: data?.categories,
 			summary: data?.summary,
 			dates: getPastWeekDate(),
 		});

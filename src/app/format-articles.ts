@@ -5,7 +5,11 @@ import * as cheerio from "cheerio";
 import debug from "debug";
 import type { Page } from "puppeteer";
 
-import { BASE_PATH, DESCRIPTION_MAX_LENGTH } from "../lib/constants.js";
+import {
+	BASE_PATH,
+	CATEGORIES,
+	DESCRIPTION_MAX_LENGTH,
+} from "../lib/constants.js";
 import {
 	fetchPageContent,
 	generateJSONResponseFromModel,
@@ -183,17 +187,16 @@ async function writeSummaryToFile() {
 }
 
 export async function generateCategories(articles: ValidArticleData[]) {
-	const prompt = `Analyze the following articles and create meaningful categories to group them:
+	const prompt = `Analyze the following articles and categorize them according to the predefined categories:
 
 	${JSON.stringify(articles, null, 2)}
 	
+	CATEGORIES:
+	${CATEGORIES.join("\n")}
+	
 	Please follow these guidelines:
-	1. Create 3-5 distinct categories based on the main themes or topics of the articles.
-	2. Ensure each category is broad enough to encompass multiple articles but specific enough to be meaningful.
-	3. Assign each article to at least one category. An article can belong to multiple categories if appropriate.
-	4. For each category, provide:
-		 a) A clear, concise name (2-5 words)
-	5. If any articles don't fit well into the main categories, create a "Miscellaneous" category for them.
+	1. Assign each article to at least one of the predefined categories. An article can belong to multiple categories if appropriate.
+	2. If any articles don't fit well into the main categories, create a "Miscellaneous" category for them.
 	
 	Format your response as a JSON object with the following structure:
 	[
@@ -233,7 +236,7 @@ export async function generateCategories(articles: ValidArticleData[]) {
 		log("Error generating summary");
 	}
 
-	return generatedCategories;
+	return generatedCategories?.filter((category) => category.articles.length > 0);
 }
 
 async function writeCategoriesToFile() {
@@ -248,5 +251,5 @@ async function writeCategoriesToFile() {
 
 	log(categories);
 
-	await writeTestData("categories.json", categories);
+	await writeTestData("display-data-full.json", categories);
 }

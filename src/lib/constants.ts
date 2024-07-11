@@ -114,3 +114,18 @@ export const API_URL =
 		: `http://localhost:${PORT}`;
 
 export const BASE_PATH = path.resolve();
+
+export const CATEGORIES = [
+	"Industry Trends & Policy",
+	"Clinical Research & Care Innovations",
+	"Business Operations & Technology",
+	"Caregiver Support & Resources",
+	"Patient Care & Caregiving Best Practices",
+	"Other",
+];
+
+// - Industry trends & news
+// - Caregiving & Family Support
+
+// - Senior Care Tips & Resources
+// - In-Home Care Services & Solutions

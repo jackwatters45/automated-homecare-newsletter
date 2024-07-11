@@ -1,6 +1,6 @@
 import debug from "debug";
 
-import { RECURRING_FREQUENCY, TOPIC } from "../lib/constants.js";
+import { CATEGORIES, RECURRING_FREQUENCY, TOPIC } from "../lib/constants.js";
 import {
 	generateJSONResponseFromModel,
 	retry,
@@ -113,7 +113,8 @@ async function filterArticles(
 
 async function rankArticles(
 	filteredArticles: ArticleFilteringData[],
-	numberOfArticles = 40,
+	maxNumberOfArticles = 30,
+	minNumberOfArticles = maxNumberOfArticles - 5,
 ): Promise<ArticleFilteringData[]> {
 	const aiRankingPrompt = `Rank the following list of filtered articles related to ${TOPIC}:
 
@@ -123,7 +124,7 @@ async function rankArticles(
 	1. Impact: Prioritize articles that discuss significant industry changes, policy updates, or innovations in homecare and home health.
 	2. Diversity of Content: Ensure a mix of articles covering different aspects of homecare and home health (e.g., technology, policy, patient care, business developments).
 	3. Source Variety: Use a diverse range of sources. Limit articles from any single source to a maximum of 3.
-	4. Relevance: Prioritize articles that are directly related to ${TOPIC}.
+	4. Relevance: Prioritize articles that are directly related to ${TOPIC} and that will fit in one of the following categories: ${CATEGORIES.join(", ")}. Try to include a similar number of articles from each category.
 	
 	Additional Instructions:
 	- Consider the potential impact of the news on homecare providers, patients, or the industry as a whole when ranking articles.
@@ -131,8 +132,9 @@ async function rankArticles(
 	
 	Output Instructions:
 	- Return the ranked list as a JSON array in the exact format of the input list.
-	- Include the top ${numberOfArticles} most relevant articles in the output.
-	- If fewer than ${numberOfArticles} articles are in the input, return all of them in ranked order.
+	- Include the top ${maxNumberOfArticles} most relevant articles in the output.
+	- Return a maximum of ${maxNumberOfArticles} articles and minimum of ${minNumberOfArticles} articles.
+	- If fewer than ${maxNumberOfArticles} articles are in the input, return all of them in ranked order.
 	- Ensure the output strictly adheres to the original JSON structure.
 	- Sort the articles by impact and diversity of content where the most impactful articles are at the top.
 	
@@ -160,7 +162,7 @@ async function rankArticles(
 
 export async function filterAndRankArticles(
 	articles: ValidArticleData[],
-	numberOfArticles = 40,
+	maxNumberOfArticles = 30,
 ): Promise<ValidArticleDataWithCount[]> {
 	const uniqueArticles = deduplicateAndCountArticles(articles);
 
@@ -169,14 +171,17 @@ export async function filterAndRankArticles(
 	const aiFilteringInput = extractArticleFilteringData(shuffledArticles);
 
 	const filteredArticles = await filterArticles(aiFilteringInput);
-	const rankedArticles = await rankArticles(filteredArticles, numberOfArticles);
+	const rankedArticles = await rankArticles(
+		filteredArticles,
+		maxNumberOfArticles,
+	);
 
 	const rankedArticlesWithCount = mergeFilteredArticles(
 		shuffledArticles,
 		rankedArticles,
 	);
 
-	return rankedArticlesWithCount.slice(0, numberOfArticles);
+	return rankedArticlesWithCount.slice(0, maxNumberOfArticles);
 }
 
 function extractArticleFilteringData(

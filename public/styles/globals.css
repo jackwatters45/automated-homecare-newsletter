@@ -125,6 +125,14 @@ nav {
   .articles-header {
     font-size: 1.25rem;
   }
+
+  .category {
+    padding: 0 0 3rem;
+
+    :last-child {
+      border-bottom: none;
+    }
+  }
 }
 
 .article {

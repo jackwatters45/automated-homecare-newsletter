@@ -3,11 +3,6 @@
 ## TODO
 
 - determine good way to group newsletter content -> implement groups
-  - Industry trends & news
-  - Caregiving & Family Support
-  
-  - Senior Care Tips & Resources
-  - In-Home Care Services & Solutions
 
 - tests
 

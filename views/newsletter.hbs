@@ -33,12 +33,16 @@
             </div>
             {{!-- TODO rename --}}
             <div class="articles">
-                <h2 class="articles-header">Articles</h2>
-                {{#each articles }}
-                <article class="article">
-                    <h3 class="article-title"><a class="article-link" href="{{link}}">{{title}}</a></h3>
-                    <p class="article-description">{{description}}</p>
-                </article>
+                {{#each categories }}
+                <div class="category">
+                    <h2 class="articles-header">{{ name }}</h2>
+                    {{#each articles }}
+                    <article class="article">
+                        <h3 class="article-title"><a class="article-link" href="{{link}}">{{title}}</a></h3>
+                        <p class="article-description">{{description}}</p>
+                    </article>
+                    {{/each}}
+                </div>
                 {{/each}}
             </div>
         </div>
