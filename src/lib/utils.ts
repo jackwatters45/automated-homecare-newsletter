@@ -1,4 +1,4 @@
-import { promises as fs } from "node:fs";
+import fsSync, { promises as fs } from "node:fs";
 import path from "node:path";
 import debug from "debug";
 import type { Page } from "puppeteer";
@@ -18,6 +18,19 @@ let aiCallCount = 0;
 export function logAiCall(prompt: string) {
 	aiCallCount++;
 	log(`AI model called ${aiCallCount} times. Prompt: ${prompt.slice(0, 50)}...`);
+}
+
+export function useLogFile(name: string) {
+	return (message: string) => {
+		const logPath = path.join(BASE_PATH, name);
+		const timestamp = new Date().toISOString();
+		const logMessage = `[${timestamp}] ${message}\n`;
+		fsSync.appendFile(logPath, logMessage, (err) => {
+			if (err) {
+				console.error(`Failed to write to ${name}: ${err.message}`);
+			}
+		});
+	};
 }
 
 export async function generateJSONResponseFromModel(prompt: string) {

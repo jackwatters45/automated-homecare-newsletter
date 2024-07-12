@@ -1,9 +1,12 @@
+import fs from "node:fs";
+import path from "node:path";
 import { GenerateContentResult } from "@google/generative-ai";
 import { Page } from "puppeteer";
 import robotsParser, { Robot } from "robots-parser";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { model } from "../../src/app";
 import {
+	BASE_PATH,
 	DESCRIPTION_MAX_LENGTH,
 	RECURRING_FREQUENCY,
 } from "../../src/lib/constants";
@@ -16,6 +19,7 @@ import {
 	getPastWeekDate,
 	retry,
 	truncateDescription,
+	useLogFile,
 } from "../../src/lib/utils";
 import type { PageToScrape } from "../../src/types";
 
@@ -38,6 +42,59 @@ vi.mock("../../src/app", () => ({
 		generateContent: vi.fn(),
 	},
 }));
+
+describe("useLogFile", () => {
+	let appendFileSpy;
+
+	beforeEach(() => {
+		appendFileSpy = vi
+			.spyOn(fs, "appendFile")
+			.mockImplementation((logPath, logMessage, callback) => callback(null));
+	});
+
+	afterEach(() => {
+		appendFileSpy.mockRestore();
+	});
+
+	it("should write a log message with a timestamp", () => {
+		const name = "test.log";
+		const logMessage = "Test log message";
+		const logFile = useLogFile(name);
+
+		logFile(logMessage);
+
+		const logPath = path.join(BASE_PATH, name);
+
+		expect(appendFileSpy).toHaveBeenCalledWith(
+			logPath,
+			expect.stringContaining(logMessage),
+			expect.any(Function),
+		);
+	});
+
+	it("should handle errors during logging", () => {
+		const consoleErrorMock = vi
+			.spyOn(console, "error")
+			.mockImplementation(() => {});
+		const name = "error.log";
+		const logMessage = "Test error log message";
+		const errorMessage = "Test error";
+
+		appendFileSpy.mockImplementationOnce((logPath, logMessage, callback) => {
+			callback(new Error(errorMessage));
+		});
+
+		const logFile = useLogFile(name);
+
+		logFile(logMessage);
+
+		expect(consoleErrorMock).toHaveBeenCalledWith(
+			`Failed to write to ${name}: ${errorMessage}`,
+		);
+
+		consoleErrorMock.mockRestore();
+	});
+});
 
 describe("generateJSONResponseFromModel", () => {
 	beforeEach(() => {

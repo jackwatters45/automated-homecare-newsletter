@@ -35,10 +35,3 @@ export function setupCronJobs() {
 
 	log("Cron jobs set up successfully");
 }
-
-function run() {
-	log("Cron jobs started");
-	schedule("* * * * *", pingServer, { timezone: "UTC" });
-}
-
-run();

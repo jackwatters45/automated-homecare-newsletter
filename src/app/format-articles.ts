@@ -228,7 +228,7 @@ export async function generateCategories(articles: ValidArticleData[]) {
 	
 	Ensure your response is valid JSON that can be parsed programmatically.`;
 
-	const generatedCategories = await retry(() =>
+	const generatedCategories = await retry<Category[]>(() =>
 		generateJSONResponseFromModel(prompt),
 	);
 

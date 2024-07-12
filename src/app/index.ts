@@ -3,10 +3,12 @@ import "dotenv/config";
 import debug from "debug";
 import puppeteer from "puppeteer";
 
+import fs from "node:fs";
+import path from "node:path";
 import { initializeGenAI } from "../lib/ai.js";
-import { SPECIFIC_PAGES } from "../lib/constants.js";
+import { BASE_PATH, SPECIFIC_PAGES } from "../lib/constants.js";
 import { renderTemplate } from "../lib/template.js";
-import { writeTestData } from "../lib/utils.js";
+import { useLogFile, writeTestData } from "../lib/utils.js";
 import type { ValidArticleData } from "../types/index.js";
 import { scrapeArticles } from "./data-fetching.js";
 import {
@@ -82,6 +84,8 @@ export async function generateNewsletterData() {
 	}
 }
 
+const writeLog = useLogFile("run.log");
+
 export async function GenerateNewsletter() {
 	try {
 		const newsletterData = await generateNewsletterData();
@@ -96,8 +100,12 @@ export async function GenerateNewsletter() {
 		// const res = await sendEmail(result);
 		// log(`Email sent with response: ${JSON.stringify(res)}`);
 
+		writeLog("Newsletter generated successfully");
+
 		return { message: "Newsletter generated successfully", html: template };
 	} catch (error) {
+		writeLog(`Error: ${error}`);
+
 		console.error(error);
 	}
 }
