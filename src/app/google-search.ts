@@ -9,17 +9,19 @@ const log = debug(`${process.env.APP_NAME}:google-search.ts`);
 
 const customsearch = google.customsearch("v1");
 
-export function getLastWeekQuery(q: string): string {
+export function getLastDateQuery(
+	q: string,
+	beforeMs = RECURRING_FREQUENCY,
+): string {
 	try {
-		const pastWeek = new Date().getTime() - RECURRING_FREQUENCY;
-		const formattedPastWeek = new Date(pastWeek).toISOString().split("T")[0];
+		const pastDate = new Date().getTime() - beforeMs;
+		const formattedPastDate = new Date(pastDate).toISOString().split("T")[0];
 
-		log(`google search query: ${q} after:${formattedPastWeek}`);
+		log(`google search query: ${q} after:${formattedPastDate}`);
 
-		return `${q} after:${formattedPastWeek}`;
+		return `${q} after:${formattedPastDate}`;
 	} catch (error) {
-		log(`Error in getLastWeekQuery: ${error}`);
-		// If there's an error, return the original query without the date filter
+		log(`Error in getLastDateQuery: ${error}`);
 		return q;
 	}
 }
@@ -38,7 +40,7 @@ export async function searchNews(qs: string[]): Promise<ValidArticleData[]> {
 					return customsearch.cse.list({
 						cx: process.env.CUSTOM_ENGINE_ID,
 						auth: process.env.CUSTOM_SEARCH_API_KEY,
-						q: getLastWeekQuery(q),
+						q: getLastDateQuery(q),
 						start: startIndex,
 					});
 				});

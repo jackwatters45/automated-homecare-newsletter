@@ -4,8 +4,8 @@ import type { Page } from "puppeteer";
 import robotsParser from "robots-parser";
 
 import {
+	checkRobotsTxtPermission,
 	constructFullUrl,
-	ensureHttps,
 	fetchPageContent,
 	retry,
 } from "../lib/utils.js";
@@ -50,20 +50,16 @@ interface ArticleExtractionParams {
 	element: cheerio.AnyNode;
 }
 
-function extractArticleData({
+export function extractArticleData({
 	targetPage,
 	$,
 	element,
 }: ArticleExtractionParams) {
 	const rawHref = $(element).find(targetPage.linkSelector).attr("href");
 
-	let fullUrl = rawHref ? ensureHttps(rawHref) : undefined;
-	if (!fullUrl?.startsWith("https://"))
-		fullUrl = constructFullUrl(targetPage.url, fullUrl);
-
 	return {
 		url: targetPage.url,
-		link: fullUrl,
+		link: constructFullUrl(rawHref, targetPage),
 		title: extractTextContent($, element, targetPage.titleSelector),
 		description: extractTextContent($, element, targetPage.descriptionSelector),
 		date: extractDate($, element, targetPage.dateSelector),
@@ -88,36 +84,4 @@ function extractDate(
 	return $(element).find(selector).length
 		? new Date($(element).find(selector).text().trim())
 		: undefined;
-}
-
-async function checkRobotsTxtPermission(targetUrl: string) {
-	try {
-		const robotsTxtUrl = new URL("/robots.txt", targetUrl).toString();
-		const response = await retry(() =>
-			fetch(robotsTxtUrl, {
-				redirect: "follow",
-			}),
-		);
-
-		if (!response || !response.ok) {
-			console.warn(
-				`Failed to fetch robots.txt: ${response?.status} ${response?.statusText}`,
-			);
-			return true; // Assume scraping is allowed if robots.txt can't be fetched
-		}
-
-		const robotsTxtContent = await response.text();
-		// @ts-ignore
-		const robotsRules = robotsParser(targetUrl, robotsTxtContent);
-
-		return robotsRules.isAllowed(targetUrl);
-	} catch (error) {
-		console.error(
-			"Error in checkRobotsTxtPermission for URL:",
-			targetUrl,
-			"Error:",
-			error,
-		);
-		return false; // Assume scraping is not allowed if there's an error
-	}
 }

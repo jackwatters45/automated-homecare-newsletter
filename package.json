@@ -6,6 +6,7 @@
 	"main": "dist/index.js",
 	"scripts": {
 		"test": "vitest",
+		"coverage": "vitest run --coverage",
 		"dev": "DEBUG=automated-homecare-newsletter:* tsx src/index.ts",
 		"build": "npx tsc",
 		"prestart": "npm run build",
@@ -45,10 +46,11 @@
 		"@types/morgan": "^1.9.9",
 		"@types/node": "^20.14.9",
 		"@types/node-cron": "^3.0.11",
+		"@vitest/coverage-v8": "^2.0.2",
 		"debug": "^4.3.5",
 		"lefthook": "^1.6.18",
 		"tsx": "^4.15.7",
 		"typescript": "^5.5.3",
-		"vitest": "^1.6.0"
+		"vitest": "^2.0.2"
 	}
 }

@@ -59,7 +59,7 @@ export async function filterArticlesByPage(
 	}
 }
 
-async function filterArticles(
+export async function filterArticles(
 	articles: ArticleFilteringData[],
 ): Promise<ArticleFilteringData[]> {
 	try {
@@ -98,9 +98,7 @@ async function filterArticles(
 		]`;
 
 		const filteredArticles =
-			(await retry(() =>
-				generateJSONResponseFromModel<ValidArticleData[]>(aiFilteringPrompt),
-			)) ?? [];
+			(await retry(() => generateJSONResponseFromModel(aiFilteringPrompt))) ?? [];
 
 		await writeTestData("filtered-article-data.json", filteredArticles);
 
@@ -111,7 +109,7 @@ async function filterArticles(
 	}
 }
 
-async function rankArticles(
+export async function rankArticles(
 	filteredArticles: ArticleFilteringData[],
 	maxNumberOfArticles = 30,
 	minNumberOfArticles = maxNumberOfArticles - 5,
@@ -151,9 +149,7 @@ async function rankArticles(
 	]`;
 
 	const rankedArticles =
-		(await retry(() =>
-			generateJSONResponseFromModel<ValidArticleData[]>(aiRankingPrompt),
-		)) ?? [];
+		(await retry(() => generateJSONResponseFromModel(aiRankingPrompt))) ?? [];
 
 	await writeTestData("ranked-article-data.json", rankedArticles);
 
@@ -198,7 +194,7 @@ function extractArticleFilteringData(
 	}
 }
 
-function mergeFilteredArticles(
+export function mergeFilteredArticles(
 	articleData: ValidArticleDataWithCount[],
 	filteredArticles: ArticleFilteringData[],
 ): ValidArticleDataWithCount[] {
@@ -220,7 +216,7 @@ function mergeFilteredArticles(
 	}
 }
 
-function deduplicateAndCountArticles(
+export function deduplicateAndCountArticles(
 	arr: ValidArticleData[],
 	fields: (keyof ValidArticleData)[] = ["title", "link"],
 ): ValidArticleDataWithCount[] {

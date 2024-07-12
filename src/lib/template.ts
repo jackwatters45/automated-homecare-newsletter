@@ -1,8 +1,8 @@
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import Handlebars from "handlebars";
-import { BASE_PATH } from "../lib/constants.js";
 import type { NewsletterData } from "../types/index.js";
+import { BASE_PATH } from "./constants.js";
 
 export async function renderTemplate(
 	data: NewsletterData,

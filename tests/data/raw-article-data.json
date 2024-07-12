@@ -1,6 +1,41 @@
 [
 	{
 		"url": "https://www.mcknightshomecare.com/home/news/",
+		"link": "https://www.mcknightshomecare.com/news/comfort-keepers-franchise-owner-commits-continued-wage-infractions-dol-alleges/",
+		"title": "Comfort Keepers franchise owner commits continued wage infractions, DOL alleges",
+		"description": "The DOL seeking a contempt order against the owner of several Comfort Keepers locations due to wage violations.",
+		"date": "2024-07-12T07:00:00.000Z"
+	},
+	{
+		"url": "https://www.mcknightshomecare.com/home/news/",
+		"link": "https://www.mcknightshomecare.com/news/independence-at-home-beneficiaries-posed-heavy-financial-strain-on-medicare-study-finds/",
+		"title": "Independence at Home beneficiaries posed heavy financial strain on Medicare, study finds",
+		"description": "The number of Medicare beneficiaries eligible for Independence at Home skyrocketed during the model’s active years.",
+		"date": "2024-07-12T07:00:00.000Z"
+	},
+	{
+		"url": "https://www.mcknightshomecare.com/home/news/",
+		"link": "https://www.mcknightshomecare.com/news/nyus-college-of-nursing-receives-5m-to-provide-aging-care-training/",
+		"title": "NYU’s College of Nursing receives $5M to provide aging care training",
+		"description": "HRSA granted New York University’s Rory Meyers College of Nursing $5 million to train 5,000 on providing aging-friendly care.",
+		"date": "2024-07-12T07:00:00.000Z"
+	},
+	{
+		"url": "https://www.mcknightshomecare.com/home/news/",
+		"link": "https://www.mcknightshomecare.com/news/telemedicine-firm-adds-palliative-care-specialty-to-improve-access-in-rural-areas/",
+		"title": "Telemedicine firm adds palliative care specialty to improve access in rural areas",
+		"description": "Palliative care could be considered the Steve Wozniak of medical specialties: Like the little-known co-founder of Apple Computer, it is frequently misunderstood and seldom given its due. Eagle Telemedicine,...",
+		"date": "2024-07-12T07:00:00.000Z"
+	},
+	{
+		"url": "https://www.mcknightshomecare.com/home/news/",
+		"link": "https://www.mcknightshomecare.com/bidens-condition-its-called-aging-folks/",
+		"title": "Biden’s condition? It’s called aging, folks",
+		"description": "All of this talk about aging has made me wonder if my senior moments may be closer than I feared. It’s also a reminder that the topic of getting older is one that few of us like to touch until we are...",
+		"date": "2024-07-11T07:00:00.000Z"
+	},
+	{
+		"url": "https://www.mcknightshomecare.com/home/news/",
 		"link": "https://www.mcknightshomecare.com/news/adoption-of-supplemental-benefits-does-little-to-alter-ma-plan-membership-study-finds/",
 		"title": "Adoption of supplemental benefits does little to alter MA plan membership, study finds",
 		"description": "MA plans that adopt supplemental benefits typically do not see significant changes in the demographics of beneficiaries.",
@@ -35,39 +70,10 @@
 		"date": "2024-07-10T07:00:00.000Z"
 	},
 	{
-		"url": "https://www.mcknightshomecare.com/home/news/",
-		"link": "https://www.mcknightshomecare.com/news/ceo-new-day-healthcare-finds-success-with-embrace-of-value-based-care/",
-		"title": "CEO: New Day Healthcare finds success with embrace of value-based care",
-		"description": "CEO G. Scott Herman, who founded New Day Healthcare in 2020, has focused on creating a high-volume, low-margin business based on nonepisodic care that works with Medicare Advantage plans. Part of that...",
-		"date": "2024-07-10T07:00:00.000Z"
-	},
-	{
-		"url": "https://www.mcknightshomecare.com/home/news/",
-		"link": "https://www.mcknightshomecare.com/news/program-helps-end-of-life-patients-quickly-access-hospice-care/",
-		"title": "Program helps end-of-life patients quickly access hospice care",
-		"description": "A program led by Brigham and Women’s Hospital in Boston successfully improved hospice transitions among end-of-life patients.",
-		"date": "2024-07-10T07:00:00.000Z"
-	},
-	{
-		"url": "https://www.mcknightshomecare.com/home/news/",
-		"link": "https://www.mcknightshomecare.com/news/home-care-briefs-for-thursday-july-11/",
-		"title": "Home Care briefs for Thursday, July 11",
-		"description": "CMS proposes reducing payment rates in Physician Fee Schedule for 2025 by 2.93% … Rep. Earl Blumenauer (D-OR) earns award for contributions to end-of-life care … DOL recovers $110,000 in back...",
-		"date": "2024-07-10T07:00:00.000Z"
-	},
-	{
-		"url": "https://www.mcknightshomecare.com/home/news/",
-		"link": "https://www.mcknightshomecare.com/news/harmonycares-to-use-200m-investment-to-significantly-upgrade-home-care-technology-ceo-says/",
-		"title": "HarmonyCares to use $200M investment ‘to significantly upgrade’ home care technology, CEO says",
-		"description": "HarmonyCares recently raised $200 million of capital to leverage new technology to produce better outcomes for patients and clinicians.",
-		"date": "2024-07-09T07:00:00.000Z"
-	},
-	{
-		"url": "https://www.mcknightshomecare.com/home/news/",
-		"link": "https://www.mcknightshomecare.com/news/people-perceive-hospital-at-home-to-be-effective-safe-convenient-study-finds/",
-		"title": "People perceive hospital-at-home to be effective, safe, convenient, study finds",
-		"description": "The implied comfort, convenience and effectiveness of hospital-at-home care makes it more appealing than an inpatient stay.",
-		"date": "2024-07-09T07:00:00.000Z"
+		"url": "https://homehealthcarenews.com/",
+		"link": "https://homehealthcarenews.com/2024/07/secret-shopping-and-competitive-analysis-how-home-based-care-providers-use-their-peers-to-get-ahead/",
+		"title": "Secret Shopping And Competitive Analysis: How Home-Based Care Providers Use Their Peers To Get Ahead",
+		"date": "2024-07-12T07:00:00.000Z"
 	},
 	{
 		"url": "https://homehealthcarenews.com/",
@@ -86,6 +92,18 @@
 		"link": "https://homehealthcarenews.com/2024/07/senior-helpers-accordcare-see-results-from-enhanced-training-programs/",
 		"title": "Senior Helpers, AccordCare See Results From Enhanced Training Programs",
 		"date": "2024-07-09T07:00:00.000Z"
+	},
+	{
+		"url": "https://homehealthcarenews.com/",
+		"link": "https://homehealthcarenews.com/2024/07/secret-shopping-and-competitive-analysis-how-home-based-care-providers-use-their-peers-to-get-ahead/",
+		"title": "Secret Shopping And Competitive Analysis: How Home-Based Care Providers Use Their Peers To Get Ahead",
+		"date": "2024-07-12T07:00:00.000Z"
+	},
+	{
+		"url": "https://homehealthcarenews.com/",
+		"link": "https://homehealthcarenews.com/2024/07/enhabits-board-battle-continues-advisory-firm-partially-sides-with-activist-investor/",
+		"title": "Enhabit’s Board Battle Continues, Advisory Firm Partially Sides With Activist Investor",
+		"date": "2024-07-12T07:00:00.000Z"
 	},
 	{
 		"url": "https://homehealthcarenews.com/",
@@ -112,16 +130,25 @@
 		"date": "2024-07-10T07:00:00.000Z"
 	},
 	{
-		"url": "https://homehealthcarenews.com/",
-		"link": "https://homehealthcarenews.com/2024/07/trinity-health-at-home-tabs-dan-drake-as-its-next-ceo/",
-		"title": "Trinity Health At Home Taps Dan Drake As Its Next CEO",
-		"date": "2024-07-10T07:00:00.000Z"
+		"url": "https://valleyhca.com/our-blog/",
+		"link": "https://valleyhca.com/bone-health-and-older-adults/",
+		"title": "Bone Health And Older Adults",
+		"description": "Whenever a group of older adults gather to socialize, at some point in time the conversations will invariably gravitate toward the struggles some are having with various bone issues associated with aging.  Osteoporosis affects about 54 million people in the United States with women being four times more likely to… Read More",
+		"date": "2024-07-11T07:00:00.000Z"
 	},
 	{
-		"url": "https://homehealthcarenews.com/",
-		"link": "https://homehealthcarenews.com/2024/07/senior-helpers-accordcare-see-results-from-enhanced-training-programs/",
-		"title": "Senior Helpers, AccordCare See Results From Enhanced Training Programs",
-		"date": "2024-07-09T07:00:00.000Z"
+		"url": "https://www.medicalnewstoday.com/news",
+		"link": "https://www.medicalnewstoday.com/articles/toxic-heavy-metals-lead-arsenic-tampons-what-to-know",
+		"title": "Scientists find heavy metals such as lead, arsenic in tampons: What to know",
+		"description": "Researchers have found that toxic metals such as arsenic and lead, among other contaminants, may be present in several tampon brands in the U.S. and…",
+		"date": "2024-07-12T07:00:00.000Z"
+	},
+	{
+		"url": "https://www.medicalnewstoday.com/news",
+		"link": "https://www.medicalnewstoday.com/articles/some-diabetes-drugs-ozempic-may-lower-risks-cancer-obesity",
+		"title": "Some diabetes drugs like Ozempic may lower risks of 10 cancers, study finds",
+		"description": "People taking diabetes drugs such as GLP-1RAs saw a significant reduction in their risk of 10 out of 13 obesity-associated cancers, a new study showed.",
+		"date": "2024-07-12T07:00:00.000Z"
 	},
 	{
 		"url": "https://www.medicalnewstoday.com/news",
@@ -201,25 +228,22 @@
 		"date": "2024-07-06T07:00:00.000Z"
 	},
 	{
-		"url": "https://www.medicalnewstoday.com/news",
-		"link": "https://www.medicalnewstoday.com/articles/study-pinpoints-3-common-antidepressants-tied-to-the-most-weight-gain",
-		"title": "Study pinpoints 3 common antidepressants tied to the most weight gain",
-		"description": "Researchers have found that escitalopram, paroxetine, and duloxetine are the antidepressants tied to the highest risk of weight gain.",
-		"date": "2024-07-05T07:00:00.000Z"
+		"url": "https://nahc.org/nahc-newsroom/",
+		"link": "https://nahc.org/nahc-nhpco-alliance-joint-statement-comment-letter-submitted-on-hospice-care-act/",
+		"title": "NAHC-NHPCO Alliance Joint Statement: Comment Letter Submitted on Hospice CARE Act",
+		"date": "2024-07-12T07:00:00.000Z"
 	},
 	{
-		"url": "https://www.medicalnewstoday.com/news",
-		"link": "https://www.medicalnewstoday.com/articles/drugs-like-ozempic-wegovy-linked-to-eye-condition-causing-vision-loss",
-		"title": "Drugs like Ozempic, Wegovy linked to eye condition causing vision loss",
-		"description": "A recent study has suggested that semaglutide drugs like Ozempic and Wegovy are linked to a rare eye condition that can cause vision loss.",
-		"date": "2024-07-05T07:00:00.000Z"
+		"url": "https://nahc.org/nahc-newsroom/",
+		"link": "https://nahc.org/why-forvis-mazars-supports-the-2024-financial-management-conference/",
+		"title": "Why Forvis Mazars Supports the 2024 Financial Management Conference",
+		"date": "2024-07-12T07:00:00.000Z"
 	},
 	{
-		"url": "https://www.medicalnewstoday.com/news",
-		"link": "https://www.medicalnewstoday.com/articles/smoking-education-interventions-may-help-decrease-dementia-incidence",
-		"title": "Smoking and education interventions may help decrease dementia incidence",
-		"description": "Scientists have linked a reduction in smoking and increases in education to reducing the incidence rate of dementia in some high-income countries.",
-		"date": "2024-07-05T07:00:00.000Z"
+		"url": "https://nahc.org/nahc-newsroom/",
+		"link": "https://nahc.org/nahc-nhpco-alliance-seeks-member-input-on-hha-referral-process/",
+		"title": "NAHC-NHPCO Alliance Seeks Member Input on HHA Referral Process",
+		"date": "2024-07-12T07:00:00.000Z"
 	},
 	{
 		"url": "https://nahc.org/nahc-newsroom/",
@@ -276,24 +300,6 @@
 		"date": "2024-07-08T07:00:00.000Z"
 	},
 	{
-		"url": "https://nahc.org/nahc-newsroom/",
-		"link": "https://nahc.org/next-cms-open-door-forum-is-tomorrow-3/",
-		"title": "Next CMS Open Door Forum is Tomorrow",
-		"date": "2024-07-08T07:00:00.000Z"
-	},
-	{
-		"url": "https://nahc.org/nahc-newsroom/",
-		"link": "https://nahc.org/only-10-days-left-for-early-bird-prices-to-the-home-care-and-hospice-conference-expo/",
-		"title": "Only 10 Days Left for Early Bird Prices to the Home Care and Hospice Conference & Expo!",
-		"date": "2024-07-05T07:00:00.000Z"
-	},
-	{
-		"url": "https://nahc.org/nahc-newsroom/",
-		"link": "https://nahc.org/grant-opportunity-to-improve-senior-health/",
-		"title": "Grant Opportunity to Improve Senior Health",
-		"date": "2024-07-05T07:00:00.000Z"
-	},
-	{
 		"url": "https://dailycaring.com/",
 		"link": "https://dailycaring.com/video-fall-prevention-exercises-for-seniors-stay-balanced-while-reaching/",
 		"title": "2 Fall Prevention Exercises for Seniors: Improve Balance While Reaching",
@@ -304,6 +310,12 @@
 		"link": "https://dailycaring.com/visiting-someone-with-alzheimers-dos-and-donts-for-visitors/",
 		"title": "Do’s and Don’ts for Visiting Someone with Dementia",
 		"description": "People with dementia can still enjoy having visitors Older adults with Alzheimer’s disease or dementia may still enjoy having visitors...."
+	},
+	{
+		"url": "https://dailycaring.com/",
+		"link": "https://dailycaring.com/what-happens-when-someone-dies-without-a-will/",
+		"title": "What Happens When Someone Dies Without a Will?",
+		"description": "A will gives seniors peace of mind If your older adult wants to be sure that their assets and property..."
 	},
 	{
 		"url": "https://dailycaring.com/",
@@ -348,10 +360,10 @@
 		"description": "Simple products protect seniors from heat stroke Seniors are more vulnerable to overheating and heat stroke because older bodies don’t..."
 	},
 	{
-		"url": "https://dailycaring.com/",
-		"link": "https://dailycaring.com/4-reasons-dementia-activities-are-important-and-5-ways-to-adapt-everyday-tasks/",
-		"title": "4 Benefits of Activities for Dementia and 5 Ways to Adapt Daily Tasks",
-		"description": "Activities in dementia boost self-esteem When someone has Alzheimer’s disease or dementia, their cognitive function may be declining, but they..."
+		"url": "https://www.casacompanionhomecare.com/blog/",
+		"link": "https://www.casacompanionhomecare.com/homecareblog/eight-key-components-effective-in-home-care-plan/",
+		"title": "Eight Key Components of an Effective In-Home Care Plan",
+		"description": "Integrating in-home care into your loved one’s life brings the exact level and kind of support they need into familiar surroundings. Many seniors prefer home care to facility care because in-home caregiving is just the right amount and kind of help.  Creating and following a detailed care plan with your in-home care agency is the…"
 	},
 	{
 		"url": "https://www.casacompanionhomecare.com/blog/",
@@ -408,12 +420,6 @@
 		"description": "Quality non-emergency medical transport (NEMT) is more than just a convenience; it’s a necessity for many individuals with medical needs. Patients and their families rely on these services for safe, comfortable transportation to medical appointments, treatments, and other essential engagements. Safe and trustworthy non-emergency medical transport costs more than ride sharing, but NEMT delivers peace…"
 	},
 	{
-		"url": "https://www.casacompanionhomecare.com/blog/",
-		"link": "https://www.casacompanionhomecare.com/home-care-blog/in-home-care-heart-disease-patients/",
-		"title": "In-Home Care for Heart Disease Patients",
-		"description": "In-home care provides a comforting and supportive environment where heart disease patients can receive the assistance they need while maintaining their independence. Living with heart disease is challenging but the right in home care lets patients manage their condition effectively. Home care aides offer personalized assistance tailored to the unique needs of heart disease patients,…"
-	},
-	{
 		"title": "Health",
 		"link": "https://news.yahoo.com/health/",
 		"snippet": "1 day ago ... The latest news and headlines from Yahoo News. Get breaking news stories and in-depth coverage with videos and photos."
@@ -421,242 +427,242 @@
 	{
 		"title": "Newsroom | Mon Health Medical Center",
 		"link": "https://news.google.com/__i/rss/rd/articles/CBMiK2h0dHBzOi8vd3d3Lm1vbmhlYWx0aC5jb20vbWFpbi9uZXdzcm9vbS81NjXSAQA?oc=5",
-		"snippet": "1 day ago ... Check out the latest news articles in healthcare at Mon General Hospital."
+		"snippet": "2 days ago ... Check out the latest news articles in healthcare at Mon General Hospital."
 	},
 	{
-		"title": "Danbury, CT Classifieds",
-		"link": "https://news.google.com/__i/rss/rd/articles/CBMiXWh0dHBzOi8vcGF0Y2guY29tL2Nvbm5lY3RpY3V0L2RhbmJ1cnkvY2xhc3NpZmllZHMvam9icy8xMjUzNDMvb2ZmaWNlLXNwYWNlLWZvci1yZW50LWluLWRhcmllbtIBAA?oc=5",
-		"snippet": "7 days ago ... Local market ads for gigs & services, free stuff, for sale, announcements, housing, job listings and lost and found in Danbury, CT."
+		"title": "Bloomberg Government",
+		"link": "https://news.google.com/__i/rss/rd/articles/CBMid2h0dHBzOi8vbmV3cy5ibG9vbWJlcmdsYXcuY29tL3ByaXZhY3ktYW5kLWRhdGEtc2VjdXJpdHkvYmlkZW5zLXRpa3Rvay1mb3JheS1zcHVycy1iaXBhcnRpc2FuLWFuZ3N0LWF0LWhvdXNlLWNoaW5hLXBhbmVs0gEA",
+		"snippet": "15 hours ago ... BGOV Delivers rich data, sophisticated tools and breaking news alongside original, in-depth analysis ... defrauded federal health-care programs by avoiding ..."
 	},
 	{
-		"title": "The Best Home Warranty for Veterans of 2024",
-		"link": "https://news.google.com/__i/rss/rd/articles/CBMiUWh0dHBzOi8vd3d3Lm1hcmtldHdhdGNoLmNvbS9waWNrcy9ndWlkZXMvZmluYW5jZS9iZXN0LWhvbWUtd2FycmFudHktZm9yLXZldGVyYW5zL9IBAA?oc=5",
-		"snippet": "8 days ago ... She has also guided content strategy and edited in the insurance, venture capital, financial and healthcare fields. More Home Warranty Resources:."
+		"title": "Funding supports people affected by dementia | BC Gov News",
+		"link": "https://news.google.com/__i/rss/rd/articles/CBMiM2h0dHBzOi8vbmV3cy5nb3YuYmMuY2EvcmVsZWFzZXMvMjAyMUhMVEgwMTY4LTAwMTgyNtIBAA?oc=5",
+		"snippet": "22 hours ago ... People can connect to First Link through a referral from their health-care provider or by calling the First Link dementia helpline at 1 800 936-6033. “I want to ..."
 	},
 	{
 		"title": "SSI and Medicaid During Pregnancy and Childbirth",
 		"link": "https://news.google.com/__i/rss/rd/articles/CBMiRmh0dHBzOi8vd3d3LmludmVzdG9wZWRpYS5jb20vc3NpLW1lZGljYWlkLXByZWduYW5jeS1jaGlsZGJpcnRoLTU2NDkzMTPSAQA?oc=5",
-		"snippet": "5 days ago ... After you give birth, you may need to use SSI for a range of medical services, such as care for low birth weight babies, for disabled children, or for ..."
+		"snippet": "3 days ago ... After you give birth, you may need to use SSI for a range of medical services, such as care for low birth weight babies, for disabled children, or for ..."
+	},
+	{
+		"title": "Music Tectonics Conference in LA: 6 Takeaways - dot.LA",
+		"link": "https://news.google.com/__i/rss/rd/articles/CBMiNWh0dHBzOi8vZG90LmxhL211c2ljLXRlY3Rvbmljcy1nYW1pbmctMjY1ODUxODg5Ny5odG1s0gEA?oc=5",
+		"snippet": "8 days ago ... ... news · Rivian's $5 Billion Lifeline · Christine Rothacker. Jun 28 2024 ... medical providers synthesize patient data, raised a $30M Series B led by Oak ..."
 	},
 	{
 		"title": "Snapchat Partners With Ticketmaster to Match Users to Local ...",
 		"link": "https://news.google.com/__i/rss/rd/articles/CBMiNGh0dHBzOi8vZG90LmxhL3NuYXBjaGF0LXRpY2tldG1hc3Rlci0yNjU2NjkyMDg3Lmh0bWzSAQA?oc=5/",
-		"snippet": "7 days ago ... ... News Feature - dot.LA ... , a provider of durable medical equipment and single-use medical supplies to the home care market was acquired by SG Homecare."
+		"snippet": "8 days ago ... Saudis Invest in Live Nation; YouTube Holds Global Film Fest - dot.LA › · Snapchat Launches Breaking News ... medical providers synthesize patient data ..."
 	},
 	{
 		"title": "Canoo Unveils Electric Delivery Van a Week Before IPO - dot.LA",
 		"link": "https://news.google.com/__i/rss/rd/articles/CBMiJGh0dHBzOi8vZG90LmxhL2Nhbm9vLTI2NDk1MjE3NDQuaHRtbNIBAA?oc=5",
-		"snippet": "7 days ago ... ... news · Rivian's $5 Billion Lifeline · Christine Rothacker. Jun 28 2024 ... medical providers synthesize patient data, raised a $30M Series B led by Oak ..."
+		"snippet": "8 days ago ... ... news · Rivian's $5 Billion Lifeline · Christine Rothacker. Jun 28 2024 ... medical providers synthesize patient data, raised a $30M Series B led by Oak ..."
 	},
 	{
 		"title": "AmazeVR Goes Global As VR Concerts Enter New Phase - dot.LA",
 		"link": "https://news.google.com/__i/rss/rd/articles/CBMiQ2h0dHBzOi8vZG90LmxhL3NtLWVudGVydGFpbm1lbnQtYW1hemV2ci12ci1jb25jZXJ0cy0yNjU3NjY5NjY3Lmh0bWzSAQA?oc=5",
-		"snippet": "7 days ago ... Western Drug Medical Supply, a provider of durable medical equipment and single-use medical supplies to the home care market was acquired by SG Homecare."
-	},
-	{
-		"title": "Teaneck Events Calendar for July 8, 2024 - Teaneck, NJ Patch",
-		"link": "https://news.google.com/__i/rss/rd/articles/CBMibWh0dHBzOi8vcGF0Y2guY29tL25ldy1qZXJzZXkvdGVhbmVjay9hbXAvY2FsLzIwMjAwNzEyLzg1MTIzNi90ZWFuZWNrLWJsb29kLWRyaXZlLXVyZ2VudC1uZWVkLXdhbGstaW5zLXdlbGNvbWXSAQA?oc=5",
-		"snippet": "8 days ago ... July 8, 2024 Calendar of free events, paid events, and things to do in Teaneck, NJ."
-	},
-	{
-		"title": "False reports claim Biden suffered medical emergency on Air Force ...",
-		"link": "https://apnews.com/article/fact-check-misinformation-biden-medical-emergency-5176f10443a286f581221fe994b5ad78",
-		"snippet": "5 days ago ... ... home in Delaware after a campaign stop in Wisconsin ... News' George Stephanopolous and getting into a car, all without issue. There were no signs of an ..."
+		"snippet": "8 days ago ... Western Drug Medical Supply, a provider of durable medical equipment and single-use medical supplies to the home care market was acquired by SG Homecare."
 	},
 	{
 		"title": "Latest and Breaking News, Headlines, Live Updates ... - Yahoo News",
 		"link": "https://news.yahoo.com/health/",
-		"snippet": "1 day ago ... Health·NBC News. The dark side of Zyn: How tobacco-free nicotine pouches may ... What to know about 6 popular home tests for allergies, cancer and more."
+		"snippet": "1 day ago ... US·The New York Times. Why Nursing Home Residents Still Suffer Despite Tough State Laws ... Health·NBC News. 2,400 may have been exposed to HIV and hepatitis at ..."
+	},
+	{
+		"title": "False reports claim Biden suffered medical emergency on Air Force ...",
+		"link": "https://apnews.com/article/fact-check-misinformation-biden-medical-emergency-5176f10443a286f581221fe994b5ad78",
+		"snippet": "6 days ago ... ... home in Delaware after a campaign stop in Wisconsin ... News' George Stephanopolous and getting into a car, all without issue. There were no signs of an ..."
 	},
 	{
 		"title": "Newsroom | Mon Health Medical Center",
 		"link": "https://news.google.com/__i/rss/rd/articles/CBMiK2h0dHBzOi8vd3d3Lm1vbmhlYWx0aC5jb20vbWFpbi9uZXdzcm9vbS81NjXSAQA?oc=5",
-		"snippet": "1 day ago ... Check out the latest news articles in healthcare at Mon General Hospital ... Home Care Equipment and Supplies · Hospitalist · Imaging Services/Radiology."
+		"snippet": "2 days ago ... Check out the latest news articles in healthcare at Mon General Hospital ... Home Care Equipment and Supplies · Hospitalist · Imaging Services/Radiology."
 	},
 	{
-		"title": "Pittsburgh Post-Gazette",
-		"link": "https://news.google.com/newspapers/url?client=ca-print-news-pittsburgh_post_gazette&format=GNPP&num=0&channel=STN-ca-print-news-pittsburgh_post_gazette+STN-GNID:QX1G:19790223&q=http://www.post-gazette.com&source=gbs_pub_info&usg=AOvVaw0_VI9BA_DiVGgBkUawGx8H",
-		"snippet": "6 hours ago ... News Home · Crime & Courts · Election 2024 · Politics · Education · Health & Wellness ... Two Mars Area Centennial sixth-graders develop award-winning medical app."
+		"title": "Retiring From National Guard or Reserve? Know Your TRICARE ...",
+		"link": "https://news.google.com/__i/rss/rd/articles/CBMid2h0dHBzOi8vbmV3c3Jvb20udHJpY2FyZS5taWwvQXJ0aWNsZXMvQXJ0aWNsZS8zMTIwODY2L3JldGlyaW5nLWZyb20tbmF0aW9uYWwtZ3VhcmQtb3ItcmVzZXJ2ZS1rbm93LXlvdXItdHJpY2FyZS1vcHRpb25z0gEA?oc=5",
+		"snippet": "2 days ago ... Military Health System News · Defense Health Network News. Multimedia ... TRICARE Newsroom Home News TRICARE News. Servicewoman hugs her child. PHOTO ..."
 	},
 	{
 		"title": "OHSU coronavirus (COVID-19) response | OHSU News",
 		"link": "https://news.google.com/__i/rss/rd/articles/CBMiTGh0dHBzOi8vbmV3cy5vaHN1LmVkdS8yMDIyLzExLzAyL3ByZXBhcmluZy1mb3ItdGhlLW5vdmVsLWNvcm9uYXZpcnVzLWF0LW9oc3XSAQA?oc=5",
-		"snippet": "4 days ago ... OHSU Hospital and OHSU Health Hillsboro Medical Center hospitalization details: ... homes, limiting barriers to health care access. The service has ..."
+		"snippet": "5 days ago ... OHSU Hospital and OHSU Health Hillsboro Medical Center hospitalization details: ... homes, limiting barriers to health care access. The service has ..."
 	},
 	{
-		"title": "News | Imperial News | Imperial College London",
-		"link": "https://news.google.com/__i/rss/rd/articles/CBMiTmh0dHBzOi8vd3d3LmltcGVyaWFsLmFjLnVrL25ld3MvMjI2NTEzL21hbnktaWN1LXN0YWZmLWhhdmUtZXhwZXJpZW5jZWQtbWVudGFsL9IBUmh0dHBzOi8vd3d3LmltcGVyaWFsLmFjLnVrL25ld3MvMjI2NTEzL21hbnktaWN1LXN0YWZmLWhhdmUtZXhwZXJpZW5jZWQtbWVudGFsL2FtcC8?oc=5",
-		"snippet": "2 days ago ... Imperial News. Imperial College London. MenuHome College and Campus Science Engineering Health Business. Search field. Imperial celebrates strong student ..."
+		"title": "Pittsburgh Post-Gazette",
+		"link": "https://news.google.com/newspapers/url?client=ca-print-news-pittsburgh_post_gazette&format=GNPP&num=0&channel=STN-ca-print-news-pittsburgh_post_gazette+STN-GNID:QX1G:19790223&q=http://www.post-gazette.com&source=gbs_pub_info&usg=AOvVaw0_VI9BA_DiVGgBkUawGx8H",
+		"snippet": "4 hours ago ... ... News Home · Crime & Courts · Election 2024 · Politics · Education · Health & Wellness · Transportation · State · Nation · World · Weather News · Obituaries."
 	},
 	{
 		"title": "Maine has no testing requirement for medical cannabis. Public ...",
 		"link": "https://apnews.com/us-news/marijuana-maine-general-news-31efc8f44535ffbf6fe57bae1243028c",
-		"snippet": "3 days ago ... Public health advocates and state officials want to see testing requirements ... home-based programs and make small batches, so extensive testing ..."
+		"snippet": "4 days ago ... Public health advocates and state officials want to see testing requirements ... home-based programs and make small batches, so extensive testing ..."
 	},
 	{
-		"title": "the-dispatch.com | Local News, Politics & Sports in Lexington NC",
-		"link": "https://news.google.com/newspapers/url?client=ca-print-news-the_dispatch_1&format=GNPP&num=0&channel=STN-ca-print-news-the_dispatch_1+STN-GNID:EAGZ:19200213&q=http://www.the-dispatch.com/&source=gbs_pub_info&usg=AOvVaw2L8x0JreWThxp05cI3s747",
-		"snippet": "7 hours ago ... WINSTON-SALEM — On July 5, 2024, Virginia Maie Ellington (née Brewer) died at home… ... All Davidson County restaurants inspected in June post 'A' health grades."
+		"title": "How Much Does an Urgent Care Visit Cost? – Forbes Advisor",
+		"link": "https://news.google.com/__i/rss/rd/articles/CBMiQWh0dHBzOi8vd3d3LmZvcmJlcy5jb20vYWR2aXNvci9oZWFsdGgtaW5zdXJhbmNlL3VyZ2VudC1jYXJlLWNvc3Qv0gEA?oc=5",
+		"snippet": "3 days ago ... ... home, life and health. Before covering insurance, Les was a news editor and reporter for Patch and Community Newspaper Company and also covered health care ..."
 	},
 	{
-		"title": "Biden's ABC interview: What to know as president insists 'I am ...",
-		"link": "https://apnews.com/article/president-joe-biden-campaign-wisconsin-abc-news-e4657f86f5e82b10a5fefb526bc49b08",
-		"snippet": "5 days ago ... President Joe Biden has used a highly anticipated TV interview to repeatedly reject taking an independent medical ... news in all formats and the essential ..."
+		"title": "News | Imperial News | Imperial College London",
+		"link": "https://news.google.com/__i/rss/rd/articles/CBMiTmh0dHBzOi8vd3d3LmltcGVyaWFsLmFjLnVrL25ld3MvMjI2NTEzL21hbnktaWN1LXN0YWZmLWhhdmUtZXhwZXJpZW5jZWQtbWVudGFsL9IBUmh0dHBzOi8vd3d3LmltcGVyaWFsLmFjLnVrL25ld3MvMjI2NTEzL21hbnktaWN1LXN0YWZmLWhhdmUtZXhwZXJpZW5jZWQtbWVudGFsL2FtcC8?oc=5",
+		"snippet": "3 days ago ... ... medicine, business and college announcements. ... Imperial News. Imperial College London. Home College and Campus Science Engineering Health Business."
 	},
 	{
-		"title": "News - Today@Wayne - Wayne State University",
-		"link": "https://news.google.com/__i/rss/rd/articles/CBMid2h0dHBzOi8vdG9kYXkud2F5bmUuZWR1L25ld3MvMjAyMC8xMi8wNy9wcm9maWxlcy1pbi13YXJyaW9yLXN0cm9uZy1oaWdobGlnaHQtY2FtcHVzLXN1Y2Nlc3Nlcy1kdXJpbmctdGhlLXBhbmRlbWljLTQxMDQx0gEA?oc=5",
-		"snippet": "3 days ago ... Home; News. News. Detroit researchers receive Department of Defense grant ... health impacts of community-voiced chemical and non-chemical stressors. June ..."
+		"title": "South Korea Travel Advice & Safety | Smartraveller",
+		"link": "https://news.google.com/__i/rss/rd/articles/CBMiTWh0dHBzOi8vd3d3LnNtYXJ0cmF2ZWxsZXIuZ292LmF1L2Rlc3RpbmF0aW9ucy9hc2lhL3NvdXRoLWtvcmVhLXJlcHVibGljLWtvcmVh0gEA?oc=5",
+		"snippet": "4 days ago ... Consider your physical and mental health before you travel, especially if you have an existing medical condition. ... News. Read our latest news. Resources."
 	},
 	{
 		"title": "Can California's health care providers help solve the state's ...",
 		"link": "https://apnews.com/us-news/bakersfield-health-care-industry-government-programs-general-news-0583e94b85010bd8bc91c74e5eb71032",
-		"snippet": "4 hours ago ... As of the end of last year, 600 of those homes were available, said Dr. Sameer Amin, chief medical officer for LA Care. Anthem Blue Cross Blue Shield recently ..."
+		"snippet": "1 day ago ... As of the end of last year, 600 of those homes were available, said Dr. Sameer Amin, chief medical officer for LA Care. Anthem Blue Cross Blue Shield recently ..."
+	},
+	{
+		"title": "Biden ABC interview: President tries to salvage reelection effort | AP ...",
+		"link": "https://apnews.com/article/president-joe-biden-campaign-wisconsin-abc-news-e4657f86f5e82b10a5fefb526bc49b08",
+		"snippet": "6 days ago ... President Joe Biden has used a highly anticipated TV interview to repeatedly reject taking an independent medical ... news in all formats and the essential ..."
 	},
 	{
 		"title": "Joe Biden | AP News",
 		"link": "https://apnews.com/hub/joe-biden",
-		"snippet": "1 day ago ... Stay informed and read the latest breaking news and updates on Joe Biden ... The White House faces many questions about Biden's health and medical history."
-	},
-	{
-		"title": "Associated Press News: Breaking News, Latest Headlines and ...",
-		"link": "https://apnews.com/",
-		"snippet": "2 days ago ... Read the latest headlines, breaking news, and videos at APNews.com, the definitive source for independent journalism from every corner of the globe."
-	},
-	{
-		"title": "The Best Home Warranty for Veterans of 2024",
-		"link": "https://news.google.com/__i/rss/rd/articles/CBMiUWh0dHBzOi8vd3d3Lm1hcmtldHdhdGNoLmNvbS9waWNrcy9ndWlkZXMvZmluYW5jZS9iZXN0LWhvbWUtd2FycmFudHktZm9yLXZldGVyYW5zL9IBAA?oc=5",
-		"snippet": "8 days ago ... She has also guided content strategy and edited in the insurance, venture capital, financial and healthcare fields. More Home Warranty Resources:."
+		"snippet": "2 days ago ... Stay informed and read the latest breaking news and updates on Joe ... Navy sailor disciplined for trying to access Biden's health records early this year."
 	},
 	{
 		"title": "Crisis in the occupied Palestinian territory: What is happening and ...",
 		"link": "https://news.google.com/__i/rss/rd/articles/CBMiQmh0dHBzOi8vd3d3LnJlc2N1ZS5vcmcvYXJ0aWNsZS9jcmlzaXMtcGFsZXN0aW5lLXdoYXQteW91LW5lZWQta25vd9IBAA",
-		"snippet": "6 days ago ... The International Rescue Committee (IRC) and partners in Gaza are delivering emergency and life-saving medical care, including direct medical care, in Gaza's ..."
-	},
-	{
-		"title": "dnews.com | News of the Palouse since 1911",
-		"link": "https://news.google.com/newspapers/url?client=ca-print-news-moscow_pullman_daily_news&format=GNPP&num=0&channel=STN-ca-print-news-moscow_pullman_daily_news+STN-GNID:A9DB:19910724&q=http://dnews.com/&source=gbs_pub_info&usg=AOvVaw3u9UebEqnHPVhuVwXyPJSk",
-		"snippet": "5 hours ago ... Click here and listen to the latest in regional health news from reporter Rachel Sun. Idaho doctor: Fed care law essential ... Find your home · Elk City."
-	},
-	{
-		"title": "Reading Eagle – Reading, PA News, Sports, Weather, Things to Do",
-		"link": "https://news.google.com/newspapers/url?client=ca-print-news-reading_eagle&format=GNPP&num=0&channel=STN-ca-print-news-reading_eagle+STN-GNID:5FBY:19830705&q=http://readingeagle.com/&source=gbs_pub_info&usg=AOvVaw2RASbG_7fB7NZiFy0HsNSx",
-		"snippet": "7 hours ago ... Health · History · Politics · Spotted Lanternfly · Ask the ... Older homeowners who need access to cash may consider converting some of their home's equity into ..."
+		"snippet": "7 days ago ... The International Rescue Committee (IRC) and partners in Gaza are delivering emergency and life-saving medical care, including direct medical care, in Gaza's ..."
 	},
 	{
 		"title": "Ulcerative colitis pain location: Symptoms, causes, personal story",
 		"link": "https://news.google.com/__i/rss/rd/articles/CBMiSmh0dHBzOi8vd3d3Lm1lZGljYWxuZXdzdG9kYXkuY29tL2FydGljbGVzL3VsY2VyYXRpdmUtY29saXRpcy1wYWluLWxvY2F0aW9u0gEA?oc=5",
-		"snippet": "22 hours ago ... Keep up with the ever-changing world of medical science with new and emerging developments in health. ... HealthlineMedical News TodayGreatistPsych CentralBezzy."
-	},
-	{
-		"title": "WPXI: Pittsburgh News, Weather, Traffic and Sports",
-		"link": "https://news.google.com/__i/rss/rd/articles/CBMiL2h0dHBzOi8vd3d3LndweGkuY29tL2hvbWVwYWdlP2Nocj0xNjMzOTc2MTY3MTk10gEA?oc=5",
-		"snippet": "50 minutes ago ... News Weather Video 11 Investigates Sports Decision 2024 11 Cares Changing Climate Home Experts Care Connect Breaking the Stigma Steals and Deals · News · Back ..."
-	},
-	{
-		"title": "What COVID-19 variants are going around in July 2024? | Nebraska ...",
-		"link": "https://news.google.com/__i/rss/rd/articles/CBMiSWh0dHBzOi8vd3d3Lm5lYnJhc2thbWVkLmNvbS9DT1ZJRC93aGF0LWNvdmlkLTE5LXZhcmlhbnRzLWFyZS1nb2luZy1hcm91bmTSAQA?oc=5",
-		"snippet": "3 days ago ... Get health information you can use, fact-checked by Nebraska Medicine experts. Breadcrumb. Home Advancing Health ... The great news is that these proven ..."
-	},
-	{
-		"title": "House keys carry symbolic weight for Palestinians families ...",
-		"link": "https://apnews.com/article/gaza-displacement-israel-war-900c4bacf70080249ea8e62f818c410f",
-		"snippet": "3 days ago ... MUWASI, Gaza Strip (AP) — On his key chain, Hassan Nofal keeps the keys to two homes. One is to the house of his grandparents in what is now southern Israel ..."
-	},
-	{
-		"title": "Danbury, CT Classifieds",
-		"link": "https://news.google.com/__i/rss/rd/articles/CBMiXWh0dHBzOi8vcGF0Y2guY29tL2Nvbm5lY3RpY3V0L2RhbmJ1cnkvY2xhc3NpZmllZHMvam9icy8xMjUzNDMvb2ZmaWNlLXNwYWNlLWZvci1yZW50LWluLWRhcmllbtIBAA?oc=5",
-		"snippet": "7 days ago ... Local market ads for gigs & services, free stuff, for sale, announcements, housing, job listings and lost and found in Danbury, CT."
-	},
-	{
-		"title": "Israel-Hamas war: Israeli airstrikes kill at least 25 in southern Gaza ...",
-		"link": "https://apnews.com/article/israel-palestinians-hamas-war-news-07-09-2024-5c8eb2a36e22fb0ea7666b73e5c0b54c",
-		"snippet": "2 days ago ... Vermont flooding · World News. Airstrike kills 25 in southern Gaza as Israeli assault on Gaza City shuts down medical facilities. 0 seconds of 23 seconds."
-	},
-	{
-		"title": "SSI and Medicaid During Pregnancy and Childbirth",
-		"link": "https://news.google.com/__i/rss/rd/articles/CBMiRmh0dHBzOi8vd3d3LmludmVzdG9wZWRpYS5jb20vc3NpLW1lZGljYWlkLXByZWduYW5jeS1jaGlsZGJpcnRoLTU2NDkzMTPSAQA?oc=5",
-		"snippet": "5 days ago ... After you give birth, you may need to use SSI for a range of medical services, such as care for low birth weight babies, for disabled children, or for yourself ..."
+		"snippet": "2 days ago ... Keep up with the ever-changing world of medical science with new and emerging developments in health. ... HealthlineMedical News TodayGreatistPsych CentralBezzy."
 	},
 	{
 		"title": "Most Johns Hopkins medical students will no longer pay tuition ...",
 		"link": "https://apnews.com/article/bloomberg-philanthropy-john-hopkins-university-53ed82c14c4d4b07cb2675a9ca1829f9",
-		"snippet": "3 days ago ... ... medical school and the school of nursing and public health.” Bloomberg Philanthropies previously gifted $1.8 billion to Johns Hopkins in 2018 to ensure that ..."
+		"snippet": "4 days ago ... ... medical school and the school of nursing and public health.” Bloomberg Philanthropies previously gifted $1.8 billion to Johns Hopkins in 2018 to ensure that ..."
+	},
+	{
+		"title": "What COVID-19 variants are going around in July 2024? | Nebraska ...",
+		"link": "https://news.google.com/__i/rss/rd/articles/CBMiSWh0dHBzOi8vd3d3Lm5lYnJhc2thbWVkLmNvbS9DT1ZJRC93aGF0LWNvdmlkLTE5LXZhcmlhbnRzLWFyZS1nb2luZy1hcm91bmTSAQA?oc=5",
+		"snippet": "4 days ago ... Get health information you can use, fact-checked by Nebraska Medicine experts. Breadcrumb. Home Advancing Health ... The great news is that these proven ..."
+	},
+	{
+		"title": "US Indo-Pacific Command",
+		"link": "https://news.google.com/__i/rss/rd/articles/CBMia2h0dHBzOi8vd3d3LnBhY29tLm1pbC9NZWRpYS9OZXdzL05ld3MtQXJ0aWNsZS1WaWV3L0FydGljbGUvMzI1MDg2My91c2luZG9wYWNvbS1jZWxlYnJhdGVzLTc1dGgtYW5uaXZlcnNhcnkv0gEA?oc=5",
+		"snippet": "4 days ago ... Home : Media : News : News Article View. CONNECT WITH USINDOPACOM. Facebook ... News · USA.gov · Photos & Videos · Privacy & Security · Top Issues · US INDOPACOM ..."
+	},
+	{
+		"title": "Israel-Hamas war: Israeli airstrikes kill at least 25 in southern Gaza ...",
+		"link": "https://apnews.com/article/israel-palestinians-hamas-war-news-07-09-2024-5c8eb2a36e22fb0ea7666b73e5c0b54c",
+		"snippet": "3 days ago ... Inflation cools · World News. Airstrike kills 25 in southern Gaza as Israeli assault on Gaza City shuts down medical facilities. 0 seconds of 23 seconds."
+	},
+	{
+		"title": "House keys carry symbolic weight for Palestinians families ...",
+		"link": "https://apnews.com/article/gaza-displacement-israel-war-900c4bacf70080249ea8e62f818c410f",
+		"snippet": "4 days ago ... MUWASI, Gaza Strip (AP) — On his key chain, Hassan Nofal keeps the keys to two homes. One is to the house of his grandparents in what is now southern Israel ..."
+	},
+	{
+		"title": "Reading Eagle – Reading, PA News, Sports, Weather, Things to Do",
+		"link": "https://news.google.com/newspapers/url?client=ca-print-news-reading_eagle&format=GNPP&num=0&channel=STN-ca-print-news-reading_eagle+STN-GNID:5FBY:19830705&q=http://readingeagle.com/&source=gbs_pub_info&usg=AOvVaw2RASbG_7fB7NZiFy0HsNSx",
+		"snippet": "7 hours ago ... Home Page. Close Menu. News · News · Election · Coronavirus · South Schuylkill News · Berks Country · Education · Health · History · Politics · Spotted ..."
 	},
 	{
 		"title": "Dominican Republic travel advice - GOV.UK",
 		"link": "https://news.google.com/__i/rss/rd/articles/CBMiR2h0dHBzOi8vd3d3Lmdvdi51ay9mb3JlaWduLXRyYXZlbC1hZHZpY2UvZG9taW5pY2FuLXJlcHVibGljL2Nvcm9uYXZpcnVz0gEA?oc=5",
-		"snippet": "7 days ago ... Health · Getting help. Subscriptions. Get email alerts. Warnings and insurance. Still current at: 11 July 2024; Updated: 5 July 2024; Latest update: Update on ..."
+		"snippet": "8 days ago ... Health · Getting help. Subscriptions. Get email alerts. Warnings and insurance. Still current at: 12 July 2024; Updated: 5 July 2024; Latest update: Update on ..."
 	},
 	{
-		"title": "Lodi News-Sentinel",
-		"link": "https://news.google.com/newspapers/url?client=ca-print-news-lodi_news_sentinel&format=GNPP&num=0&channel=STN-ca-print-news-lodi_news_sentinel+STN-GNID:UY54:20071214&q=http://www.lodinews.com/&source=gbs_pub_info&usg=AOvVaw3tS1GmHNoJJzc9kcTByAiX",
-		"snippet": "8 hours ago ... About 15 years ago, Lodi Fire Chief Ken Johnson was working from home when his wife began experiencing a medical emergency in which she was losing consciousness ..."
-	},
-	{
-		"title": "Home | Montreal Gazette | Montreal Gazette",
-		"link": "https://news.google.com/newspapers/url?client=ca-print-news-the_gazette&format=GNPP&num=0&channel=STN-ca-print-news-the_gazette+STN-GNID:T0PU:19800623&q=http://www.montrealgazette.com&source=gbs_pub_info&usg=AOvVaw3psPYlaz9IueyAGejt1pkJ",
-		"snippet": "7 hours ago ... Read latest breaking news, updates, and headlines. Montreal Gazette offers information on latest national and international events & more."
-	},
-	{
-		"title": "Indian mother delivers baby on boat as her river island is inundated ...",
-		"link": "https://apnews.com/article/india-floods-river-birth-boat-bb281029d775694bedc79ad08254431e",
-		"snippet": "7 days ago ... Jahanara Khatoon, 25, had just given birth on the boat on their way to a healthcare center, surrounded by the raging floodwaters of the Brahmaputra River. “I am ..."
-	},
-	{
-		"title": "Long Island - Watch Live",
-		"link": "https://news.google.com/__i/rss/rd/articles/CBMiXmh0dHBzOi8vYnJvbngubmV3czEyLmNvbS9yb2FkLXRyaXAtY2xvc2UtdG8taG9tZS1mYWxsLWludG8tYXV0dW1uLWF0LW5ldy15b3JrLWJvdGFuaWNhbC1nYXJkZW7SAQA?oc=5",
-		"snippet": "1 day ago ... ... care about, straight to your inbox. Your email address. Subscribe. News 12 New York · Download News 12 App · Where to Watch · News 12 Book Club. Select your TV ..."
+		"title": "SSI and Medicaid During Pregnancy and Childbirth",
+		"link": "https://news.google.com/__i/rss/rd/articles/CBMiRmh0dHBzOi8vd3d3LmludmVzdG9wZWRpYS5jb20vc3NpLW1lZGljYWlkLXByZWduYW5jeS1jaGlsZGJpcnRoLTU2NDkzMTPSAQA?oc=5",
+		"snippet": "3 days ago ... After you give birth, you may need to use SSI for a range of medical services, such as care for low birth weight babies, for disabled children, or for yourself ..."
 	},
 	{
 		"title": "Climate and environment | AP News",
 		"link": "https://apnews.com/climate-and-environment",
-		"snippet": "8 hours ago ... The latest news from The Associated Press on climate change, threats to biodiversity and renewable energies."
+		"snippet": "1 day ago ... ... home in between floods · Image · Corn, millet and ... rooftop solar? Farm ... Takeaways from AP's story on the BP oil spill medical settlement's shortcomings."
 	},
 	{
-		"title": "Gabby Landsverk - Business Insider",
-		"link": "https://news.google.com/__i/rss/rd/articles/CBMiLmh0dHBzOi8vd3d3Lmluc2lkZXIuY29tL2F1dGhvci9nYWJieS1sYW5kc3ZlcmvSAQA?oc=5",
-		"snippet": "8 days ago ... Gabby has a background in investigative journalism (previously contributing research for an investigation on correctional healthcare for the New Yorker) and a ..."
+		"title": "Home | Montreal Gazette | Montreal Gazette",
+		"link": "https://news.google.com/newspapers/url?client=ca-print-news-the_gazette&format=GNPP&num=0&channel=STN-ca-print-news-the_gazette+STN-GNID:T0PU:19800623&q=http://www.montrealgazette.com&source=gbs_pub_info&usg=AOvVaw3psPYlaz9IueyAGejt1pkJ",
+		"snippet": "6 hours ago ... Read latest breaking news, updates, and headlines. Montreal Gazette offers information on latest national and international events & more."
+	},
+	{
+		"title": "Pet Care Industry Outlook for 2030 | Morgan Stanley",
+		"link": "https://news.google.com/__i/rss/rd/articles/CBMiQmh0dHBzOi8vd3d3Lm1vcmdhbnN0YW5sZXkuY29tL2lkZWFzL3BldC1jYXJlLWluZHVzdHJ5LW91dGxvb2stMjAzMNIBAA?oc=5",
+		"snippet": "13 hours ago ... Discover why a generational shift and the increased importance of pets in their owners' lives could affect growth in pet services and products in coming ..."
+	},
+	{
+		"title": "Syphilis Rash on the Body: Appearance, Diagnosis, Treatment",
+		"link": "https://news.google.com/__i/rss/rd/articles/CBMiPGh0dHBzOi8vd3d3LnZlcnl3ZWxsaGVhbHRoLmNvbS9zeXBoaWxpcy1yYXNoLW9uLWJvZHktNjUzNzU5MNIBAA?oc=5",
+		"snippet": "4 hours ago ... Syphilis Rash Symptoms · Rashes that Look Like Syphilis · When to See a Healthcare Provider · Diagnosing Syphilis · Treating Syphilis and Syphilis Rashes · Summary."
+	},
+	{
+		"title": "The 3 Best Smartwatch for Android Phones of 2024 | Reviews by ...",
+		"link": "https://news.google.com/__i/rss/rd/articles/CBMiQ2h0dHBzOi8vd3d3Lm55dGltZXMuY29tL3dpcmVjdXR0ZXIvcmV2aWV3cy9iZXN0LXNtYXJ0d2F0Y2gtYW5kcm9pZC_SAQA",
+		"snippet": "3 days ago ... Home & Garden. Vacuums, Cleaning, & Laundry. Vacuum Cleaners · Vacuum cleaners ... The watch has a sharp, bright OLED screen and health-tracking sensors, too."
 	},
 	{
 		"title": "Cancer Prevention News",
 		"link": "https://news.google.com/articles/CBMiuAFodHRwczovL3d3dy5oZWFsaW8uY29tL2hlbWF0b2xvZ3ktb25jb2xvZ3kvY2FuY2VyLXByZXZlbnRpb24vbmV3cy9pbi10aGUtam91cm5hbHMvJTdCN2MxN2NiNTAtOGUxMC00ZWEwLTgzODQtOWI0Y2U0NWM0Yjc3JTdEL3JlZ3VsYXItYXNwaXJpbi11c2UtbWF5LWxvd2VyLXJpc2stZm9yLW92YXJpYW4tbGl2ZXItY2FuY2Vy0gEA?hl=en-PH&gl=PH&ceid=PH%3Aen",
-		"snippet": "4 days ago ... Find the latest Cancer Prevention news articles, videos, podcasts, and meeting coverage from medical experts and key opinion leaders you trust."
+		"snippet": "2 days ago ... Find the latest Cancer Prevention news articles, videos, podcasts, and meeting coverage from medical experts and key opinion leaders you trust."
 	},
 	{
-		"title": "Tiny homes, built largely with philanthropic support, offer more patch ...",
-		"link": "https://apnews.com/article/tiny-homes-sobrato-philanthropies-dignity-moves-62e94764e416d56d777e6043aceeccb1",
-		"snippet": "1 day ago ... ... news in all formats and the essential provider of the technology and ... Medical and mental health services will be provided. And residents can live ..."
-	},
-	{
-		"title": "The Fayette County Record: Home",
-		"link": "https://news.google.com/__i/rss/rd/articles/CBMiKGh0dHBzOi8vd3d3LmZheWV0dGVjb3VudHlyZWNvcmQuY29tL25vZGXSAQA?oc=5",
-		"snippet": "3 days ago ... Breaking. News,every weekday. ... Enter your email address and proceed to make the payment. Tejas Health Care Honors Founder Bob Field As Part of 15th Anniversary ..."
-	},
-	{
-		"title": "Fort Campbell soldier found dead in home was stabbed nearly 70 ...",
-		"link": "https://apnews.com/article/fort-campbell-soldier-death-autopsy-stab-wounds-0b635a82257767aae030cb313b9d43a6",
-		"snippet": "1 day ago ... An autopsy report from the Montgomery County Medical Examiner's Office said Dueñas Aguilar suffered 68 stab wounds to her neck and upper body, The Clarksville ..."
-	},
-	{
-		"title": "Cheapest Liability-Only Car Insurance Of 2024 – Forbes Advisor",
-		"link": "https://news.google.com/__i/rss/rd/articles/CBMiVWh0dHBzOi8vd3d3LmZvcmJlcy5jb20vYWR2aXNvci9jYXItaW5zdXJhbmNlL2Jlc3QtY2hlYXAtbGlhYmlsaXR5LW9ubHktY2FyLWluc3VyYW5jZS_SAQA?oc=5",
-		"snippet": "7 days ago ... He has covered insurance for a decade, including auto, home, life and health. Before covering insurance, Les was a news editor and reporter for Patch and ..."
+		"title": "the-dispatch.com | Local News, Politics & Sports in Lexington NC",
+		"link": "https://news.google.com/newspapers/url?client=ca-print-news-the_dispatch_1&format=GNPP&num=0&channel=STN-ca-print-news-the_dispatch_1+STN-GNID:EAGZ:19200213&q=http://www.the-dispatch.com/&source=gbs_pub_info&usg=AOvVaw2L8x0JreWThxp05cI3s747",
+		"snippet": "8 hours ago ... WINSTON-SALEM — On July 5, 2024, Virginia Maie Ellington (née Brewer) died at home… Theresa McDowell. LEXINGTON — Theresa Rimer McDowell, 84, of Davidson County ..."
 	},
 	{
 		"title": "Indian Rap Star Baba Sehgal Wants to Help You Sleep Better",
 		"link": "https://news.google.com/__i/rss/rd/articles/CBMiUGh0dHBzOi8vd3d3Lm1kZGlvbmxpbmUuY29tL21hcmtldHMvaW5kaWFuLXJhcC1zdGFyLWJhYmEtc2VoZ2FsLWRyb3BzLWJhcnMtcmVzbWVk0gEA?oc=5",
-		"snippet": "7 days ago ... It was a constant frustration on the set and at home with my family,” Moore said. “When I learned that I had a medical condition called dry eye disease, I ..."
-	},
-	{
-		"title": "What will Labour do? Starmer's manifesto and election promises",
-		"link": "https://news.google.com/__i/rss/rd/articles/CBMiZ2h0dHBzOi8vd3d3LnRlbGVncmFwaC5jby51ay9wb2xpdGljcy8yMDI0LzAyLzA5L2xhYm91ci1wYXJ0eS1wbGVkZ2VzLW1hbmlmZXN0by1nZW5lcmFsLWVsZWN0aW9uLXZvdGVycy_SAQA",
-		"snippet": "7 days ago ... News home · UK news · Politics · World · Health news · Defence · Science · Education ... health specialists – to cater for millions of patients overloading A&E ..."
+		"snippet": "8 days ago ... It was a constant frustration on the set and at home with my family,” Moore said. “When I learned that I had a medical condition called dry eye disease, I ..."
 	},
 	{
 		"title": "Nevada Daily Mail",
 		"link": "https://news.google.com/newspapers/url?client=ca-print-news-the_nevada_daily_mail&format=GNPP&num=0&channel=STN-ca-print-news-the_nevada_daily_mail+STN-GNID:RNSH:18830710&q=http://www.nevadadailymail.com/&source=gbs_pub_info&usg=AOvVaw0if56CpoMcRQuzWR9V3XDx",
-		"snippet": "3 days ago ... Classifieds · Home · News · Photos · Records · Sports · Weather · LEGALS · Contact Us · Customer Care · Archive (1883-2007) · Archive (2007-Today) ..."
+		"snippet": "2 days ago ... Classifieds · Home · News · Photos · Records · Sports · Weather · LEGALS · Contact Us · Customer Care · Archive (1883-2007) · Archive (2007-Today) ..."
+	},
+	{
+		"title": "TASB News and Insights | TASB",
+		"link": "https://news.google.com/__i/rss/rd/articles/CBMiZGh0dHBzOi8vd3d3LnRhc2Iub3JnL1NlcnZpY2VzL0hSLVNlcnZpY2VzL0hSWC9Db21wZW5zYXRpb24tYW5kLUJlbmVmaXRzL09wdGluZy1PdXQtb2YtVFJTLUFjdGl2ZUNhcmXSAQA?oc=5",
+		"snippet": "2 days ago ... Explore timely education articles, trends, topics, position papers, TASB announcements, and news releases."
+	},
+	{
+		"title": "Best Dental Insurance With No Waiting Period 2024 – Forbes Advisor",
+		"link": "https://news.google.com/__i/rss/rd/articles/CBMiWGh0dHBzOi8vd3d3LmZvcmJlcy5jb20vYWR2aXNvci9oZWFsdGgtaW5zdXJhbmNlL2Jlc3QtZGVudGFsLWluc3VyYW5jZS1uby13YWl0aW5nLXBlcmlvZC_SAQA?oc=5",
+		"snippet": "3 days ago ... ... Medical Malpractice Insurance ... He has covered insurance for a decade, including auto, home, life and health. Before covering insurance, Les was a news ..."
+	},
+	{
+		"title": "Does Pet Insurance Cover Cancer Treatment?",
+		"link": "https://news.google.com/__i/rss/rd/articles/CBMiU2h0dHBzOi8vd3d3Lm1hcmtldHdhdGNoLmNvbS9waWNrcy9ndWlkZXMvaW5zdXJhbmNlL2RvZXMtcGV0LWluc3VyYW5jZS1jb3Zlci1jYW5jZXIv0gEA?oc=5",
+		"snippet": "4 days ago ... The rate of cancer in dogs is similar to that of humans; the American Veterinary Medical ... ASPCA Pet Health ..."
+	},
+	{
+		"title": "Ireland travel advice - GOV.UK",
+		"link": "https://news.google.com/__i/rss/rd/articles/CBMiMGh0dHBzOi8vd3d3Lmdvdi51ay9mb3JlaWduLXRyYXZlbC1hZHZpY2UvaXJlbGFuZNIBAA?oc=5",
+		"snippet": "4 days ago ... Home · Passports, travel and living abroad · Travel abroad · Foreign travel advice ... Government activity. Departments · News · Guidance and regulation ..."
+	},
+	{
+		"title": "An 'Equal' Inheritance for All the Kids Doesn't Always Work | Kiplinger",
+		"link": "https://news.google.com/__i/rss/rd/articles/CBMiUmh0dHBzOi8vd3d3LmtpcGxpbmdlci5jb20vcmV0aXJlbWVudC9ob3ctY2hpbGRyZW4tc2hvdWxkLWluaGVyaXQtaXNudC1hbHdheXMtY2xlYXLSAQA?oc=5",
+		"snippet": "1 day ago ... Many times, one child primarily helps an elderly parent. This could include helping with medical appointments, coordinating care with various health care ..."
+	},
+	{
+		"title": "2023 Gartner® Magic Quadrant™ for Financial Planning Software ...",
+		"link": "https://news.google.com/__i/rss/rd/articles/CBMiP2h0dHBzOi8vd3d3LndvbHRlcnNrbHV3ZXIuY29tL2VuL2V4cGVydC1pbnNpZ2h0cy9nYXJ0bmVyLW1xLWZwYdIBAA?oc=5",
+		"snippet": "3 days ago ... Home page: Portuguese. Canada. Home page: English · French. Current Page ... News & Press Releases · Events · Solutions Directory · Health · Tax & Accounting."
+	},
+	{
+		"title": "What's happening in Gaza? A desperate humanitarian crisis",
+		"link": "https://news.google.com/__i/rss/rd/articles/CBMidWh0dHBzOi8vd3d3LnJlZGNyb3NzLm9yZy51ay9zdG9yaWVzL2Rpc2FzdGVycy1hbmQtZW1lcmdlbmNpZXMvd29ybGQvd2hhdHMtaGFwcGVuaW5nLWluLWdhemEtaHVtYW5pdGFyaWFuLWNyaXNpcy1ncm93c9IBAA",
+		"snippet": "4 days ago ... The latest news from the Gaza strip where a desperate humanitarian crisis is unfolding. Thousands of people have died, healthcare has collapsed and famine ..."
+	},
+	{
+		"title": "Russia-Ukraine war: Russian missile attacks kill at least 31, hits ...",
+		"link": "https://apnews.com/article/russia-ukraine-war-kyiv-attack-33aecd50cf252ff6184c0c14f90588b5",
+		"snippet": "4 days ago ... More than 1,600 medical facilities have been damaged since the start of the war and 214 have been ruined completely, according to Ukrainian Health Ministry ..."
 	},
 	{
 		"title": "Health",
@@ -666,196 +672,196 @@
 	{
 		"title": "Newsroom | Mon Health Medical Center",
 		"link": "https://news.google.com/__i/rss/rd/articles/CBMiK2h0dHBzOi8vd3d3Lm1vbmhlYWx0aC5jb20vbWFpbi9uZXdzcm9vbS81NjXSAQA?oc=5",
-		"snippet": "1 day ago ... Check out the latest news articles in healthcare at Mon General Hospital."
+		"snippet": "2 days ago ... Check out the latest news articles in healthcare at Mon General Hospital."
 	},
 	{
 		"title": "Can California's health care providers help solve the state's ...",
 		"link": "https://apnews.com/us-news/bakersfield-health-care-industry-government-programs-general-news-0583e94b85010bd8bc91c74e5eb71032",
-		"snippet": "4 hours ago ... Los Angeles County's largest health plan, LA Care, is using the incentive funds to help open 1,700 homes to homeless residents by 2027. Working with the county, ..."
+		"snippet": "1 day ago ... Los Angeles County's largest health plan, LA Care, is using the incentive funds to help open 1,700 homes to homeless residents by 2027. Working with the county, ..."
 	},
 	{
 		"title": "Pittsburgh Post-Gazette",
 		"link": "https://news.google.com/newspapers/url?client=ca-print-news-pittsburgh_post_gazette&format=GNPP&num=0&channel=STN-ca-print-news-pittsburgh_post_gazette+STN-GNID:QX1G:19790223&q=http://www.post-gazette.com&source=gbs_pub_info&usg=AOvVaw0_VI9BA_DiVGgBkUawGx8H",
-		"snippet": "6 hours ago ... ... News Home · Crime & Courts · Election 2024 · Politics · Education · Health & Wellness · Transportation · State · Nation · World · Weather News · Obituaries."
+		"snippet": "4 hours ago ... ... News Home · Crime & Courts · Election 2024 · Politics · Education · Health & Wellness · Transportation · State · Nation · World · Weather News · Obituaries."
+	},
+	{
+		"title": "Retiring From National Guard or Reserve? Know Your TRICARE ...",
+		"link": "https://news.google.com/__i/rss/rd/articles/CBMid2h0dHBzOi8vbmV3c3Jvb20udHJpY2FyZS5taWwvQXJ0aWNsZXMvQXJ0aWNsZS8zMTIwODY2L3JldGlyaW5nLWZyb20tbmF0aW9uYWwtZ3VhcmQtb3ItcmVzZXJ2ZS1rbm93LXlvdXItdHJpY2FyZS1vcHRpb25z0gEA?oc=5",
+		"snippet": "2 days ago ... TRICARE Newsroom Home News TRICARE News ... The MHS GENESIS Patient Portal lets you speak to your military health care team at your military hospital or..."
 	},
 	{
 		"title": "OHSU coronavirus (COVID-19) response | OHSU News",
 		"link": "https://news.google.com/__i/rss/rd/articles/CBMiTGh0dHBzOi8vbmV3cy5vaHN1LmVkdS8yMDIyLzExLzAyL3ByZXBhcmluZy1mb3ItdGhlLW5vdmVsLWNvcm9uYXZpcnVzLWF0LW9oc3XSAQA?oc=5",
-		"snippet": "4 days ago ... OHSU Hospital and OHSU Health Hillsboro Medical Center hospitalization details: ... homes, limiting barriers to health care access. The service has ..."
+		"snippet": "5 days ago ... OHSU Hospital and OHSU Health Hillsboro Medical Center hospitalization details: ... homes, limiting barriers to health care access. The service has ..."
 	},
 	{
-		"title": "Joe Biden | AP News",
-		"link": "https://apnews.com/hub/joe-biden",
-		"snippet": "1 day ago ... White House press secretary Karine Jean-Pierre has tried to address questions about President Joe Biden's health. July 8."
-	},
-	{
-		"title": "Biden's ABC interview: What to know as president insists 'I am ...",
+		"title": "Biden ABC interview: President tries to salvage reelection effort | AP ...",
 		"link": "https://apnews.com/article/president-joe-biden-campaign-wisconsin-abc-news-e4657f86f5e82b10a5fefb526bc49b08",
-		"snippet": "5 days ago ... ... medical evaluation that would show voters he is up for serving another term ... care of himself.” Kentucky Gov. Andy Beshear, who attended the meeting ..."
+		"snippet": "6 days ago ... ... medical evaluation that would show voters he is up for serving another term ... care of himself.” Kentucky Gov. Andy Beshear, who attended the meeting ..."
 	},
 	{
 		"title": "News | Imperial News | Imperial College London",
 		"link": "https://news.google.com/__i/rss/rd/articles/CBMiTmh0dHBzOi8vd3d3LmltcGVyaWFsLmFjLnVrL25ld3MvMjI2NTEzL21hbnktaWN1LXN0YWZmLWhhdmUtZXhwZXJpZW5jZWQtbWVudGFsL9IBUmh0dHBzOi8vd3d3LmltcGVyaWFsLmFjLnVrL25ld3MvMjI2NTEzL21hbnktaWN1LXN0YWZmLWhhdmUtZXhwZXJpZW5jZWQtbWVudGFsL2FtcC8?oc=5",
-		"snippet": "2 days ago ... Health · Engineering · SCIENCE · COLLEGE AND CAMPUS · BUSINESS · Features · Most popular · Latest comments ..."
+		"snippet": "3 days ago ... Imperial News. Imperial College London. Home College and Campus Science Engineering Health Business ... Cancer Care. 10 July 2024: Cancer experts outline ..."
 	},
 	{
-		"title": "Associated Press News: Breaking News, Latest Headlines and ...",
-		"link": "https://apnews.com/",
-		"snippet": "2 days ago ... Read the latest headlines, breaking news, and videos at APNews.com, the definitive source for independent journalism from every corner of the globe."
+		"title": "How Much Does an Urgent Care Visit Cost? – Forbes Advisor",
+		"link": "https://news.google.com/__i/rss/rd/articles/CBMiQWh0dHBzOi8vd3d3LmZvcmJlcy5jb20vYWR2aXNvci9oZWFsdGgtaW5zdXJhbmNlL3VyZ2VudC1jYXJlLWNvc3Qv0gEA?oc=5",
+		"snippet": "3 days ago ... Get Forbes Advisor's ratings of the best insurance companies and helpful information on how to find the best travel, auto, home, health, life, pet, and small ..."
 	},
 	{
 		"title": "Reading Eagle – Reading, PA News, Sports, Weather, Things to Do",
 		"link": "https://news.google.com/newspapers/url?client=ca-print-news-reading_eagle&format=GNPP&num=0&channel=STN-ca-print-news-reading_eagle+STN-GNID:5FBY:19830705&q=http://readingeagle.com/&source=gbs_pub_info&usg=AOvVaw2RASbG_7fB7NZiFy0HsNSx",
-		"snippet": "7 hours ago ... Close Menu. News · News · Election · Coronavirus · South Schuylkill News · Berks Country · Education · Health · History · Politics · Spotted Lanternfly ..."
+		"snippet": "7 hours ago ... Home Page. Close Menu. News · News · Election · Coronavirus · South Schuylkill News · Berks Country · Education · Health · History · Politics · Spotted ..."
 	},
 	{
-		"title": "dnews.com | News of the Palouse since 1911",
-		"link": "https://news.google.com/newspapers/url?client=ca-print-news-moscow_pullman_daily_news&format=GNPP&num=0&channel=STN-ca-print-news-moscow_pullman_daily_news+STN-GNID:A9DB:19910724&q=http://dnews.com/&source=gbs_pub_info&usg=AOvVaw3u9UebEqnHPVhuVwXyPJSk",
-		"snippet": "5 hours ago ... For Your Health. Click here and listen to the latest in regional health news from reporter Rachel Sun. Idaho doctor: Fed care law essential. 1:08. Rural ..."
+		"title": "South Korea Travel Advice & Safety | Smartraveller",
+		"link": "https://news.google.com/__i/rss/rd/articles/CBMiTWh0dHBzOi8vd3d3LnNtYXJ0cmF2ZWxsZXIuZ292LmF1L2Rlc3RpbmF0aW9ucy9hc2lhL3NvdXRoLWtvcmVhLXJlcHVibGljLWtvcmVh0gEA?oc=5",
+		"snippet": "4 days ago ... You may be required to register on the Korean Q-code quarantine registration system prior to arrival or to complete a health questionnaire on arrival. Check ..."
 	},
 	{
-		"title": "Danbury, CT Classifieds",
-		"link": "https://news.google.com/__i/rss/rd/articles/CBMiXWh0dHBzOi8vcGF0Y2guY29tL2Nvbm5lY3RpY3V0L2RhbmJ1cnkvY2xhc3NpZmllZHMvam9icy8xMjUzNDMvb2ZmaWNlLXNwYWNlLWZvci1yZW50LWluLWRhcmllbtIBAA?oc=5",
-		"snippet": "7 days ago ... Local market ads for gigs & services, free stuff, for sale, announcements, housing, job listings and lost and found in Danbury, CT."
-	},
-	{
-		"title": "the-dispatch.com | Local News, Politics & Sports in Lexington NC",
-		"link": "https://news.google.com/newspapers/url?client=ca-print-news-the_dispatch_1&format=GNPP&num=0&channel=STN-ca-print-news-the_dispatch_1+STN-GNID:EAGZ:19200213&q=http://www.the-dispatch.com/&source=gbs_pub_info&usg=AOvVaw2L8x0JreWThxp05cI3s747",
-		"snippet": "7 hours ago ... What's Happening: Building permits show cleaning supply manufacturer moving to Lexington · All Davidson County restaurants inspected in June post 'A' health ..."
-	},
-	{
-		"title": "Home | Montreal Gazette | Montreal Gazette",
-		"link": "https://news.google.com/newspapers/url?client=ca-print-news-the_gazette&format=GNPP&num=0&channel=STN-ca-print-news-the_gazette+STN-GNID:T0PU:19800623&q=http://www.montrealgazette.com&source=gbs_pub_info&usg=AOvVaw3psPYlaz9IueyAGejt1pkJ",
-		"snippet": "7 hours ago ... A man will be sentenced for Montreal transit assaults. But mental-health questions remain. with Video. Local News."
+		"title": "AuntMinnieEurope",
+		"link": "https://news.google.com/__i/rss/rd/articles/CBMioQFodHRwczovL3d3dy5hdW50bWlubmllZXVyb3BlLmNvbS9pbmRleC5hc3B4P3NlYz1sb2cmVVJMPWh0dHBzJTNBJTJGJTJGd3d3LmF1bnRtaW5uaWVldXJvcGUuY29tJTJGaW5kZXguYXNweCUzRnNlYyUzRHN1cCUyNnN1YiUzRG1vbCUyNnBhZyUzRGRpcyUyNkl0ZW1JRCUzRDYyMzAwNtIBAA?oc=5",
+		"snippet": "5 days ago ... Quibim and Hospital Clínic Barcelona are collaborating on an initiative to help stroke patients. ... Clinical News · Informatics · Industry News · Medical, Legal ..."
 	},
 	{
 		"title": "What COVID-19 variants are going around in July 2024? | Nebraska ...",
 		"link": "https://news.google.com/__i/rss/rd/articles/CBMiSWh0dHBzOi8vd3d3Lm5lYnJhc2thbWVkLmNvbS9DT1ZJRC93aGF0LWNvdmlkLTE5LXZhcmlhbnRzLWFyZS1nb2luZy1hcm91bmTSAQA?oc=5",
-		"snippet": "3 days ago ... Since many are using home tests that are not reported through public health or are not testing at all, the official case counts underestimate the actual ..."
-	},
-	{
-		"title": "WPXI: Pittsburgh News, Weather, Traffic and Sports",
-		"link": "https://news.google.com/__i/rss/rd/articles/CBMiL2h0dHBzOi8vd3d3LndweGkuY29tL2hvbWVwYWdlP2Nocj0xNjMzOTc2MTY3MTk10gEA?oc=5",
-		"snippet": "50 minutes ago ... News Weather Video 11 Investigates Sports Decision 2024 11 Cares Changing Climate Home Experts Care Connect Breaking the Stigma Steals and Deals · News · Back ..."
+		"snippet": "4 days ago ... Since many are using home tests that are not reported through public health or are not testing at all, the official case counts underestimate the actual ..."
 	},
 	{
 		"title": "Climate and environment | AP News",
 		"link": "https://apnews.com/climate-and-environment",
-		"snippet": "8 hours ago ... Once praised, settlement to help sickened BP oil spill workers leaves most with nearly nothing · Image. Takeaways from AP's story on the BP oil spill medical ..."
+		"snippet": "1 day ago ... ... home in between floods · Image · Corn, millet and ... rooftop solar? Farm ... Takeaways from AP's story on the BP oil spill medical settlement's shortcomings."
 	},
 	{
-		"title": "Long Island - Watch Live",
-		"link": "https://news.google.com/__i/rss/rd/articles/CBMiXmh0dHBzOi8vYnJvbngubmV3czEyLmNvbS9yb2FkLXRyaXAtY2xvc2UtdG8taG9tZS1mYWxsLWludG8tYXV0dW1uLWF0LW5ldy15b3JrLWJvdGFuaWNhbC1nYXJkZW7SAQA?oc=5",
-		"snippet": "1 day ago ... ... care about, straight to your inbox. Your email address. Subscribe. News 12 New York · Download News 12 App · Where to Watch · News 12 Book Club. Select your TV ..."
+		"title": "Home | Montreal Gazette | Montreal Gazette",
+		"link": "https://news.google.com/newspapers/url?client=ca-print-news-the_gazette&format=GNPP&num=0&channel=STN-ca-print-news-the_gazette+STN-GNID:T0PU:19800623&q=http://www.montrealgazette.com&source=gbs_pub_info&usg=AOvVaw3psPYlaz9IueyAGejt1pkJ",
+		"snippet": "5 hours ago ... Home | Montreal Gazette | Montreal Gazette. Local News · Service resumes at ... care and health literacy. 1 day ago Patient advocacy. Dr. Shazma Mithani ..."
 	},
 	{
-		"title": "The Best Home Warranty for Veterans of 2024",
-		"link": "https://news.google.com/__i/rss/rd/articles/CBMiUWh0dHBzOi8vd3d3Lm1hcmtldHdhdGNoLmNvbS9waWNrcy9ndWlkZXMvZmluYW5jZS9iZXN0LWhvbWUtd2FycmFudHktZm9yLXZldGVyYW5zL9IBAA?oc=5",
-		"snippet": "8 days ago ... She has also guided content strategy and edited in the insurance, venture capital, financial and healthcare fields. More Home Warranty Resources:."
+		"title": "Province strengthens COVID-19 measures for safer holiday season ...",
+		"link": "https://news.google.com/__i/rss/rd/articles/CBMiM2h0dHBzOi8vbmV3cy5nb3YuYmMuY2EvcmVsZWFzZXMvMjAyMUhMVEgwMjM0LTAwMjQzMdIBAA?oc=5",
+		"snippet": "1 day ago ... ... care admissions and the potential to overstress the health-care system ... Health. British Columbia News. Province strengthens COVID-19 measures for safer ..."
 	},
 	{
 		"title": "Dominican Republic travel advice - GOV.UK",
 		"link": "https://news.google.com/__i/rss/rd/articles/CBMiR2h0dHBzOi8vd3d3Lmdvdi51ay9mb3JlaWduLXRyYXZlbC1hZHZpY2UvZG9taW5pY2FuLXJlcHVibGljL2Nvcm9uYXZpcnVz0gEA?oc=5",
-		"snippet": "7 days ago ... Contents · Warnings and insurance · Entry requirements · Safety and security · Regional risks · Health · Getting help ..."
+		"snippet": "8 days ago ... Contents · Warnings and insurance · Entry requirements · Safety and security · Regional risks · Health · Getting help ..."
 	},
 	{
 		"title": "Cancer Prevention News",
 		"link": "https://news.google.com/articles/CBMiuAFodHRwczovL3d3dy5oZWFsaW8uY29tL2hlbWF0b2xvZ3ktb25jb2xvZ3kvY2FuY2VyLXByZXZlbnRpb24vbmV3cy9pbi10aGUtam91cm5hbHMvJTdCN2MxN2NiNTAtOGUxMC00ZWEwLTgzODQtOWI0Y2U0NWM0Yjc3JTdEL3JlZ3VsYXItYXNwaXJpbi11c2UtbWF5LWxvd2VyLXJpc2stZm9yLW92YXJpYW4tbGl2ZXItY2FuY2Vy0gEA?hl=en-PH&gl=PH&ceid=PH%3Aen",
-		"snippet": "4 days ago ... An FDA advisory committee has voted strongly in favor of approval for Guardant Health's blood test for colorectal cancer, intended for patients aged 45 years ..."
+		"snippet": "2 days ago ... An FDA advisory committee has voted strongly in favor of approval for Guardant Health's blood test for colorectal cancer, intended for patients aged 45 years ..."
+	},
+	{
+		"title": "Funding supports people affected by dementia | BC Gov News",
+		"link": "https://news.google.com/__i/rss/rd/articles/CBMiM2h0dHBzOi8vbmV3cy5nb3YuYmMuY2EvcmVsZWFzZXMvMjAyMUhMVEgwMTY4LTAwMTgyNtIBAA?oc=5",
+		"snippet": "22 hours ago ... People can connect to First Link through a referral from their health-care provider or by calling the First Link dementia helpline at 1 800 936-6033. “I want to ..."
 	},
 	{
 		"title": "SSI and Medicaid During Pregnancy and Childbirth",
 		"link": "https://news.google.com/__i/rss/rd/articles/CBMiRmh0dHBzOi8vd3d3LmludmVzdG9wZWRpYS5jb20vc3NpLW1lZGljYWlkLXByZWduYW5jeS1jaGlsZGJpcnRoLTU2NDkzMTPSAQA?oc=5",
-		"snippet": "5 days ago ... Non-LBW children can qualify for Medicaid through the Children's Health Insurance Program (CHIP) if their household meets income eligibility limits. Each state ..."
-	},
-	{
-		"title": "The Fayette County Record: Home",
-		"link": "https://news.google.com/__i/rss/rd/articles/CBMiKGh0dHBzOi8vd3d3LmZheWV0dGVjb3VudHlyZWNvcmQuY29tL25vZGXSAQA?oc=5",
-		"snippet": "3 days ago ... Breaking. News,every weekday. ... Enter your email address and proceed to make the payment. Tejas Health Care Honors Founder Bob Field As Part of 15th Anniversary ..."
+		"snippet": "3 days ago ... Non-LBW children can qualify for Medicaid through the Children's Health Insurance Program (CHIP) if their household meets income eligibility limits. Each state ..."
 	},
 	{
 		"title": "Crisis in the occupied Palestinian territory: What is happening and ...",
 		"link": "https://news.google.com/__i/rss/rd/articles/CBMiQmh0dHBzOi8vd3d3LnJlc2N1ZS5vcmcvYXJ0aWNsZS9jcmlzaXMtcGFsZXN0aW5lLXdoYXQteW91LW5lZWQta25vd9IBAA",
-		"snippet": "6 days ago ... The International Rescue Committee (IRC) and partners in Gaza are delivering emergency and life-saving medical care, including direct medical care, in Gaza's ..."
+		"snippet": "7 days ago ... The International Rescue Committee (IRC) and partners in Gaza are delivering emergency and life-saving medical care, including direct medical care, in Gaza's ..."
+	},
+	{
+		"title": "Bloomberg Government",
+		"link": "https://news.google.com/__i/rss/rd/articles/CBMid2h0dHBzOi8vbmV3cy5ibG9vbWJlcmdsYXcuY29tL3ByaXZhY3ktYW5kLWRhdGEtc2VjdXJpdHkvYmlkZW5zLXRpa3Rvay1mb3JheS1zcHVycy1iaXBhcnRpc2FuLWFuZ3N0LWF0LWhvdXNlLWNoaW5hLXBhbmVs0gEA",
+		"snippet": "15 hours ago ... BGOV Delivers rich data, sophisticated tools and breaking news alongside original, in-depth analysis ... defrauded federal health-care programs by avoiding ..."
+	},
+	{
+		"title": "Pet Care Industry Outlook for 2030 | Morgan Stanley",
+		"link": "https://news.google.com/__i/rss/rd/articles/CBMiQmh0dHBzOi8vd3d3Lm1vcmdhbnN0YW5sZXkuY29tL2lkZWFzL3BldC1jYXJlLWluZHVzdHJ5LW91dGxvb2stMjAzMNIBAA?oc=5",
+		"snippet": "13 hours ago ... Among spending categories, pet services such as animal health are expected to be the main driver of growth, more than doubling to $112 billion in 2030 from $48 ..."
 	},
 	{
 		"title": "Health and Fitness News: Stay Updated on Wellness, Workouts ...",
 		"link": "https://news.google.com/__i/rss/rd/articles/CBMia2h0dHBzOi8vd3d3Lm1pZC1kYXkuY29tL2xpZmVzdHlsZS9oZWFsdGgtJi1maXRuZXNzL2FydGljbGUvaW5jcmVhc2UtcHJvdGVpbi1pbnRha2UtdG8tc3RheS1oZWFsdGh5LTIzMTg0MzQx0gEA?oc=5",
-		"snippet": "8 hours ago ... Take a nutrition-rich balanced diet, and start by incorporating different coloured fruits and vegetables which are abundant in vitamins and antioxidants. Opt ..."
-	},
-	{
-		"title": "What will Labour do? Starmer's manifesto and election promises",
-		"link": "https://news.google.com/__i/rss/rd/articles/CBMiZ2h0dHBzOi8vd3d3LnRlbGVncmFwaC5jby51ay9wb2xpdGljcy8yMDI0LzAyLzA5L2xhYm91ci1wYXJ0eS1wbGVkZ2VzLW1hbmlmZXN0by1nZW5lcmFsLWVsZWN0aW9uLXZvdGVycy_SAQA",
-		"snippet": "7 days ago ... News home · UK news · Politics · World · Health news · Defence · Science · Education ... Sir Keir would also give care home residents a legal right to see their ..."
-	},
-	{
-		"title": "Gabby Landsverk - Business Insider",
-		"link": "https://news.google.com/__i/rss/rd/articles/CBMiLmh0dHBzOi8vd3d3Lmluc2lkZXIuY29tL2F1dGhvci9nYWJieS1sYW5kc3ZlcmvSAQA?oc=5",
-		"snippet": "8 days ago ... Gabby Landsverk. Senior Health, Nutrition and Fitness Reporter."
+		"snippet": "10 hours ago ... It can be achieved in the form of cycling, running, jogging, swimming, yoga, meditation, playing tennis, etc.,” Dr. Khan suggests. Kapadia advises that a ..."
 	},
 	{
 		"title": "Ulcerative colitis pain location: Symptoms, causes, personal story",
 		"link": "https://news.google.com/__i/rss/rd/articles/CBMiSmh0dHBzOi8vd3d3Lm1lZGljYWxuZXdzdG9kYXkuY29tL2FydGljbGVzL3VsY2VyYXRpdmUtY29saXRpcy1wYWluLWxvY2F0aW9u0gEA?oc=5",
-		"snippet": "22 hours ago ... Keep up with the ever-changing world of medical science with new and emerging developments in health. ... HealthlineMedical News TodayGreatistPsych CentralBezzy."
-	},
-	{
-		"title": "TASB News and Insights | TASB",
-		"link": "https://news.google.com/__i/rss/rd/articles/CBMiZGh0dHBzOi8vd3d3LnRhc2Iub3JnL1NlcnZpY2VzL0hSLVNlcnZpY2VzL0hSWC9Db21wZW5zYXRpb24tYW5kLUJlbmVmaXRzL09wdGluZy1PdXQtb2YtVFJTLUFjdGl2ZUNhcmXSAQA?oc=5",
-		"snippet": "4 days ago ... Home. News & Insights. News & Insights. Quick Links. txEdInsights. As a thought ... medical leave for spring and summer births. HR Services. Image of blank ..."
-	},
-	{
-		"title": "Summer Cold vs. COVID: What To Know",
-		"link": "https://news.google.com/__i/rss/rd/articles/CBMiWGh0dHBzOi8vd3d3LmhlYWx0aC5jb20vY29uZGl0aW9uL2luZmVjdGlvdXMtZGlzZWFzZXMvY29yb25hdmlydXMvc3VtbWVyLWNvbGQtb3ItY292aWQtMTnSAQA?oc=5",
-		"snippet": "6 days ago ... ... home recovery. Over-the-counter (OTC) medications can help treat COVID symptoms like coughing or congestion.6. Antiviral medications can treat individuals ..."
-	},
-	{
-		"title": "Ireland travel advice - GOV.UK",
-		"link": "https://news.google.com/__i/rss/rd/articles/CBMiMGh0dHBzOi8vd3d3Lmdvdi51ay9mb3JlaWduLXRyYXZlbC1hZHZpY2UvaXJlbGFuZNIBAA?oc=5",
-		"snippet": "3 days ago ... Services and information. Benefits · Births, death, marriages and care · Business ... Government activity. Departments · News · Guidance and regulation · Research ..."
+		"snippet": "2 days ago ... Keep up with the ever-changing world of medical science with new and emerging developments in health. ... HealthlineMedical News TodayGreatistPsych CentralBezzy."
 	},
 	{
 		"title": "Most Johns Hopkins medical students will no longer pay tuition ...",
 		"link": "https://apnews.com/article/bloomberg-philanthropy-john-hopkins-university-53ed82c14c4d4b07cb2675a9ca1829f9",
-		"snippet": "3 days ago ... Bloomberg granted Meharry Medical College $34 million in 2020 as part of a $100 million gift he made to four Black medical schools to help reduce the debt of ..."
+		"snippet": "4 days ago ... Bloomberg granted Meharry Medical College $34 million in 2020 as part of a $100 million gift he made to four Black medical schools to help reduce the debt of ..."
+	},
+	{
+		"title": "TASB News and Insights | TASB",
+		"link": "https://news.google.com/__i/rss/rd/articles/CBMiZGh0dHBzOi8vd3d3LnRhc2Iub3JnL1NlcnZpY2VzL0hSLVNlcnZpY2VzL0hSWC9Db21wZW5zYXRpb24tYW5kLUJlbmVmaXRzL09wdGluZy1PdXQtb2YtVFJTLUFjdGl2ZUNhcmXSAQA?oc=5",
+		"snippet": "2 days ago ... Home. News & Insights. News & Insights. Quick Links. txEdInsights. As a thought ... medical leave for spring and summer births. HR Services. Image of blank ..."
+	},
+	{
+		"title": "What will Labour do? Starmer's manifesto and election promises",
+		"link": "https://news.google.com/__i/rss/rd/articles/CBMiZ2h0dHBzOi8vd3d3LnRlbGVncmFwaC5jby51ay9wb2xpdGljcy8yMDI0LzAyLzA5L2xhYm91ci1wYXJ0eS1wbGVkZ2VzLW1hbmlmZXN0by1nZW5lcmFsLWVsZWN0aW9uLXZvdGVycy_SAQA",
+		"snippet": "8 days ago ... News home · UK news · Politics · World · Health news · Defence · Science · Education ... Sir Keir would also give care home residents a legal right to see their ..."
+	},
+	{
+		"title": "Long Island - Watch Live",
+		"link": "https://news.google.com/__i/rss/rd/articles/CBMiXmh0dHBzOi8vYnJvbngubmV3czEyLmNvbS9yb2FkLXRyaXAtY2xvc2UtdG8taG9tZS1mYWxsLWludG8tYXV0dW1uLWF0LW5ldy15b3JrLWJvdGFuaWNhbC1nYXJkZW7SAQA?oc=5",
+		"snippet": "5 hours ago ... ... care about, straight to your inbox. Your email address. Subscribe. News 12 New York · Download News 12 App · Where to Watch · News 12 Book Club. Select your TV ..."
+	},
+	{
+		"title": "WPXI: Pittsburgh News, Weather, Traffic and Sports",
+		"link": "https://news.google.com/__i/rss/rd/articles/CBMiL2h0dHBzOi8vd3d3LndweGkuY29tL2hvbWVwYWdlP2Nocj0xNjMzOTc2MTY3MTk10gEA?oc=5",
+		"snippet": "6 hours ago ... Local breaking news, severe weather, sports and traffic coverage. ... Home Experts Care Connect Breaking the Stigma Steals and Deals · News · Back to ..."
+	},
+	{
+		"title": "Summer Cold vs. COVID: What To Know",
+		"link": "https://news.google.com/__i/rss/rd/articles/CBMiWGh0dHBzOi8vd3d3LmhlYWx0aC5jb20vY29uZGl0aW9uL2luZmVjdGlvdXMtZGlzZWFzZXMvY29yb25hdmlydXMvc3VtbWVyLWNvbGQtb3ItY292aWQtMTnSAQA?oc=5",
+		"snippet": "7 days ago ... ... home recovery. Over-the-counter (OTC) medications can help treat COVID symptoms like coughing or congestion.6. Antiviral medications can treat individuals ..."
+	},
+	{
+		"title": "Ireland travel advice - GOV.UK",
+		"link": "https://news.google.com/__i/rss/rd/articles/CBMiMGh0dHBzOi8vd3d3Lmdvdi51ay9mb3JlaWduLXRyYXZlbC1hZHZpY2UvaXJlbGFuZNIBAA?oc=5",
+		"snippet": "4 days ago ... Services and information. Benefits · Births, death, marriages and care · Business ... Government activity. Departments · News · Guidance and regulation · Research ..."
+	},
+	{
+		"title": "TOM MURPHY | AP News",
+		"link": "https://apnews.com/author/tom-murphy",
+		"snippet": "5 hours ago ... Murphy covers how people and businesses navigate the U.S. health care system. He is a member of AP's Health and Science team."
+	},
+	{
+		"title": "Does Pet Insurance Cover Cancer Treatment?",
+		"link": "https://news.google.com/__i/rss/rd/articles/CBMiU2h0dHBzOi8vd3d3Lm1hcmtldHdhdGNoLmNvbS9waWNrcy9ndWlkZXMvaW5zdXJhbmNlL2RvZXMtcGV0LWluc3VyYW5jZS1jb3Zlci1jYW5jZXIv0gEA?oc=5",
+		"snippet": "4 days ago ... You may be wondering if purchasing a pet insurance plan can help subsidize the cost of treating these health conditions. Whether your pet insurance provider ..."
 	},
 	{
 		"title": "Best Dental Insurance With No Waiting Period 2024 – Forbes Advisor",
 		"link": "https://news.google.com/__i/rss/rd/articles/CBMiWGh0dHBzOi8vd3d3LmZvcmJlcy5jb20vYWR2aXNvci9oZWFsdGgtaW5zdXJhbmNlL2Jlc3QtZGVudGFsLWluc3VyYW5jZS1uby13YWl0aW5nLXBlcmlvZC_SAQA?oc=5",
-		"snippet": "2 days ago ... He has covered insurance for a decade, including auto, home, life and health. Before covering insurance, Les was a news editor and reporter for Patch and ..."
-	},
-	{
-		"title": "Israel-Hamas war | Breaking News & Live Updates | AP News",
-		"link": "https://apnews.com/hub/israel-hamas-war",
-		"snippet": "6 days ago ... Palestinian hospital authorities and witnesses say an Israeli airstrike slammed into a residential building right next to the main medical center in Gaza's ..."
-	},
-	{
-		"title": "Which health insurance policy a newly married couple should buy ...",
-		"link": "https://news.google.com/__i/rss/rd/articles/CBMigwFodHRwczovL3d3dy5saXZlbWludC5jb20vbW9uZXkvcGVyc29uYWwtZmluYW5jZS93aGljaC1oZWFsdGgtaW5zdXJhbmNlLXBvbGljeS1hLW5ld2x5LW1hcnJpZWQtY291cGxlLXNob3VsZC1idXktMTE2NjQ3OTEyMDQ5OTguaHRtbNIBAA?oc=5",
-		"snippet": "1 day ago ... Catch all the Business News, Market News, Breaking News Events and Latest News Updates on Live Mint. ... HomeMoneyPersonal FinanceWhich health insurance policy a ..."
+		"snippet": "3 days ago ... He has covered insurance for a decade, including auto, home, life and health. Before covering insurance, Les was a news editor and reporter for Patch and ..."
 	},
 	{
 		"title": "Indian Rap Star Baba Sehgal Wants to Help You Sleep Better",
 		"link": "https://news.google.com/__i/rss/rd/articles/CBMiUGh0dHBzOi8vd3d3Lm1kZGlvbmxpbmUuY29tL21hcmtldHMvaW5kaWFuLXJhcC1zdGFyLWJhYmEtc2VoZ2FsLWRyb3BzLWJhcnMtcmVzbWVk0gEA?oc=5",
-		"snippet": "7 days ago ... It was a constant frustration on the set and at home with my family,” Moore said. “When I learned that I had a medical condition called dry eye disease, I ..."
+		"snippet": "8 days ago ... It was a constant frustration on the set and at home with my family,” Moore said. “When I learned that I had a medical condition called dry eye disease, I ..."
 	},
 	{
-		"title": "Best Home Warranty Companies in Washington of 2024",
-		"link": "https://news.google.com/__i/rss/rd/articles/CBMiSmh0dHBzOi8vd3d3Lm1hcmtldHdhdGNoLmNvbS9waWNrcy9ndWlkZXMvZmluYW5jZS9ob21lLXdhcnJhbnR5LXdhc2hpbmd0b24v0gEA?oc=5",
-		"snippet": "8 days ago ... ... news in New York's Hudson Valley. Her work included coverage of local and state budgets, federal financial regulations and health care legislation. More ..."
+		"title": "Israel-Hamas war | Breaking News & Live Updates | AP News",
+		"link": "https://apnews.com/hub/israel-hamas-war",
+		"snippet": "3 days ago ... Airstrike kills 25 in southern Gaza as Israeli assault on Gaza City shuts down medical facilities ... home and at least one person wearing a United Nations ..."
 	},
 	{
-		"title": "What's happening in Gaza? A desperate humanitarian crisis",
-		"link": "https://news.google.com/__i/rss/rd/articles/CBMidWh0dHBzOi8vd3d3LnJlZGNyb3NzLm9yZy51ay9zdG9yaWVzL2Rpc2FzdGVycy1hbmQtZW1lcmdlbmNpZXMvd29ybGQvd2hhdHMtaGFwcGVuaW5nLWluLWdhemEtaHVtYW5pdGFyaWFuLWNyaXNpcy1ncm93c9IBAA",
-		"snippet": "3 days ago ... The latest news from the Gaza strip where a desperate humanitarian crisis is unfolding. Thousands of people have died, healthcare has collapsed and famine ..."
+		"title": "Nevada Daily Mail",
+		"link": "https://news.google.com/newspapers/url?client=ca-print-news-the_nevada_daily_mail&format=GNPP&num=0&channel=STN-ca-print-news-the_nevada_daily_mail+STN-GNID:RNSH:18830710&q=http://www.nevadadailymail.com/&source=gbs_pub_info&usg=AOvVaw0if56CpoMcRQuzWR9V3XDx",
+		"snippet": "2 days ago ... Classifieds · Home · News · Photos · Records · Sports · Weather · LEGALS · Contact Us · Customer Care · Archive (1883-2007) · Archive (2007-Today) ..."
 	},
 	{
 		"title": "The Latest - AP News",
 		"link": "https://apnews.com/article/israel-hamas-gaza-latest-07-08-2024-414fc517191d52bef7e4ebc7ade360d8",
-		"snippet": "3 days ago ... ... medical points and two primary health care centers. The evacuation orders came as Israeli deepens its offensives in pursuit of militants who had regrouped ..."
+		"snippet": "4 days ago ... ... medical points and two primary health care centers. The evacuation orders came as Israeli deepens its offensives in pursuit of militants who had regrouped ..."
 	},
 	{
-		"title": "Kitchener-Waterloo - CBC News",
-		"link": "https://news.google.com/__i/rss/rd/articles/CBMiMWh0dHBzOi8vd3d3LmNiYy5jYS9uZXdzL2NhbmFkYS9raXRjaGVuZXItd2F0ZXJsb2_SAQA?oc=5",
-		"snippet": "2 days ago ... Police said late Wednesday the 44-year-old has been found safe, with no foul play concerns, and is now home after a relentless search by family and friends."
+		"title": "What's happening in Gaza? A desperate humanitarian crisis",
+		"link": "https://news.google.com/__i/rss/rd/articles/CBMidWh0dHBzOi8vd3d3LnJlZGNyb3NzLm9yZy51ay9zdG9yaWVzL2Rpc2FzdGVycy1hbmQtZW1lcmdlbmNpZXMvd29ybGQvd2hhdHMtaGFwcGVuaW5nLWluLWdhemEtaHVtYW5pdGFyaWFuLWNyaXNpcy1ncm93c9IBAA",
+		"snippet": "4 days ago ... The latest news from the Gaza strip where a desperate humanitarian crisis is unfolding. Thousands of people have died, healthcare has collapsed and famine ..."
 	}
 ]

@@ -4,7 +4,6 @@ import type { PageToScrape } from "../types/index.js";
 export const TEST_PAGES: PageToScrape[] = [
 	{
 		url: "https://pqhh.org/media-center/",
-		type: "server",
 		articleContainerSelector: ".fl-post-text",
 		linkSelector: ".fl-post-title > a",
 		titleSelector: ".fl-post-title",
@@ -16,7 +15,6 @@ export const TEST_PAGES: PageToScrape[] = [
 export const SPECIFIC_PAGES: PageToScrape[] = [
 	{
 		url: "https://pqhh.org/media-center/",
-		type: "server",
 		articleContainerSelector: ".fl-post-text",
 		linkSelector: ".fl-post-title > a",
 		titleSelector: ".fl-post-title",
@@ -25,7 +23,6 @@ export const SPECIFIC_PAGES: PageToScrape[] = [
 	},
 	{
 		url: "https://www.mcknightshomecare.com/home/news/",
-		type: "client",
 		articleContainerSelector: ".article-teaser",
 		linkSelector: "a",
 		titleSelector: ".card-title",
@@ -34,7 +31,6 @@ export const SPECIFIC_PAGES: PageToScrape[] = [
 	},
 	{
 		url: "https://homehealthcarenews.com/",
-		type: "server",
 		articleContainerSelector: ".entry-block",
 		linkSelector: "h2 > a",
 		titleSelector: ".entry-title",
@@ -44,7 +40,6 @@ export const SPECIFIC_PAGES: PageToScrape[] = [
 	},
 	{
 		url: "https://valleyhca.com/our-blog/",
-		type: "server",
 		articleContainerSelector: "article",
 		linkSelector: "a",
 		titleSelector: ".tpn-postheader",
@@ -53,7 +48,6 @@ export const SPECIFIC_PAGES: PageToScrape[] = [
 	},
 	{
 		url: "https://www.medicalnewstoday.com/news",
-		type: "server",
 		articleContainerSelector: ".css-kbq0t",
 		linkSelector: "a",
 		titleSelector: "h2",
@@ -62,7 +56,6 @@ export const SPECIFIC_PAGES: PageToScrape[] = [
 	},
 	{
 		url: "https://nahc.org/nahc-newsroom/",
-		type: "server",
 		articleContainerSelector: ".news-info",
 		linkSelector: ".read-more",
 		titleSelector: ".h4",
@@ -71,7 +64,6 @@ export const SPECIFIC_PAGES: PageToScrape[] = [
 	},
 	{
 		url: "https://dailycaring.com/",
-		type: "server",
 		articleContainerSelector: "article",
 		linkSelector: "a",
 		titleSelector: "h2",
@@ -80,7 +72,6 @@ export const SPECIFIC_PAGES: PageToScrape[] = [
 	},
 	{
 		url: "https://www.casacompanionhomecare.com/blog/",
-		type: "server",
 		articleContainerSelector: ".fl-post-grid-post",
 		linkSelector: "a",
 		titleSelector: "h2",
@@ -89,7 +80,6 @@ export const SPECIFIC_PAGES: PageToScrape[] = [
 	},
 	// {
 	// 	url: "https://www.healthcarefinancenews.com/news",
-	// 	type: "server",
 	// 	articleContainerSelector: ".views-row",
 	// 	linkSelector: "a",
 	// 	titleSelector: ".field-content > a",

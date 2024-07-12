@@ -1,44 +1,37 @@
 import { promises as fs } from "node:fs";
 import path from "node:path";
-import Bottleneck from "bottleneck";
 import debug from "debug";
 import type { Page } from "puppeteer";
 
+import robotsParser from "robots-parser";
 import { model } from "../app/index.js";
 import {
 	BASE_PATH,
 	DESCRIPTION_MAX_LENGTH,
 	RECURRING_FREQUENCY,
 } from "../lib/constants.js";
+import type { PageToScrape } from "../types/index.js";
 
 const log = debug(`${process.env.APP_NAME}:utils.ts`);
 
 let aiCallCount = 0;
-function logAiCall(prompt: string) {
+export function logAiCall(prompt: string) {
 	aiCallCount++;
 	log(`AI model called ${aiCallCount} times. Prompt: ${prompt.slice(0, 50)}...`);
 }
 
-export async function generateJSONResponseFromModel<T>(
-	prompt: string,
-): Promise<T> {
+export async function generateJSONResponseFromModel(prompt: string) {
 	const result = await model.generateContent(prompt);
 	logAiCall(prompt);
 	const response = await result.response;
 
 	const text = response.text();
 
-	return parseJsonString(text);
-}
-
-function parseJsonString(jsonString: string) {
-	// Remove the ```json and ``` markers
-	const cleanedString = jsonString
+	const cleanedString = text
 		.replace(/^```json\n/, "")
 		.replace(/\n```$/, "")
 		.trim();
 
-	// Parse the JSON string
 	try {
 		return JSON.parse(cleanedString);
 	} catch (error) {
@@ -51,27 +44,52 @@ function parseJsonString(jsonString: string) {
 	}
 }
 
-export function ensureHttps(url: string): string {
-	return url.startsWith("http://") ? url.replace("http://", "https://") : url;
-}
-
 export function constructFullUrl(
-	baseUrl: string,
-	relativePath: string | undefined,
+	rawHref: string | undefined,
+	targetPage: PageToScrape,
 ): string | undefined {
-	if (!relativePath) return undefined;
+	if (rawHref === "") return targetPage.url;
 
+	if (!rawHref) return undefined;
+
+	// If it's already a full URL, ensure it uses HTTPS
+	if (rawHref.startsWith("http://") || rawHref.startsWith("https://")) {
+		return rawHref.replace(/^http:/, "https:");
+	}
+
+	// Remove query parameters and hash from the base URL
+	const baseUrl = targetPage.url.split(/[?#]/)[0];
+
+	// Remove trailing slashes from the base URL and leading slashes from the path
 	const trimmedBaseUrl = baseUrl.replace(/\/+$/, "");
-	const trimmedPath = relativePath.replace(/^\/+/, "");
+	const trimmedPath = rawHref.replace(/^\/+/, "");
 
+	// Split the base URL and path into parts
 	const baseUrlParts = trimmedBaseUrl.split("/");
 	const pathParts = trimmedPath.split("/");
 
-	while (baseUrlParts[baseUrlParts.length - 1] === pathParts[0]) {
+	// Remove the file part from the base URL if it exists
+	if (
+		baseUrlParts.length > 3 &&
+		!baseUrlParts[baseUrlParts.length - 1].includes(".")
+	) {
 		baseUrlParts.pop();
 	}
 
-	return `${baseUrlParts.join("/")}/${pathParts.join("/")}`;
+	// Process the path parts, handling ".." and "."
+	const resultParts = [...baseUrlParts];
+	for (const part of pathParts) {
+		if (part === "..") {
+			if (resultParts.length > 3) {
+				resultParts.pop();
+			}
+		} else if (part !== ".") {
+			resultParts.push(part);
+		}
+	}
+
+	// Combine the parts back into a full URL
+	return resultParts.join("/");
 }
 
 export function convertStringDatesToDate<T extends { date?: string }>(
@@ -84,21 +102,36 @@ export function convertStringDatesToDate<T extends { date?: string }>(
 }
 
 export function truncateDescription(description: string): string {
-	const words = description
-		.trim()
-		.split(/[\p{P}\s]+/u)
-		.slice(0, DESCRIPTION_MAX_LENGTH);
+	// Replace newlines with spaces and remove extra spaces
+	const trimmedDescription = description.replace(/\s+/g, " ").trim();
 
-	// Remove trailing punctuation or spaces
-	while (words.length > 0 && /^[\p{P}\s]+$/u.test(words[words.length - 1])) {
-		words.pop();
+	const words = trimmedDescription.split(/\s+/);
+
+	// Remove trailing punctuation from each word
+	const cleanWords = words
+		.map((word) => word.replace(/(?<!\()[\p{P}]+(?<!\))$/u, ""))
+		.filter((word) => word.length > 0);
+
+	// If no words remain after cleaning, return an empty string
+	if (cleanWords.length === 0) {
+		return "";
 	}
 
-	// Join the words and add ellipsis if truncated
-	const truncated = words.join(" ");
-	return truncated.length < description.trim().length
-		? `${truncated}...`
-		: truncated;
+	// Slice to max length
+	const truncatedArr = cleanWords.slice(0, DESCRIPTION_MAX_LENGTH);
+
+	// Join words
+	const truncatedStr = truncatedArr.join(" ");
+
+	// Add ellipsis if truncated, but only if it's not exactly at the word boundary
+	if (
+		cleanWords.length !== truncatedArr.length &&
+		truncatedArr.length === DESCRIPTION_MAX_LENGTH
+	) {
+		return `${truncatedStr.trim()}...`;
+	}
+
+	return truncatedStr.trim().endsWith(".") ? truncatedStr : `${truncatedStr}.`;
 }
 
 export async function fetchPageContent(
@@ -106,36 +139,18 @@ export async function fetchPageContent(
 	browserInstance: Page,
 ): Promise<string> {
 	try {
+		const response = await fetch(url);
+		if (!response.ok) {
+			throw new Error(`HTTP error! status: ${response.status}`);
+		}
+		return await response.text();
+	} catch (error) {
 		try {
-			const response = await fetch(url);
-			if (!response.ok) {
-				throw new Error(`HTTP error! status: ${response.status}`);
-			}
-			return await response.text();
-		} catch (error) {
 			await browserInstance.goto(url);
 			return await browserInstance.content();
-		}
-	} catch (error) {
-		console.error("Error in fetchPageContent:", error);
-		throw error;
-	}
-}
-
-const limiter = new Bottleneck({
-	minTime: 1000,
-	maxConcurrent: 1,
-});
-
-export async function retry<T>(fn: () => Promise<T>, maxRetries = 3) {
-	let retries = 0;
-	while (retries < maxRetries) {
-		try {
-			return await fn();
 		} catch (error) {
-			retries++;
-			if (retries === maxRetries) throw error;
-			await new Promise((resolve) => setTimeout(resolve, 2 ** retries * 1000));
+			console.error("Error in fetchPageContent:", error);
+			throw error;
 		}
 	}
 }
@@ -179,4 +194,50 @@ export async function writeTestData<T>(name: string, data: T) {
 		path.join(BASE_PATH, "tests", "data", name),
 		JSON.stringify(data, null, 2),
 	);
+}
+
+export async function checkRobotsTxtPermission(targetUrl: string) {
+	try {
+		const robotsTxtUrl = new URL("/robots.txt", targetUrl).toString();
+		const response = await retry(() =>
+			fetch(robotsTxtUrl, {
+				redirect: "follow",
+			}),
+		);
+
+		if (!response || !response.ok) {
+			console.warn(
+				`Failed to fetch robots.txt: ${response?.status} ${response?.statusText}`,
+			);
+			return true; // Assume scraping is allowed if robots.txt can't be fetched
+		}
+
+		const robotsTxtContent = await response.text();
+
+		// @ts-ignore
+		const robotsRules = robotsParser(targetUrl, robotsTxtContent);
+
+		return robotsRules.isAllowed(targetUrl);
+	} catch (error) {
+		console.error(
+			"Error in checkRobotsTxtPermission for URL:",
+			targetUrl,
+			"Error:",
+			error,
+		);
+		return false; // Assume scraping is not allowed if there's an error
+	}
+}
+
+export async function retry<T>(fn: () => Promise<T>, maxRetries = 3) {
+	let retries = 0;
+	while (retries < maxRetries) {
+		try {
+			return await fn();
+		} catch (error) {
+			retries++;
+			if (retries === maxRetries) throw error;
+			await new Promise((resolve) => setTimeout(resolve, 2 ** retries * 1000));
+		}
+	}
 }

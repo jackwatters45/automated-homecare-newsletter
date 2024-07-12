@@ -2,7 +2,6 @@ import type { generateNewsletterData } from "../app/index.js";
 
 export interface PageToScrape {
 	url: string;
-	type: "client" | "server";
 	articleContainerSelector: string;
 	linkSelector: string;
 	titleSelector: string;

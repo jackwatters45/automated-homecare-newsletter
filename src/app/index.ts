@@ -5,6 +5,7 @@ import puppeteer from "puppeteer";
 
 import { initializeGenAI } from "../lib/ai.js";
 import { SPECIFIC_PAGES } from "../lib/constants.js";
+import { renderTemplate } from "../lib/template.js";
 import { writeTestData } from "../lib/utils.js";
 import type { ValidArticleData } from "../types/index.js";
 import { scrapeArticles } from "./data-fetching.js";
@@ -18,7 +19,6 @@ import {
 	generateSummary,
 } from "./format-articles.js";
 import { searchNews } from "./google-search.js";
-import { renderTemplate } from "./template.js";
 
 const log = debug(`${process.env.APP_NAME}:app:index.ts`);
 
@@ -109,4 +109,4 @@ async function main() {
 		console.error("An error occurred in main:", error);
 	}
 }
-main();
+// main();

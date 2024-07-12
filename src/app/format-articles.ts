@@ -30,7 +30,7 @@ const rateLimiter = new Bottleneck({
 	minTime: 2500,
 });
 
-const enrichArticleData = async (
+export const enrichArticleData = async (
 	articleData: ValidArticleData,
 	browserInstance: Page,
 ): Promise<ArticleDisplayData> => {
@@ -64,7 +64,7 @@ const enrichArticleData = async (
 		const descriptionPrompt = createDescriptionPrompt(fullArticleText);
 
 		const generatedDescription = await retry(() =>
-			generateJSONResponseFromModel<string>(descriptionPrompt),
+			generateJSONResponseFromModel(descriptionPrompt),
 		);
 
 		const description = generatedDescription?.trim();
@@ -162,7 +162,7 @@ export async function generateSummary(articles: ValidArticleData[]) {
 	Your summary should provide a quick, informative overview that gives readers a clear sense of the valuable content available, without revealing all the details.`;
 
 	const generatedDescription = await retry(() =>
-		generateJSONResponseFromModel<string>(prompt),
+		generateJSONResponseFromModel(prompt),
 	);
 
 	const formattedDescription = generatedDescription?.trim();
@@ -229,7 +229,7 @@ export async function generateCategories(articles: ValidArticleData[]) {
 	Ensure your response is valid JSON that can be parsed programmatically.`;
 
 	const generatedCategories = await retry(() =>
-		generateJSONResponseFromModel<Category[]>(prompt),
+		generateJSONResponseFromModel(prompt),
 	);
 
 	if (!generatedCategories) {

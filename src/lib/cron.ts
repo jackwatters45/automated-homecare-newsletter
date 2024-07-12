@@ -1,5 +1,5 @@
 import debug from "debug";
-import cron from "node-cron";
+import { schedule } from "node-cron";
 
 import { GenerateNewsletter } from "../app/index.js";
 import { pingServer } from "./health.js";
@@ -8,7 +8,7 @@ import { retry } from "./utils.js";
 const log = debug(`${process.env.APP_NAME}:cron.ts`);
 
 // Function to check if it's an alternate Monday
-function isAlternateMonday(date: Date) {
+export function isAlternateMonday(date: Date) {
 	const firstMondayOfYear = new Date(
 		date.getFullYear(),
 		0,
@@ -22,7 +22,7 @@ function isAlternateMonday(date: Date) {
 
 export function setupCronJobs() {
 	// Schedule the main task to run every two weeks on Monday at 09:00 AST
-	cron.schedule(
+	schedule(
 		"0 9 * * 1",
 		() => {
 			if (isAlternateMonday(new Date())) retry(GenerateNewsletter);
@@ -31,7 +31,14 @@ export function setupCronJobs() {
 	);
 
 	// Schedule the test task (health check) to run every day at 00:00 UTC
-	cron.schedule("0 0 * * *", () => pingServer(), { timezone: "UTC" });
+	schedule("0 0 * * *", pingServer, { timezone: "UTC" });
 
 	log("Cron jobs set up successfully");
 }
+
+function run() {
+	log("Cron jobs started");
+	schedule("* * * * *", pingServer, { timezone: "UTC" });
+}
+
+run();

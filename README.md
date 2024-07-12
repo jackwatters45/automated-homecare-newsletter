@@ -2,13 +2,11 @@
 
 ## TODO
 
-- determine good way to group newsletter content -> implement groups
-
-- tests
-
 - cron job testing
   - test with a shorter period
   - set up mock function to use for actual cron job test
+  
+- tests
 
 - Distribution channel
 
