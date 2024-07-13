@@ -15,12 +15,18 @@ describe("renderTemplate", () => {
 
 	it("should render the template correctly with provided data", async () => {
 		const data: NewsletterData = {
-			categories: ["Tech", "Health"],
+			categories: [
+				{
+					name: "Tech",
+					articles: [],
+				},
+				{ name: "Health", articles: [] },
+			],
 			summary: "This is a summary.",
 		};
 
 		const fileName = "newsletter.hbs";
-		const filePath = path.join(BASE_PATH, "views", fileName);
+		const filePath = path.join(BASE_PATH, "public", "views", fileName);
 		const fileContent =
 			"Categories: {{categories}}. Summary: {{summary}}. Date: {{date}}.";
 
@@ -37,12 +43,17 @@ describe("renderTemplate", () => {
 
 	it("should use the default file name if none is provided", async () => {
 		const data: NewsletterData = {
-			categories: ["Tech"],
+			categories: [
+				{
+					name: "Tech",
+					articles: [],
+				},
+			],
 			summary: "Default summary.",
 		};
 
 		const defaultFileName = "newsletter.hbs";
-		const filePath = path.join(BASE_PATH, "views", defaultFileName);
+		const filePath = path.join(BASE_PATH, "public", "views", defaultFileName);
 		const fileContent =
 			"Categories: {{categories}}. Summary: {{summary}}. Date: {{date}}.";
 
@@ -64,7 +75,7 @@ describe("renderTemplate", () => {
 		};
 
 		const fileName = "newsletter.hbs";
-		const filePath = path.join(BASE_PATH, "views", fileName);
+		const filePath = path.join(BASE_PATH, "public", "views", fileName);
 		const fileContent =
 			"Categories: {{categories}}. Summary: {{summary}}. Date: {{date}}.";
 

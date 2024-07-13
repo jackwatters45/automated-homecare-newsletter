@@ -1,78 +1,128 @@
 [
 	{
-		"title": "HarmonyCares to use $200M investment ‘to significantly upgrade’ home care technology, CEO says",
-		"link": "https://www.mcknightshomecare.com/news/harmonycares-to-use-200m-investment-to-significantly-upgrade-home-care-technology-ceo-says/",
-		"description": "HarmonyCares recently raised $200 million of capital to leverage new technology to produce better outcomes for patients and clinicians "
-	},
-	{
-		"title": "Why Private Equity’s Involvement In Home-Based Care Is Largely Overstated",
-		"link": "https://homehealthcarenews.com/2024/07/why-private-equitys-involvement-in-home-based-care-is-largely-overstated/",
-		"description": "Despite growing interest in private equity investments in home based care a new report reveals that PE backed providers make up a small fraction of the overall market ..."
-	},
-	{
-		"title": "Pennant acquires Signature Healthcare at Home assets for $80M",
-		"link": "https://www.mcknightshomecare.com/news/pennant-acquires-signature-healthcare-at-home-assets-for-80m/",
-		"description": "The Pennant Group a provider of home health personal care hospice and senior living services disclosed Thursday that it agreed to purchase assets of certain Signature Healthcare at Home affiliates ..."
-	},
-	{
-		"title": "CEO: New Day Healthcare finds success with embrace of value-based care",
-		"link": "https://www.mcknightshomecare.com/news/ceo-new-day-healthcare-finds-success-with-embrace-of-value-based-care/",
-		"description": "CEO G Scott Herman who founded New Day Healthcare in 2020 has focused on creating a high volume low margin business based on nonepisodic care that works with Medicare Advantage plans Part of that ..."
-	},
-	{
-		"title": "The Pennant Group Agrees To $80M Purchase Of Pacific Northwest Home Health Provider",
-		"link": "https://homehealthcarenews.com/2024/07/the-pennant-group-agrees-to-80m-purchase-of-pacific-northwest-home-health-provider/",
-		"description": "Pennant Group expands its presence in the Pacific Northwest with an $80 million acquisition of Signature Healthcare at Home adding to its existing footprint in Oregon Washington and Idaho ..."
-	},
-	{
-		"title": "Report: Care worker turnover, vacancy remains major hurdle for senior care providers",
-		"link": "https://www.mcknightshomecare.com/news/report-care-worker-turnover-vacancy-remains-major-hurdle-for-senior-care-providers/",
-		"description": "Despite steady investments in the direct care workforce many home care agencies still struggle to recruit and retain essential workers ..."
-	},
-	{
-		"title": "Senior Helpers, AccordCare See Results From Enhanced Training Programs",
-		"link": "https://homehealthcarenews.com/2024/07/senior-helpers-accordcare-see-results-from-enhanced-training-programs/",
-		"description": "Home care companies are finding success in boosting caregiver recruitment and retention through enhanced training programs "
-	},
-	{
-		"title": "‘It’s A Number That’s Worth Paying Attention To’: Understanding Private Equity’s Role In Home-Based Care",
-		"link": "https://homehealthcarenews.com/2024/07/its-a-number-thats-worth-paying-attention-to-understanding-private-equitys-role-in-home-based-care/",
-		"description": "Despite widespread speculation private equity firms influence on home based care remains relatively small but their role in driving innovation and consolidation is significant ..."
-	},
-	{
-		"title": "All The Payment Factors Included In The 2025 Home Health Proposed Rule",
-		"link": "https://nahc.org/all-the-payment-factors-included-in-the-2025-home-health-proposed-rule/",
-		"description": "This article provides a comprehensive overview of the payment factors included in the proposed 2025 Home Health rule "
-	},
-	{
-		"title": "Proposed New OASIS Items",
-		"link": "https://nahc.org/proposed-new-oasis-items/",
-		"description": "The article provides insights into the proposed new OASIS items a crucial development for home health agencies ..."
+		"title": "House committee greenlights bill that would federally recognize direct support professionals",
+		"link": "https://www.mcknightshomecare.com/news/house-committee-greenlights-bill-that-would-recognize-direct-support-professionals/",
+		"description": "The House Committee on Education the Workforce on Wednesday approved a bill that would grant federal recognition to DSPs."
 	},
 	{
 		"title": "CMS Model Aims to Improve Dementia Care",
 		"link": "https://nahc.org/new-cms-model-aims-to-improve-dementia-care/",
-		"description": "This CMS model aims to enhance the quality of care for individuals living with dementia "
+		"description": "A new CMS model is being tested to improve dementia care in the home."
+	},
+	{
+		"title": "CMS Medicaid Updates",
+		"link": "https://nahc.org/cms-medicaid-updates/",
+		"description": "This article provides insights into the latest Medicaid updates from the Centers for Medicare Medicaid Services."
+	},
+	{
+		"title": "‘It’s A Number That’s Worth Paying Attention To’: Understanding Private Equity’s Role In Home-Based Care",
+		"link": "https://homehealthcarenews.com/2024/07/its-a-number-thats-worth-paying-attention-to-understanding-private-equitys-role-in-home-based-care/",
+		"description": "While private equity's role in home-based care is often overstated its impact on industry practices and modernization efforts should not be overlooked."
+	},
+	{
+		"title": "Report: Care worker turnover, vacancy remains major hurdle for senior care providers",
+		"link": "https://www.mcknightshomecare.com/news/report-care-worker-turnover-vacancy-remains-major-hurdle-for-senior-care-providers/",
+		"description": "Despite steady investments in the direct care workforce many home care agencies still struggle to recruit and retain essential workers."
+	},
+	{
+		"title": "All The Payment Factors Included In The 2025 Home Health Proposed Rule",
+		"link": "https://nahc.org/all-the-payment-factors-included-in-the-2025-home-health-proposed-rule/",
+		"description": "The proposed 2025 Home Health rule includes a comprehensive overview of payment factors providing valuable insights for homecare providers."
+	},
+	{
+		"title": "Enhabit’s Board Battle Continues, Advisory Firm Partially Sides With Activist Investor",
+		"link": "https://homehealthcarenews.com/2024/07/enhabits-board-battle-continues-advisory-firm-partially-sides-with-activist-investor/",
+		"description": "An independent advisory firm recommends changes to Enhabit's board siding with an activist investor who claims the current board lacks home health and hospice expertise."
+	},
+	{
+		"title": "Why Private Equity’s Involvement In Home-Based Care Is Largely Overstated",
+		"link": "https://homehealthcarenews.com/2024/07/why-private-equitys-involvement-in-home-based-care-is-largely-overstated/",
+		"description": "A new report debunks the common misconception that private equity firms have a significant influence on the home-based care sector revealing that their ownership and revenue contributions are much smaller than often perceived."
+	},
+	{
+		"title": "The Pennant Group Agrees To $80M Purchase Of Pacific Northwest Home Health Provider",
+		"link": "https://homehealthcarenews.com/2024/07/the-pennant-group-agrees-to-80m-purchase-of-pacific-northwest-home-health-provider/",
+		"description": "The Pennant Group continues its expansion strategy with an $80 million acquisition of a Pacific Northwest home health and hospice provider solidifying its presence in the region and adding a significant revenue stream."
+	},
+	{
+		"title": "Pennant acquires Signature Healthcare at Home assets for $80M",
+		"link": "https://www.mcknightshomecare.com/news/pennant-acquires-signature-healthcare-at-home-assets-for-80m/",
+		"description": "The Pennant Group a provider of home health personal care hospice and senior living services disclosed Thursday that it agreed to purchase assets of certain Signature Healthcare at Home affiliates."
+	},
+	{
+		"title": "NYU’s College of Nursing receives $5M to provide aging care training",
+		"link": "https://www.mcknightshomecare.com/news/nyus-college-of-nursing-receives-5m-to-provide-aging-care-training/",
+		"description": "HRSA granted New York University’s Rory Meyers College of Nursing $5 million to train 5,000 on providing aging-friendly care."
+	},
+	{
+		"title": "Secret Shopping And Competitive Analysis: How Home-Based Care Providers Use Their Peers To Get Ahead",
+		"link": "https://homehealthcarenews.com/2024/07/secret-shopping-and-competitive-analysis-how-home-based-care-providers-use-their-peers-to-get-ahead/",
+		"description": "Home-based care providers are using competitive analysis and secret shopping techniques to gain a strategic edge in the market."
+	},
+	{
+		"title": "Senior Helpers, AccordCare See Results From Enhanced Training Programs",
+		"link": "https://homehealthcarenews.com/2024/07/senior-helpers-accordcare-see-results-from-enhanced-training-programs/",
+		"description": "Enhanced training programs are helping home care providers improve caregiver retention and recruitment in a challenging labor market."
 	},
 	{
 		"title": "Adoption of supplemental benefits does little to alter MA plan membership, study finds",
 		"link": "https://www.mcknightshomecare.com/news/adoption-of-supplemental-benefits-does-little-to-alter-ma-plan-membership-study-finds/",
-		"description": "A new study suggests that Medicare Advantage plans offering supplemental benefits like caregiver support and in home services are not attracting a significantly different demographic of enrollees ..."
+		"description": "A new study suggests that the adoption of supplemental benefits by Medicare Advantage plans such as caregiver supports and in-home services has little impact on the demographics of plan membership."
 	},
 	{
-		"title": "Home Care briefs for Friday, July 12",
-		"link": "https://www.mcknightshomecare.com/news/home-care-briefs-for-friday-july-12/",
-		"description": "Alivia Care launches Alivia Care at Home LeadingAge Hospice final rule submitted to OMB likely to be published in August Axxess partners with Security Compliance Associates to offer clients ..."
+		"title": "Researchers successfully rejuvenate aging livers in preclinical study",
+		"link": "https://www.medicalnewstoday.com/articles/researchers-successfully-rejuvenate-aging-livers-in-preclinical-study",
+		"description": "A study conducted in mice and human cell samples suggests that a pharmacological intervention may help reverse age-related liver damage."
 	},
 	{
-		"title": "Home Care briefs for Thursday, July 11",
-		"link": "https://www.mcknightshomecare.com/news/home-care-briefs-for-thursday-july-11/",
-		"description": "CMS proposes reducing payment rates in Physician Fee Schedule for 2025 by 2 93 Rep Earl Blumenauer D OR earns award for contributions to end of life care DOL recovers $110 000 in back ..."
+		"title": "Study finds possible new target for early treatment of Alzheimer's disease",
+		"link": "https://www.medicalnewstoday.com/articles/possible-new-target-early-treatment-alzheimers-disease",
+		"description": "New research has found that a protein that regulates cell repair could be a promising new target for treating Alzheimer’s disease."
 	},
 	{
-		"title": "People perceive hospital-at-home to be effective, safe, convenient, study finds",
-		"link": "https://www.mcknightshomecare.com/news/people-perceive-hospital-at-home-to-be-effective-safe-convenient-study-finds/",
-		"description": "The implied comfort convenience and effectiveness of hospital at home care makes it more appealing than an inpatient stay ..."
+		"title": "Researchers figure out how they could predict individual stages of Alzheimer's",
+		"link": "https://www.medicalnewstoday.com/articles/researchers-figure-out-how-they-could-predict-individual-stages-of-alzheimers",
+		"description": "Researchers have devised a predictive model that could help doctors predict stages of cognitive decline tied to Alzheimer's disease They are now."
+	},
+	{
+		"title": "Novel method may erase 'bad memory' response to long-term Parkinson's treatment",
+		"link": "https://www.medicalnewstoday.com/articles/novel-method-may-erase-bad-memory-response-long-term-parkinsons-treatment",
+		"description": "Scientists have discovered that inhibiting a protein could stop dyskinesia symptoms and erase the brain's \"bad memory response to long-term."
+	},
+	{
+		"title": "Comfort Keepers franchise owner commits continued wage infractions, DOL alleges",
+		"link": "https://www.mcknightshomecare.com/news/comfort-keepers-franchise-owner-commits-continued-wage-infractions-dol-alleges/",
+		"description": "The Department of Labor is taking action against a Comfort Keepers franchise owner for allegedly continuing to violate labor laws and withhold overtime pay from hundreds of employees."
+	},
+	{
+		"title": "Sneak Peek: Private Duty Home Care at the 2024 Home Care and Hospice Conference and Expo",
+		"link": "https://nahc.org/sneak-peek-private-duty-home-care-at-the-2024-home-care-and-hospice-conference-and-expo/",
+		"description": "Get a sneak peek at the exciting lineup of speakers and topics for the Private Duty Home Care track at the 2024 Home Care and Hospice Conference and Expo."
+	},
+	{
+		"title": "Turning ‘Pain Points’ Into ‘Bliss Points’: The Chief Experience Officer’s Rise In Home-Based Care",
+		"link": "https://homehealthcarenews.com/2024/07/turning-pain-points-into-bliss-points-the-chief-experience-officers-rise-in-home-based-care/",
+		"description": "As home-based care organizations prioritize patient and employee experience the role of the chief experience officer is becoming increasingly important."
+	},
+	{
+		"title": "In Home Care Spring Checklist: Renew Refresh Reassess",
+		"link": "https://www.casacompanionhomecare.com/homecareblog/in-home-care-spring-checklist-renew-refresh-reassess/",
+		"description": "Spring is an ideal time to reassess all aspects of your loved one’s in-home care A reviewed and updated home care plan aligns with current needs to provide the best possible support The needs of..."
+	},
+	{
+		"title": "Telemedicine firm adds palliative care specialty to improve access in rural areas",
+		"link": "https://www.mcknightshomecare.com/news/telemedicine-firm-adds-palliative-care-specialty-to-improve-access-in-rural-areas/",
+		"description": "Palliative care could be considered the Steve Wozniak of medical specialties Like the little-known co-founder of Apple Computer it is frequently misunderstood and seldom given its due Eagle Telemedicine."
+	},
+	{
+		"title": "Empowering Families: In-Home Care for Hospice Patients",
+		"link": "https://www.casacompanionhomecare.com/homecareblog/empowering-families-in-home-care-for-hospice-patients/",
+		"description": "In-home care is an invaluable complement to hospice services offering compassionate support and comfort to both patients and their families during challenging times The support of home care aides can have a profound impact on..."
+	},
+	{
+		"title": "NAHC-NHPCO Alliance Joint Statement: Comment Letter Submitted on Hospice CARE Act",
+		"link": "https://nahc.org/nahc-nhpco-alliance-joint-statement-comment-letter-submitted-on-hospice-care-act/",
+		"description": "The NAHC-NHPCO Alliance submitted comments on the Hospice CARE Act advocating for program integrity while ensuring quality care access for patients."
 	},
 	{
 		"title": "In-Home Care vs. Facility Care: How to Make the Right Choice",
@@ -80,63 +130,13 @@
 		"description": "As seniors age and face health challenges they may face the choice between in home care and a facility Both receiving care at home or moving into a facility have their benefits and drawbacks The..."
 	},
 	{
+		"title": "Eight Key Components of an Effective In-Home Care Plan",
+		"link": "https://www.casacompanionhomecare.com/homecareblog/eight-key-components-effective-in-home-care-plan/",
+		"description": "Integrating in-home care into your loved one’s life brings the exact level and kind of support they need into familiar surroundings Many seniors prefer home care to facility care because in-home caregiving is just the..."
+	},
+	{
 		"title": "Boosting Quality of Life: In-Home Care for Memory Care Residents",
 		"link": "https://www.casacompanionhomecare.com/home-care-blog/boosting-quality-life-in-home-care-memory-care-residents/",
-		"description": "Memory care involves specialized support for individuals with memory related conditions such as Alzheimer s disease and other forms of dementia These conditions progressively impair memory cognitive function and the ability to perform daily tasks..."
-	},
-	{
-		"title": "Beyond Basic Care: The Benefits of In-Home Care in Assisted Living",
-		"link": "https://www.casacompanionhomecare.com/home-care-blog/beyond-basic-care-benefits-in-home-care-assisted-living/",
-		"description": "The world of assisted living can be complex for families seeking the best care for their loved ones These communities offer strong support and services but gaps in care can impact residents quality of life..."
-	},
-	{
-		"title": "Ten Ways to Prepare Your Home for In-Home Care",
-		"link": "https://www.casacompanionhomecare.com/home-care-blog/ten-ways-prepare-your-home-in-home-care/",
-		"description": "Bringing in home care into your home can be a big change Creating an environment that prioritizes effective and compassionate care for your loved one is a matter of preparation The elderly in home care..."
-	},
-	{
-		"title": "How Do We Know When Our Loved One Needs In-Home Care?",
-		"link": "https://www.casacompanionhomecare.com/home-care-blog/how-do-we-know-when-loved-one-needs-in-home-care/",
-		"description": "In home care can be a crucial support system for seniors and their families Home care solutions offer personalized assistance and ensure comfort safety and dignity for aging loved ones However recognizing the right time..."
-	},
-	{
-		"title": "In-Home Care for Heart Disease Patients",
-		"link": "https://www.casacompanionhomecare.com/home-care-blog/in-home-care-heart-disease-patients/",
-		"description": "In home care provides a comforting and supportive environment where heart disease patients can receive the assistance they need while maintaining their independence Living with heart disease is challenging but the right in home care..."
-	},
-	{
-		"title": "Six Reasons to Choose Non-Emergency Medical Transport",
-		"link": "https://www.casacompanionhomecare.com/homecareblog/six-reasons-choose-non-emergency-medical-transport/",
-		"description": "There are six key reasons patients in San Diego County should choose to use non emergency medical transportation NEMT NEMT ensures safe and comfortable transport for individuals with mobility challenges or medical conditions providing specialized..."
-	},
-	{
-		"title": "Quality Matters: Why Trustworthy Non-Emergency Medical Transport is Non-Negotiable",
-		"link": "https://www.casacompanionhomecare.com/homecareblog/quality-matters-why-trustworthy-non-emergency-medical-transport-non-negotiable/",
-		"description": "Quality non emergency medical transport NEMT is more than just a convenience it s a necessity for many individuals with medical needs Patients and their families rely on these services for safe comfortable transportation to..."
-	},
-	{
-		"title": "Researchers figure out how they could predict individual stages of Alzheimer's",
-		"link": "https://www.medicalnewstoday.com/articles/researchers-figure-out-how-they-could-predict-individual-stages-of-alzheimers",
-		"description": "Researchers have devised a predictive model that could help doctors predict stages of cognitive decline tied to Alzheimer s disease They are now ..."
-	},
-	{
-		"title": "Study finds possible new target for early treatment of Alzheimer's disease",
-		"link": "https://www.medicalnewstoday.com/articles/possible-new-target-early-treatment-alzheimers-disease",
-		"description": "New research has found that a protein that regulates cell repair could be a promising new target for treating Alzheimer s disease "
-	},
-	{
-		"title": "Smoking and education interventions may help decrease dementia incidence",
-		"link": "https://www.medicalnewstoday.com/articles/smoking-education-interventions-may-help-decrease-dementia-incidence",
-		"description": "Scientists have linked a reduction in smoking and increases in education to reducing the incidence rate of dementia in some high income countries "
-	},
-	{
-		"title": "Novel method may erase 'bad memory' response to long-term Parkinson's treatment",
-		"link": "https://www.medicalnewstoday.com/articles/novel-method-may-erase-bad-memory-response-long-term-parkinsons-treatment",
-		"description": "Scientists have discovered that inhibiting a protein could stop dyskinesia symptoms and erase the brain s bad memory response to long term ..."
-	},
-	{
-		"title": "Acupuncture can help boost sleep quality in Parkinson’s disease",
-		"link": "https://www.medicalnewstoday.com/articles/acupuncture-sleep-quality-parkinsons-disease",
-		"description": "New research suggests that a 4 week treatment course of acupuncture in addition to the typical medication helped improve sleep quality in people ..."
+		"description": "Memory care involves specialized support for individuals with memory-related conditions such as Alzheimer’s disease and other forms of dementia These conditions progressively impair memory cognitive function and the ability to perform daily tasks Tailored care..."
 	}
 ]

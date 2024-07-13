@@ -13,7 +13,7 @@ let data: NewsletterData = { categories: [], summary: "" };
 
 router.get("/", (req, res) => {
 	log("GET /example");
-	res.sendFile(path.join(BASE_PATH, "views", "generate-button.html"));
+	res.sendFile(path.join(BASE_PATH, "public", "views", "generate-button.html"));
 });
 
 router.get("/generate", async (req, res) => {

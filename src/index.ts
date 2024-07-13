@@ -12,13 +12,14 @@ import helmet from "helmet";
 import morgan from "morgan";
 
 import { engine } from "express-handlebars";
-import { GenerateNewsletter, generateNewsletterData } from "./app/index.js";
+import sendNewsletter, { generateNewsletterData } from "./app/index.js";
+import dbRouter from "./db/routes/router.js";
 import { API_URL, BASE_PATH, PORT } from "./lib/constants.js";
 import { setupCronJobs } from "./lib/cron.js";
 import { handleErrors } from "./lib/errors.js";
 import { retry } from "./lib/utils.js";
-import exampleRouter from "./routes/example-router.js";
-import serverRouter from "./routes/server.js";
+import serverRouter from "./routes/preview.router.js";
+import exampleRouter from "./routes/test-generation.router.js";
 
 const log = debug(`${process.env.APP_NAME}:index.ts`);
 
@@ -43,7 +44,7 @@ app.use(morgan("combined", { stream: accessLogStream }));
 // Set up view engine
 app.engine("hbs", engine({ extname: "hbs", defaultLayout: false }));
 app.set("view engine", "hbs");
-app.set("views", path.join(BASE_PATH, "views"));
+app.set("views", path.join(BASE_PATH, "public", "views"));
 
 // Rate limiting
 // const limiter = rateLimit({
@@ -66,7 +67,7 @@ app.post("/generate-newsletter-data", async (_, res) => {
 
 app.post("/generate-newsletter", async (_, res) => {
 	try {
-		const result = await retry(GenerateNewsletter);
+		const result = await retry(sendNewsletter);
 		res.json(result);
 	} catch (error) {
 		res.status(500).json({ error: "Failed to generate newsletter" });
@@ -85,6 +86,7 @@ app.get("/health", (_, res) => {
 
 app.use("/example", exampleRouter);
 app.use("/server", serverRouter);
+app.use("/api", dbRouter);
 
 // Setup cron jobs
 setupCronJobs();

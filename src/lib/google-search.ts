@@ -1,9 +1,9 @@
 import debug from "debug";
 import { google } from "googleapis";
 
-import { RECURRING_FREQUENCY } from "../lib/constants.js";
-import { retry } from "../lib/utils.js";
 import type { ArticleData, ValidArticleData } from "../types/index.js";
+import { RECURRING_FREQUENCY } from "./constants.js";
+import { retry } from "./utils.js";
 
 const log = debug(`${process.env.APP_NAME}:google-search.ts`);
 

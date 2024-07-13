@@ -26,12 +26,6 @@ export interface ValidArticleData {
 	snippet?: string;
 }
 
-export interface ArticleDisplayData {
-	title: string;
-	link: string;
-	description: string;
-}
-
 export interface ArticleFilteringData {
 	title: string;
 	description?: string;
@@ -41,9 +35,18 @@ export interface ValidArticleDataWithCount extends ValidArticleData {
 	count: number;
 }
 
-export type NewsletterData = Awaited<ReturnType<typeof generateNewsletterData>>;
+export interface ArticleDisplayData {
+	title: string;
+	link: string;
+	description: string;
+}
 
 export interface Category {
 	name: string;
 	articles: ArticleDisplayData[];
+}
+
+export interface NewsletterData {
+	categories: Category[];
+	summary: string;
 }

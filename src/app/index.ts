@@ -1,15 +1,18 @@
 import "dotenv/config";
 
+import fs from "node:fs/promises";
+import path from "node:path";
 import debug from "debug";
 import puppeteer from "puppeteer";
 
-import fs from "node:fs";
-import path from "node:path";
+import { createNewsletter, getNewsletter } from "src/db/routes/service.js";
 import { initializeGenAI } from "../lib/ai.js";
 import { BASE_PATH, SPECIFIC_PAGES } from "../lib/constants.js";
+import { resend, sendTestEmail } from "../lib/email.js";
+import { searchNews } from "../lib/google-search.js";
 import { renderTemplate } from "../lib/template.js";
 import { useLogFile, writeTestData } from "../lib/utils.js";
-import type { ValidArticleData } from "../types/index.js";
+import type { NewsletterData, ValidArticleData } from "../types/index.js";
 import { scrapeArticles } from "./data-fetching.js";
 import {
 	filterAndRankArticles,
@@ -20,9 +23,10 @@ import {
 	generateCategories,
 	generateSummary,
 } from "./format-articles.js";
-import { searchNews } from "./google-search.js";
 
 const log = debug(`${process.env.APP_NAME}:app:index.ts`);
+
+const writeLog = useLogFile("run.log");
 
 export const model = initializeGenAI();
 
@@ -74,9 +78,11 @@ export async function generateNewsletterData() {
 		writeTestData("display-data-full.json", categories);
 		log("categories generated", categories);
 
-		log("newsletter data generated");
+		const newsletter = await createNewsletter({ summary, categories });
+		log("newsletter added to db", newsletter);
 
-		return { categories, summary };
+		log("newsletter data generated");
+		return newsletter;
 	} catch (error) {
 		console.error(error);
 	} finally {
@@ -84,21 +90,56 @@ export async function generateNewsletterData() {
 	}
 }
 
-const writeLog = useLogFile("run.log");
-
-export async function GenerateNewsletter() {
+export async function sendNewsletterReviewEmail() {
 	try {
 		const newsletterData = await generateNewsletterData();
 
-		if (!newsletterData || !newsletterData.summary || newsletterData.categories) {
+		if (!newsletterData) {
+			throw new Error("Newsletter data not found");
+		}
+
+		const id = newsletterData?.id;
+		if (!id) {
+			throw new Error("Newsletter ID not found");
+		}
+
+		// TODO: send email to user to check if they want to approve the newsletter
+		const { data, error } = await resend.emails.send({
+			from: "Yats Support <support@yatusabes.co>",
+			to: ["jack.watters@me.com", "jackwattersdev@gmail.com"],
+			subject: "Review TrollyCare Newsletter",
+			text: `Please review the newsletter and approve it if you want to receive it. link to newsletter: ${BASE_PATH}/newsletter/${id}`,
+		});
+
+		if (error) {
+			return console.error({ error });
+		}
+
+		return { message: "Email sent successfully", data };
+	} catch (error) {
+		console.error(error);
+	}
+}
+
+// TODO: this should be called when a new newsletter is approved
+// TODO: add email part to this or new func
+export async function generateNewsletter(id: number) {
+	try {
+		const newsletterData = await getNewsletter(id);
+
+		log(newsletterData);
+
+		if (
+			!newsletterData ||
+			!newsletterData.summary ||
+			!newsletterData.categories ||
+			!newsletterData.categories?.length
+		) {
 			throw new Error("Incomplete newsletter data");
 		}
 
+		// TODO: desc needs to not be null
 		const template = await renderTemplate(newsletterData);
-
-		// TODO: Implement email sending
-		// const res = await sendEmail(result);
-		// log(`Email sent with response: ${JSON.stringify(res)}`);
 
 		writeLog("Newsletter generated successfully");
 
@@ -110,9 +151,65 @@ export async function GenerateNewsletter() {
 	}
 }
 
-async function main() {
+export async function testGenerateNewsletter() {
 	try {
-		await generateNewsletterData();
+		const categories = await fs.readFile(
+			path.join(BASE_PATH, "tests", "data", "display-data-full.json"),
+			"utf8",
+		);
+
+		const summary = await fs.readFile(
+			path.join(BASE_PATH, "tests", "data", "summary.json"),
+			"utf8",
+		);
+
+		const newsletterData: NewsletterData = {
+			categories: JSON.parse(categories),
+			summary: JSON.parse(summary),
+		};
+
+		log(newsletterData);
+
+		if (
+			!newsletterData ||
+			!newsletterData.summary ||
+			!newsletterData.categories?.length
+		) {
+			throw new Error("Incomplete newsletter data");
+		}
+
+		const template = await renderTemplate(newsletterData);
+
+		writeLog("Newsletter generated successfully");
+
+		return template;
+	} catch (error) {
+		writeLog(`Error: ${error}`);
+
+		console.error(error);
+	}
+}
+
+export default async function main() {
+	try {
+		const newsletter = await generateNewsletterData();
+
+		log(newsletter);
+
+		const html = await testGenerateNewsletter();
+
+		if (!html) {
+			throw new Error("Incomplete newsletter template");
+		}
+
+		log(html);
+
+		await fs.writeFile("newsletter.html", html);
+
+		const res = await sendTestEmail(html);
+		// const res = await sendEmail(result);
+
+		log(`Email sent with response: ${JSON.stringify(res)}`);
 	} catch (error) {
 		console.error("An error occurred in main:", error);
 	}

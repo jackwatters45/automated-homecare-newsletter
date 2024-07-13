@@ -1,0 +1,225 @@
+[2024-07-12T23:23:00.199Z] Error: Error: Incomplete newsletter data
+[2024-07-12T23:26:43.513Z] Error: Error: Incomplete newsletter data
+[2024-07-12T23:32:06.478Z] Newsletter generated successfully
+[2024-07-12T23:38:25.187Z] Newsletter generated successfully
+[2024-07-12T23:44:41.860Z] Error: Error: Parse error on line 68:
+...er></body></html>
+--------------------^
+Expecting 'OPEN_INVERSE_CHAIN', 'INVERSE', 'OPEN_ENDBLOCK', got 'EOF'
+[2024-07-12T23:57:10.621Z] Newsletter generated successfully
+[2024-07-12T23:58:03.297Z] Error: SyntaxError: Unexpected token '@', "@font-face"... is not valid JSON
+[2024-07-13T00:03:01.455Z] Newsletter generated successfully
+[2024-07-13T00:03:41.368Z] Newsletter generated successfully
+[2024-07-13T00:04:02.176Z] Newsletter generated successfully
+[2024-07-13T00:08:40.194Z] Newsletter generated successfully
+[2024-07-13T00:09:41.982Z] Newsletter generated successfully
+[2024-07-13T00:12:22.915Z] Newsletter generated successfully
+[2024-07-13T00:13:29.953Z] Newsletter generated successfully
+[2024-07-13T00:13:51.474Z] Newsletter generated successfully
+[2024-07-13T00:16:48.544Z] Newsletter generated successfully
+[2024-07-13T00:20:20.968Z] Newsletter generated successfully
+[2024-07-13T00:38:10.422Z] Error: TypeError [ERR_INVALID_ARG_TYPE]: The "path" argument must be of type string. Received undefined
+[2024-07-13T00:39:10.989Z] Error: Error: ENAMETOOLONG: name too long, stat '/Users/jw/Desktop/repos/automated-homecare-newsletter/emails/<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TrollyCare Newsletter</title>
+    <link rel="stylesheet" href="styles/globals.css">
+</head>
+
+<body>
+    <nav class="nav">
+        <h1>Homecare News <span class="company-name">by
+                <a href="https: /www.trollycare.com/">
+                    </href>TrollyCare
+                </a>
+            </span>
+        </h1>
+        <div class="nav-links">
+            <a href="https:/www.trollycare.com/">Contact Us</a>
+        </div>
+    </nav>
+
+    <main>
+        <div class="container">
+            <div class="intro">
+                <div class="intro-header">
+                    Friday, July 5, 2024 to Friday, July 12, 2024
+                </div>
+                <p class="summary">
+                    Private equity&#x27;s impact on home-based care is less significant than expected, despite the recent focus on its role in the industry. Agencies are facing significant hurdles in recruiting and retaining staff, with several companies highlighting the impact of their enhanced training programs. New research highlights promising developments in the treatment of Alzheimer&#x27;s disease and other age-related health issues, signaling potential improvements in care for senior populations.
+                </p>
+            </div>
+            <div class="articles">
+                <div class="category">
+                    <h2 class="articles-header">Industry Trends &amp; Policy</h2>
+                    <article class="article">
+                        <h3 class="article-title"><a class="article-link" href="https:/homehealthcarenews.com/2024/07/its-a-number-thats-worth-paying-attention-to-understanding-private-equitys-role-in-home-based-care/">‘It’s A Number That’s Worth Paying Attention To’: Understanding Private Equity’s Role In Home-Based Care</a></h3>
+                        <p class="article-description">Despite the hype surrounding private equity&#x27;s role in home-based care a new report reveals that its actual influence is far less significant than many believe.</p>
+                    </article>
+                    <article class="article">
+                        <h3 class="article-title"><a class="article-link" href="https:/homehealthcarenews.com/2024/07/why-private-equitys-involvement-in-home-based-care-is-largely-overstated/">Why Private Equity’s Involvement In Home-Based Care Is Largely Overstated</a></h3>
+                        <p class="article-description">Despite recent scrutiny private equity&#x27;s impact on home-based care is not as widespread as many believe.</p>
+                    </article>
+                    <article class="article">
+                        <h3 class="article-title"><a class="article-link" href="https:/homehealthcarenews.com/2024/07/enhabits-board-battle-continues-advisory-firm-partially-sides-with-activist-investor/">Enhabit’s Board Battle Continues, Advisory Firm Partially Sides With Activist Investor</a></h3>
+                        <p class="article-description">An independent advisory firm recommends that Enhabit Inc shareholders vote for three of the activist investor&#x27;s board nominees citing the need for more home health and hospice experience on the board.</p>
+                    </article>
+                    <article class="article">
+                        <h3 class="article-title"><a class="article-link" href="https:/homehealthcarenews.com/2024/07/the-pennant-group-agrees-to-80m-purchase-of-pacific-northwest-home-health-provider/">The Pennant Group Agrees To $80M Purchase Of Pacific Northwest Home Health Provider</a></h3>
+                        <p class="article-description">Pennant Group expands its reach in the Pacific Northwest with an $80 million acquisition of Signature Healthcare at Home a move that strengthens its presence in Washington Oregon and Idaho.</p>
+                    </article>
+                    <article class="article">
+                        <h3 class="article-title"><a class="article-link" href="https:/www.mcknightshomecare.com/news/pennant-acquires-signature-healthcare-at-home-assets-for-80m/">Pennant acquires Signature Healthcare at Home assets for $80M</a></h3>
+                        <p class="article-description">The Pennant Group a provider of home health personal care hospice and senior living services disclosed Thursday that it agreed to purchase assets of certain Signature Healthcare at Home affiliates.</p>
+                    </article>
+                    <article class="article">
+                        <h3 class="article-title"><a class="article-link" href="https:/nahc.org/all-the-payment-factors-included-in-the-2025-home-health-proposed-rule/">All The Payment Factors Included In The 2025 Home Health Proposed Rule</a></h3>
+                        <p class="article-description">This article breaks down the proposed payment factors for home health agencies in the 2025 rule.</p>
+                    </article>
+                    <article class="article">
+                        <h3 class="article-title"><a class="article-link" href="https:/nahc.org/new-cms-model-aims-to-improve-dementia-care/">CMS Model Aims to Improve Dementia Care</a></h3>
+                        <p class="article-description">CMS is implementing a new model to improve care for dementia patients.</p>
+                    </article>
+                    <article class="article">
+                        <h3 class="article-title"><a class="article-link" href="https:/nahc.org/nahc-nhpco-alliance-joint-statement-comment-letter-submitted-on-hospice-care-act/">NAHC-NHPCO Alliance Joint Statement: Comment Letter Submitted on Hospice CARE Act</a></h3>
+                        <p class="article-description">The NAHC-NHPCO Alliance submits a comment letter on the Hospice CARE Act outlining their stance on hospice payment reform and program integrity.</p>
+                    </article>
+                    <article class="article">
+                        <h3 class="article-title"><a class="article-link" href="https:/nahc.org/nahc-nhpco-alliance-seeks-member-input-on-hha-referral-process/">NAHC-NHPCO Alliance Seeks Member Input on HHA Referral Process</a></h3>
+                        <p class="article-description">The National Association for Home Care Hospice (NAHC) and the National Hospice and Palliative Care Organization (NHPCO) are seeking input from members on the home health agency referral process.</p>
+                    </article>
+                    <article class="article">
+                        <h3 class="article-title"><a class="article-link" href="https:/nahc.org/cms-medicaid-updates/">CMS Medicaid Updates</a></h3>
+                        <p class="article-description">This NAHC Report article provides an update on the latest CMS Medicaid changes that impact home care agencies.</p>
+                    </article>
+                    <article class="article">
+                        <h3 class="article-title"><a class="article-link" href="https:/nahc.org/proposed-new-oasis-items/">Proposed New OASIS Items</a></h3>
+                        <p class="article-description">The National Association for Home Care Hospice (NAHC) is proposing new OASIS items to enhance the accuracy and completeness of patient data.</p>
+                    </article>
+                    <article class="article">
+                        <h3 class="article-title"><a class="article-link" href="https:/www.mcknightshomecare.com/news/independence-at-home-beneficiaries-posed-heavy-financial-strain-on-medicare-study-finds/">Independence at Home beneficiaries posed heavy financial strain on Medicare, study finds</a></h3>
+                        <p class="article-description">A new study reveals that Independence at Home a program designed to provide primary care in the home for high-cost Medicare beneficiaries placed a significant financial burden on traditional Medicare.</p>
+                    </article>
+                    <article class="article">
+                        <h3 class="article-title"><a class="article-link" href="https:/www.mcknightshomecare.com/news/telemedicine-firm-adds-palliative-care-specialty-to-improve-access-in-rural-areas/">Telemedicine firm adds palliative care specialty to improve access in rural areas</a></h3>
+                        <p class="article-description">Palliative care could be considered the Steve Wozniak of medical specialties Like the little-known co-founder of Apple Computer it is frequently misunderstood and seldom given its due Eagle Telemedicine.</p>
+                    </article>
+                </div>
+                <div class="category">
+                    <h2 class="articles-header">Clinical Research &amp; Care Innovations</h2>
+                    <article class="article">
+                        <h3 class="article-title"><a class="article-link" href="https:/www.medicalnewstoday.com/articles/possible-new-target-early-treatment-alzheimers-disease">Study finds possible new target for early treatment of Alzheimer&#x27;s disease</a></h3>
+                        <p class="article-description">New research has found that a protein that regulates cell repair could be a promising new target for treating Alzheimer’s disease.</p>
+                    </article>
+                    <article class="article">
+                        <h3 class="article-title"><a class="article-link" href="https:/www.medicalnewstoday.com/articles/researchers-figure-out-how-they-could-predict-individual-stages-of-alzheimers">Researchers figure out how they could predict individual stages of Alzheimer&#x27;s</a></h3>
+                        <p class="article-description">Researchers have devised a predictive model that could help doctors predict stages of cognitive decline tied to Alzheimer&#x27;s disease They are now.</p>
+                    </article>
+                    <article class="article">
+                        <h3 class="article-title"><a class="article-link" href="https:/www.medicalnewstoday.com/articles/researchers-successfully-rejuvenate-aging-livers-in-preclinical-study">Researchers successfully rejuvenate aging livers in preclinical study</a></h3>
+                        <p class="article-description">A study conducted in mice and human cell samples suggests that a pharmacological intervention may help reverse age-related liver damage.</p>
+                    </article>
+                    <article class="article">
+                        <h3 class="article-title"><a class="article-link" href="https:/www.medicalnewstoday.com/articles/novel-method-may-erase-bad-memory-response-long-term-parkinsons-treatment">Novel method may erase &#x27;bad memory&#x27; response to long-term Parkinson&#x27;s treatment</a></h3>
+                        <p class="article-description">Scientists have discovered that inhibiting a protein could stop dyskinesia symptoms and erase the brain&#x27;s &quot;bad memory response to long-term.</p>
+                    </article>
+                    <article class="article">
+                        <h3 class="article-title"><a class="article-link" href="https:/www.medicalnewstoday.com/articles/some-diabetes-drugs-ozempic-may-lower-risks-cancer-obesity">Some diabetes drugs like Ozempic may lower risks of 10 cancers, study finds</a></h3>
+                        <p class="article-description">People taking diabetes drugs such as GLP-1RAs saw a significant reduction in their risk of 10 out of 13 obesity-associated cancers a new study showed.</p>
+                    </article>
+                </div>
+                <div class="category">
+                    <h2 class="articles-header">Business Operations &amp; Technology</h2>
+                    <article class="article">
+                        <h3 class="article-title"><a class="article-link" href="https:/homehealthcarenews.com/2024/07/turning-pain-points-into-bliss-points-the-chief-experience-officers-rise-in-home-based-care/">Turning ‘Pain Points’ Into ‘Bliss Points’: The Chief Experience Officer’s Rise In Home-Based Care</a></h3>
+                        <p class="article-description">This article explores the growing importance of the Chief Experience Officer role in home-based care highlighting how these executives are transforming pain points into positive experiences for patients clients and staff.</p>
+                    </article>
+                    <article class="article">
+                        <h3 class="article-title"><a class="article-link" href="https:/homehealthcarenews.com/2024/07/senior-helpers-accordcare-see-results-from-enhanced-training-programs/">Senior Helpers, AccordCare See Results From Enhanced Training Programs</a></h3>
+                        <p class="article-description">Enhanced training programs are helping home care providers like Senior Helpers and AccordCare combat staffing shortages and improve caregiver retention.</p>
+                    </article>
+                    <article class="article">
+                        <h3 class="article-title"><a class="article-link" href="https:/www.mcknightshomecare.com/news/nyus-college-of-nursing-receives-5m-to-provide-aging-care-training/">NYU’s College of Nursing receives $5M to provide aging care training</a></h3>
+                        <p class="article-description">HRSA granted New York University’s Rory Meyers College of Nursing $5 million to train 5,000 on providing aging-friendly care.</p>
+                    </article>
+                </div>
+                <div class="category">
+                    <h2 class="articles-header">Caregiver Support &amp; Resources</h2>
+                    <article class="article">
+                        <h3 class="article-title"><a class="article-link" href="https:/www.mcknightshomecare.com/news/report-care-worker-turnover-vacancy-remains-major-hurdle-for-senior-care-providers/">Report: Care worker turnover, vacancy remains major hurdle for senior care providers</a></h3>
+                        <p class="article-description">Despite steady investments in the direct care workforce many home care agencies still struggle to recruit and retain essential workers.</p>
+                    </article>
+                    <article class="article">
+                        <h3 class="article-title"><a class="article-link" href="https:/dailycaring.com/3-tips-to-get-peace-of-mind-when-using-an-in-home-caregiver/">3 Tips for Peace of Mind When Using an In-Home Caregiver</a></h3>
+                        <p class="article-description">Get peace of mind when getting caregiving help If you’re concerned or feeling guilty about hiring someone to help care.</p>
+                    </article>
+                    <article class="article">
+                        <h3 class="article-title"><a class="article-link" href="https:/dailycaring.com/why-its-good-to-find-humor-in-caregiving/">Humor in Caregiving Eases Tension and Boosts Mood</a></h3>
+                        <p class="article-description">Funny moments can happen during caregiving Chronic illnesses and serious diseases like Alzheimer’s disease are certainly no laughing matter But.</p>
+                    </article>
+                </div>
+                <div class="category">
+                    <h2 class="articles-header">Patient Care &amp; Caregiving Best Practices</h2>
+                    <article class="article">
+                        <h3 class="article-title"><a class="article-link" href="https:/www.casacompanionhomecare.com/home-care-blog/beyond-basic-care-benefits-in-home-care-assisted-living/">Beyond Basic Care: The Benefits of In-Home Care in Assisted Living</a></h3>
+                        <p class="article-description">The world of assisted living can be complex for families seeking the best care for their loved ones These communities offer strong support and services but gaps in care can impact residents quality of life...</p>
+                    </article>
+                    <article class="article">
+                        <h3 class="article-title"><a class="article-link" href="https:/www.casacompanionhomecare.com/home-care-blog/boosting-quality-life-in-home-care-memory-care-residents/">Boosting Quality of Life: In-Home Care for Memory Care Residents</a></h3>
+                        <p class="article-description">Memory care involves specialized support for individuals with memory-related conditions such as Alzheimer’s disease and other forms of dementia These conditions progressively impair memory cognitive function and the ability to perform daily tasks Tailored care...</p>
+                    </article>
+                    <article class="article">
+                        <h3 class="article-title"><a class="article-link" href="https:/www.casacompanionhomecare.com/homecareblog/empowering-families-in-home-care-for-hospice-patients/">Empowering Families: In-Home Care for Hospice Patients</a></h3>
+                        <p class="article-description">In-home care is an invaluable complement to hospice services offering compassionate support and comfort to both patients and their families during challenging times The support of home care aides can have a profound impact on...</p>
+                    </article>
+                    <article class="article">
+                        <h3 class="article-title"><a class="article-link" href="https:/www.casacompanionhomecare.com/homecareblog/in-home-care-spring-checklist-renew-refresh-reassess/">In Home Care Spring Checklist: Renew Refresh Reassess</a></h3>
+                        <p class="article-description">Spring is an ideal time to reassess all aspects of your loved one’s in-home care A reviewed and updated home care plan aligns with current needs to provide the best possible support The needs of...</p>
+                    </article>
+                    <article class="article">
+                        <h3 class="article-title"><a class="article-link" href="https:/www.casacompanionhomecare.com/home-care-blog/how-do-we-know-when-loved-one-needs-in-home-care/">How Do We Know When Our Loved One Needs In-Home Care?</a></h3>
+                        <p class="article-description">In-home care can be a crucial support system for seniors and their families Home care solutions offer personalized assistance and ensure comfort safety and dignity for aging loved ones However recognizing the right time to...</p>
+                    </article>
+                    <article class="article">
+                        <h3 class="article-title"><a class="article-link" href="https:/www.casacompanionhomecare.com/home-care-blog/in-home-care-facility-care-how-to-make-right-choice/">In-Home Care vs. Facility Care: How to Make the Right Choice</a></h3>
+                        <p class="article-description">As seniors age and face health challenges they may face the choice between in home care and a facility Both receiving care at home or moving into a facility have their benefits and drawbacks The...</p>
+                    </article>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer"></footer>
+        <p>
+            <b>TrollyCare Insurance is a division of
+                <a href="https:/www.insurancebcx.com/">
+                    Insurance BCX
+                </a>
+            </b>
+        </p>
+        <p>
+            +1 (833)-419-3093 | Proudly based in El Paso, TX
+        </p>
+        <p>
+            © 2024 TrollyCare. All rights reserved.
+        </p>
+    </footer>
+</body>
+
+</html>.pug'
+[2024-07-13T00:43:47.694Z] Newsletter generated successfully
+[2024-07-13T00:44:43.867Z] Newsletter generated successfully
+[2024-07-13T00:51:38.242Z] Newsletter generated successfully
+[2024-07-13T01:04:28.131Z] Newsletter generated successfully
+[2024-07-13T01:58:31.599Z] Newsletter generated successfully
+[2024-07-13T02:01:52.296Z] Newsletter generated successfully
+[2024-07-13T02:05:04.941Z] Newsletter generated successfully
+[2024-07-13T21:12:19.617Z] Newsletter generated successfully
+[2024-07-13T21:23:24.348Z] Newsletter generated successfully
+[2024-07-13T21:36:38.356Z] Newsletter generated successfully
+[2024-07-14T05:29:23.482Z] Error: Error: Incomplete newsletter data
+[2024-07-14T05:34:25.457Z] Error: Error: Incomplete newsletter data
+[2024-07-14T05:42:19.143Z] Error: Error: Incomplete newsletter data

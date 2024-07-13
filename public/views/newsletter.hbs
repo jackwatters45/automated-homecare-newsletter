@@ -9,9 +9,9 @@
 </head>
 
 <body>
-    <nav>
+    {{!-- <nav class="nav">
         <h1>Homecare News <span class="company-name">by
-                <a href="https: //www.trollycare.com/">
+                <a href="https://www.trollycare.com/">
                     </href>{{name}}
                 </a>
             </span>
@@ -19,7 +19,26 @@
         <div class="nav-links">
             <a href="https://www.trollycare.com/">Contact Us</a>
         </div>
-    </nav>
+    </nav> --}}
+    <div class="nav-container">
+        <table class="nav">
+            <tr>
+                <td class="nav-logo">
+                    <h1 class="nav-title">
+                        Homecare News
+                        <span class="nav-subtitle">by
+                            <a href="https://www.trollycare.com/" class="nav-company-link">
+                                {{name}}
+                            </a>
+                        </span>
+                    </h1>
+                </td>
+                <td class="nav-links">
+                    <a href="https://www.trollycare.com/" class="nav-link">Contact Us</a>
+                </td>
+            </tr>
+        </table>
+    </div>
 
     <main>
         <div class="container">
@@ -47,7 +66,7 @@
         </div>
     </main>
 
-    <footer>
+    <footer class="footer">
         <p>
             <b>TrollyCare Insurance is a division of
                 <a href="https://www.insurancebcx.com/">

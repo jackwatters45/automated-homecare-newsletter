@@ -24,3 +24,10 @@ export function handleErrors(
 	res.status(500).json(err.message);
 	throw new Error(err.message);
 }
+
+export class DatabaseError extends Error {
+	constructor(message: string) {
+		super(message);
+		this.name = "DatabaseError";
+	}
+}

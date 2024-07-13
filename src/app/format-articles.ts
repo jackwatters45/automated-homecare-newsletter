@@ -131,7 +131,9 @@ export const enrichArticlesData = async (
 	}
 };
 
-export async function generateSummary(articles: ValidArticleData[]) {
+export async function generateSummary(
+	articles: ValidArticleData[],
+): Promise<string> {
 	const prompt = `Analyze the following articles and create a concise, engaging summary:
 
 	${JSON.stringify(articles, null, 2)}
@@ -161,7 +163,7 @@ export async function generateSummary(articles: ValidArticleData[]) {
 	
 	Your summary should provide a quick, informative overview that gives readers a clear sense of the valuable content available, without revealing all the details.`;
 
-	const generatedDescription = await retry(() =>
+	const generatedDescription = await retry<string>(() =>
 		generateJSONResponseFromModel(prompt),
 	);
 
@@ -196,7 +198,7 @@ export async function generateCategories(articles: ValidArticleData[]) {
 	
 	Please follow these guidelines:
 	1. Assign each article to at least one of the predefined categories. An article can belong to multiple categories if appropriate.
-	2. If any articles don't fit well into the main categories, create a "Miscellaneous" category for them.
+	2. If any articles don't fit well into the main categories, do not include them in the results and remove them from the articles list.
 	
 	Format your response as a JSON object with the following structure:
 	[
@@ -234,6 +236,7 @@ export async function generateCategories(articles: ValidArticleData[]) {
 
 	if (!generatedCategories) {
 		log("Error generating summary");
+		throw new Error("Error generating categories");
 	}
 
 	return generatedCategories?.filter((category) => category.articles.length > 0);

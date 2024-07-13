@@ -1,7 +1,7 @@
 import debug from "debug";
 import { schedule } from "node-cron";
 
-import { GenerateNewsletter } from "../app/index.js";
+import { generateNewsletter } from "../app/index.js";
 import { pingServer } from "./health.js";
 import { retry } from "./utils.js";
 
@@ -25,7 +25,8 @@ export function setupCronJobs() {
 	schedule(
 		"0 9 * * 1",
 		() => {
-			if (isAlternateMonday(new Date())) retry(GenerateNewsletter);
+			// TODO: this needs to be the one that sends mom email
+			if (isAlternateMonday(new Date())) retry(generateNewsletter);
 		},
 		{ timezone: "America/Halifax" },
 	);

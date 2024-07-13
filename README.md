@@ -2,9 +2,11 @@
 
 ## TODO
 
-- tests
+- interface
 
-- Distribution channel
+- better log shit
+
+- tests
 
 ## Roadmap
 
