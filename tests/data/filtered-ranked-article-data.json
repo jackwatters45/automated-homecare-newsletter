@@ -1,10 +1,10 @@
 [
 	{
 		"url": "https://www.mcknightshomecare.com/home/news/",
-		"link": "https://www.mcknightshomecare.com/news/house-committee-greenlights-bill-that-would-recognize-direct-support-professionals/",
-		"title": "House committee greenlights bill that would federally recognize direct support professionals",
-		"description": "The House Committee on Education & the Workforce on Wednesday approved a bill that would grant federal recognition to DSPs.",
-		"date": "2024-07-10T07:00:00.000Z",
+		"link": "https://www.mcknightshomecare.com/news/independence-at-home-beneficiaries-posed-heavy-financial-strain-on-medicare-study-finds/",
+		"title": "Independence at Home beneficiaries posed heavy financial strain on Medicare, study finds",
+		"description": "The number of Medicare beneficiaries eligible for Independence at Home skyrocketed during the model’s active years.",
+		"date": "2024-07-12T07:00:00.000Z",
 		"count": 1
 	},
 	{
@@ -16,9 +16,23 @@
 	},
 	{
 		"url": "https://nahc.org/nahc-newsroom/",
-		"link": "https://nahc.org/cms-medicaid-updates/",
-		"title": "CMS Medicaid Updates",
-		"date": "2024-07-09T07:00:00.000Z",
+		"link": "https://nahc.org/proposed-new-oasis-items/",
+		"title": "Proposed New OASIS Items",
+		"date": "2024-07-08T07:00:00.000Z",
+		"count": 1
+	},
+	{
+		"url": "https://nahc.org/nahc-newsroom/",
+		"link": "https://nahc.org/all-the-payment-factors-included-in-the-2025-home-health-proposed-rule/",
+		"title": "All The Payment Factors Included In The 2025 Home Health Proposed Rule",
+		"date": "2024-07-10T07:00:00.000Z",
+		"count": 1
+	},
+	{
+		"url": "https://homehealthcarenews.com/",
+		"link": "https://homehealthcarenews.com/2024/07/why-private-equitys-involvement-in-home-based-care-is-largely-overstated/",
+		"title": "Why Private Equity’s Involvement In Home-Based Care Is Largely Overstated",
+		"date": "2024-07-10T07:00:00.000Z",
 		"count": 1
 	},
 	{
@@ -37,23 +51,24 @@
 		"count": 1
 	},
 	{
-		"url": "https://nahc.org/nahc-newsroom/",
-		"link": "https://nahc.org/all-the-payment-factors-included-in-the-2025-home-health-proposed-rule/",
-		"title": "All The Payment Factors Included In The 2025 Home Health Proposed Rule",
+		"url": "https://www.mcknightshomecare.com/home/news/",
+		"link": "https://www.mcknightshomecare.com/news/house-committee-greenlights-bill-that-would-recognize-direct-support-professionals/",
+		"title": "House committee greenlights bill that would federally recognize direct support professionals",
+		"description": "The House Committee on Education & the Workforce on Wednesday approved a bill that would grant federal recognition to DSPs.",
 		"date": "2024-07-10T07:00:00.000Z",
 		"count": 1
 	},
 	{
-		"url": "https://homehealthcarenews.com/",
-		"link": "https://homehealthcarenews.com/2024/07/enhabits-board-battle-continues-advisory-firm-partially-sides-with-activist-investor/",
-		"title": "Enhabit’s Board Battle Continues, Advisory Firm Partially Sides With Activist Investor",
+		"url": "https://nahc.org/nahc-newsroom/",
+		"link": "https://nahc.org/nahc-nhpco-alliance-seeks-member-input-on-hha-referral-process/",
+		"title": "NAHC-NHPCO Alliance Seeks Member Input on HHA Referral Process",
 		"date": "2024-07-12T07:00:00.000Z",
 		"count": 1
 	},
 	{
 		"url": "https://homehealthcarenews.com/",
-		"link": "https://homehealthcarenews.com/2024/07/why-private-equitys-involvement-in-home-based-care-is-largely-overstated/",
-		"title": "Why Private Equity’s Involvement In Home-Based Care Is Largely Overstated",
+		"link": "https://homehealthcarenews.com/2024/07/turning-pain-points-into-bliss-points-the-chief-experience-officers-rise-in-home-based-care/",
+		"title": "Turning ‘Pain Points’ Into ‘Bliss Points’: The Chief Experience Officer’s Rise In Home-Based Care",
 		"date": "2024-07-10T07:00:00.000Z",
 		"count": 1
 	},
@@ -73,17 +88,9 @@
 		"count": 1
 	},
 	{
-		"url": "https://www.mcknightshomecare.com/home/news/",
-		"link": "https://www.mcknightshomecare.com/news/nyus-college-of-nursing-receives-5m-to-provide-aging-care-training/",
-		"title": "NYU’s College of Nursing receives $5M to provide aging care training",
-		"description": "HRSA granted New York University’s Rory Meyers College of Nursing $5 million to train 5,000 on providing aging-friendly care.",
-		"date": "2024-07-12T07:00:00.000Z",
-		"count": 1
-	},
-	{
 		"url": "https://homehealthcarenews.com/",
-		"link": "https://homehealthcarenews.com/2024/07/secret-shopping-and-competitive-analysis-how-home-based-care-providers-use-their-peers-to-get-ahead/",
-		"title": "Secret Shopping And Competitive Analysis: How Home-Based Care Providers Use Their Peers To Get Ahead",
+		"link": "https://homehealthcarenews.com/2024/07/enhabits-board-battle-continues-advisory-firm-partially-sides-with-activist-investor/",
+		"title": "Enhabit’s Board Battle Continues, Advisory Firm Partially Sides With Activist Investor",
 		"date": "2024-07-12T07:00:00.000Z",
 		"count": 1
 	},
@@ -96,92 +103,9 @@
 	},
 	{
 		"url": "https://www.mcknightshomecare.com/home/news/",
-		"link": "https://www.mcknightshomecare.com/news/adoption-of-supplemental-benefits-does-little-to-alter-ma-plan-membership-study-finds/",
-		"title": "Adoption of supplemental benefits does little to alter MA plan membership, study finds",
-		"description": "MA plans that adopt supplemental benefits typically do not see significant changes in the demographics of beneficiaries.",
-		"date": "2024-07-11T07:00:00.000Z",
-		"count": 1
-	},
-	{
-		"url": "https://www.medicalnewstoday.com/news",
-		"link": "https://www.medicalnewstoday.com/articles/researchers-successfully-rejuvenate-aging-livers-in-preclinical-study",
-		"title": "Researchers successfully rejuvenate aging livers in preclinical study",
-		"description": "A study conducted in mice and human cell samples suggests that a pharmacological intervention may help reverse age-related liver damage.",
-		"date": "2024-07-08T07:00:00.000Z",
-		"count": 1
-	},
-	{
-		"url": "https://www.medicalnewstoday.com/news",
-		"link": "https://www.medicalnewstoday.com/articles/possible-new-target-early-treatment-alzheimers-disease",
-		"title": "Study finds possible new target for early treatment of Alzheimer's disease",
-		"description": "New research has found that a protein that regulates cell repair could be a promising new target for treating Alzheimer’s disease.",
-		"date": "2024-07-08T07:00:00.000Z",
-		"count": 1
-	},
-	{
-		"url": "https://www.medicalnewstoday.com/news",
-		"link": "https://www.medicalnewstoday.com/articles/researchers-figure-out-how-they-could-predict-individual-stages-of-alzheimers",
-		"title": "Researchers figure out how they could predict individual stages of Alzheimer's",
-		"description": "Researchers have devised a predictive model that could help doctors predict stages of cognitive decline tied to Alzheimer's disease. They are now…",
-		"date": "2024-07-11T07:00:00.000Z",
-		"count": 1
-	},
-	{
-		"url": "https://www.medicalnewstoday.com/news",
-		"link": "https://www.medicalnewstoday.com/articles/novel-method-may-erase-bad-memory-response-long-term-parkinsons-treatment",
-		"title": "Novel method may erase 'bad memory' response to long-term Parkinson's treatment",
-		"description": "Scientists have discovered that inhibiting a protein could stop dyskinesia symptoms and erase the brain's \"bad memory\" response to long-term…",
-		"date": "2024-07-11T07:00:00.000Z",
-		"count": 1
-	},
-	{
-		"url": "https://www.mcknightshomecare.com/home/news/",
 		"link": "https://www.mcknightshomecare.com/news/comfort-keepers-franchise-owner-commits-continued-wage-infractions-dol-alleges/",
 		"title": "Comfort Keepers franchise owner commits continued wage infractions, DOL alleges",
 		"description": "The DOL seeking a contempt order against the owner of several Comfort Keepers locations due to wage violations.",
-		"date": "2024-07-12T07:00:00.000Z",
-		"count": 1
-	},
-	{
-		"url": "https://nahc.org/nahc-newsroom/",
-		"link": "https://nahc.org/sneak-peek-private-duty-home-care-at-the-2024-home-care-and-hospice-conference-and-expo/",
-		"title": "Sneak Peek: Private Duty Home Care at the 2024 Home Care and Hospice Conference and Expo",
-		"date": "2024-07-10T07:00:00.000Z",
-		"count": 1
-	},
-	{
-		"url": "https://homehealthcarenews.com/",
-		"link": "https://homehealthcarenews.com/2024/07/turning-pain-points-into-bliss-points-the-chief-experience-officers-rise-in-home-based-care/",
-		"title": "Turning ‘Pain Points’ Into ‘Bliss Points’: The Chief Experience Officer’s Rise In Home-Based Care",
-		"date": "2024-07-10T07:00:00.000Z",
-		"count": 1
-	},
-	{
-		"url": "https://www.casacompanionhomecare.com/blog/",
-		"link": "https://www.casacompanionhomecare.com/homecareblog/in-home-care-spring-checklist-renew-refresh-reassess/",
-		"title": "In Home Care Spring Checklist: Renew Refresh Reassess",
-		"description": "Spring is an ideal time to reassess all aspects of your loved one’s in-home care. A reviewed and updated home care plan aligns with current needs to provide the best possible support. The needs of patients receiving in home care in San Diego evolve over time as health conditions, household safety and family caregiver information…",
-		"count": 1
-	},
-	{
-		"url": "https://www.mcknightshomecare.com/home/news/",
-		"link": "https://www.mcknightshomecare.com/news/telemedicine-firm-adds-palliative-care-specialty-to-improve-access-in-rural-areas/",
-		"title": "Telemedicine firm adds palliative care specialty to improve access in rural areas",
-		"description": "Palliative care could be considered the Steve Wozniak of medical specialties: Like the little-known co-founder of Apple Computer, it is frequently misunderstood and seldom given its due. Eagle Telemedicine,...",
-		"date": "2024-07-12T07:00:00.000Z",
-		"count": 1
-	},
-	{
-		"url": "https://www.casacompanionhomecare.com/blog/",
-		"link": "https://www.casacompanionhomecare.com/homecareblog/empowering-families-in-home-care-for-hospice-patients/",
-		"title": "Empowering Families: In-Home Care for Hospice Patients",
-		"description": "In-home care is an invaluable complement to hospice services, offering compassionate support and comfort to both patients and their families during challenging times. The support of home care aides can have a profound impact on hospice patients and their families. Home care during hospice provides personalized support, enhances quality of life, and empowers families to…",
-		"count": 1
-	},
-	{
-		"url": "https://nahc.org/nahc-newsroom/",
-		"link": "https://nahc.org/nahc-nhpco-alliance-joint-statement-comment-letter-submitted-on-hospice-care-act/",
-		"title": "NAHC-NHPCO Alliance Joint Statement: Comment Letter Submitted on Hospice CARE Act",
 		"date": "2024-07-12T07:00:00.000Z",
 		"count": 1
 	},
@@ -201,9 +125,93 @@
 	},
 	{
 		"url": "https://www.casacompanionhomecare.com/blog/",
+		"link": "https://www.casacompanionhomecare.com/home-care-blog/how-do-we-know-when-loved-one-needs-in-home-care/",
+		"title": "How Do We Know When Our Loved One Needs In-Home Care?",
+		"description": "In-home care can be a crucial support system for seniors and their families. Home care solutions offer personalized assistance and ensure comfort, safety, and dignity for aging loved ones. However, recognizing the right time to introduce home care can be challenging. There are several signs that indicate San Diego home care is appropriate. These signs…",
+		"count": 1
+	},
+	{
+		"url": "https://www.casacompanionhomecare.com/blog/",
+		"link": "https://www.casacompanionhomecare.com/home-care-blog/ten-ways-prepare-your-home-in-home-care/",
+		"title": "Ten Ways to Prepare Your Home for In-Home Care",
+		"description": "Bringing in-home care into your home can be a big change. Creating an environment that prioritizes effective and compassionate care for your loved one is a matter of preparation. The elderly in home care need to feel as comfortable, secure and independent as possible in their new situation. Preparing your home adequately can ease the…",
+		"count": 1
+	},
+	{
+		"url": "https://www.casacompanionhomecare.com/blog/",
 		"link": "https://www.casacompanionhomecare.com/home-care-blog/boosting-quality-life-in-home-care-memory-care-residents/",
 		"title": "Boosting Quality of Life: In-Home Care for Memory Care Residents",
 		"description": "Memory care involves specialized support for individuals with memory-related conditions, such as Alzheimer’s disease and other forms of dementia. These conditions progressively impair memory, cognitive function, and the ability to perform daily tasks. Tailored care from an in-home care provider can help memory care facility residents with these challenges. Traditional memory care offers structure and…",
+		"count": 1
+	},
+	{
+		"url": "https://www.casacompanionhomecare.com/blog/",
+		"link": "https://www.casacompanionhomecare.com/home-care-blog/beyond-basic-care-benefits-in-home-care-assisted-living/",
+		"title": "Beyond Basic Care: The Benefits of In-Home Care in Assisted Living",
+		"description": "The world of assisted living can be complex for families seeking the best care for their loved ones. These communities offer strong support and services, but gaps in care can impact residents’ quality of life. Adding in-home care to the care team makes a significant difference. Homecare solutions provide specialized attention and personal services so…",
+		"count": 1
+	},
+	{
+		"url": "https://dailycaring.com/",
+		"link": "https://dailycaring.com/3-ways-to-get-the-home-medical-equipment-that-seniors-need-wheelchairs-hospital-beds-and-more/",
+		"title": "3 Ways to Get the Home Medical Equipment That Seniors Need: Wheelchairs, Hospital Beds, and More",
+		"description": "Many older adults rely on home medical equipment like walkers, wheelchairs, hospital beds, oxygen concentrators, or other assistive devices in...",
+		"count": 1
+	},
+	{
+		"url": "https://www.casacompanionhomecare.com/blog/",
+		"link": "https://www.casacompanionhomecare.com/homecareblog/quality-matters-why-trustworthy-non-emergency-medical-transport-non-negotiable/",
+		"title": "Quality Matters: Why Trustworthy Non-Emergency Medical Transport is Non-Negotiable",
+		"description": "Quality non-emergency medical transport (NEMT) is more than just a convenience; it’s a necessity for many individuals with medical needs. Patients and their families rely on these services for safe, comfortable transportation to medical appointments, treatments, and other essential engagements. Safe and trustworthy non-emergency medical transport costs more than ride sharing, but NEMT delivers peace…",
+		"count": 1
+	},
+	{
+		"url": "https://www.casacompanionhomecare.com/blog/",
+		"link": "https://www.casacompanionhomecare.com/homecareblog/six-reasons-choose-non-emergency-medical-transport/",
+		"title": "Six Reasons to Choose Non-Emergency Medical Transport",
+		"description": "There are six key reasons patients in San Diego County should choose to use non-emergency medical transportation (NEMT). NEMT ensures safe and comfortable transport for individuals with mobility challenges or medical conditions, providing specialized vehicles and trained drivers. Non-emergency medical transport conveniently offers door-to-door service, eliminating the need for patients to navigate public transportation or…",
+		"count": 1
+	},
+	{
+		"url": "https://dailycaring.com/",
+		"link": "https://dailycaring.com/3-tips-to-get-peace-of-mind-when-using-an-in-home-caregiver/",
+		"title": "3 Tips for Peace of Mind When Using an In-Home Caregiver",
+		"description": "Get peace of mind when getting caregiving help If you’re concerned or feeling guilty about hiring someone to help care...",
+		"count": 1
+	},
+	{
+		"url": "https://dailycaring.com/",
+		"link": "https://dailycaring.com/6-hygiene-tips-for-bed-bound-seniors/",
+		"title": "6 Hygiene Tips for Bed Bound Seniors",
+		"description": "When someone is confined to bed due to their health conditions, it’s important to keep up their personal hygiene. Feeling...",
+		"count": 1
+	},
+	{
+		"url": "https://dailycaring.com/",
+		"link": "https://dailycaring.com/what-happens-when-someone-dies-without-a-will/",
+		"title": "What Happens When Someone Dies Without a Will?",
+		"description": "A will gives seniors peace of mind If your older adult wants to be sure that their assets and property...",
+		"count": 1
+	},
+	{
+		"url": "https://dailycaring.com/",
+		"link": "https://dailycaring.com/why-its-good-to-find-humor-in-caregiving/",
+		"title": "Humor in Caregiving Eases Tension and Boosts Mood",
+		"description": "Funny moments can happen during caregiving Chronic illnesses and serious diseases like Alzheimer’s disease are certainly no laughing matter. But...",
+		"count": 1
+	},
+	{
+		"url": "https://dailycaring.com/",
+		"link": "https://dailycaring.com/low-cost-therapy-options-help-caregivers-cope/",
+		"title": "4 Affordable Counseling Services Help Reduce Caregiver Stress",
+		"description": "Counseling or therapy helps you manage caregiving stress Talking with a counselor or therapist is a shortcut to figuring out...",
+		"count": 1
+	},
+	{
+		"url": "https://dailycaring.com/",
+		"link": "https://dailycaring.com/video-fall-prevention-exercises-for-seniors-stay-balanced-while-reaching/",
+		"title": "2 Fall Prevention Exercises for Seniors: Improve Balance While Reaching",
+		"description": "1 out of 3 older adults fall each year Every year, millions of people aged 65+ fall. In fact, 1...",
 		"count": 1
 	}
 ]
