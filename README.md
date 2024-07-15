@@ -2,15 +2,11 @@
 
 ## TODO
 
-- TODO: implement send newsletter
-
-- TODO: tests (todos)
-
-- TODO: separate
-
 - TODO: main page to edit recipients outline
 - error components
 - update types
+
+- TODO: tests (todos)
 
 ---
 

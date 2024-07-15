@@ -1,7 +1,7 @@
 import { google } from "googleapis";
 import { Mock, beforeEach, describe, expect, it, vi } from "vitest";
-import { getLastDateQuery, searchNews } from "../../src/app/google-search.js";
 import { RECURRING_FREQUENCY } from "../../src/lib/constants.js";
+import { getLastDateQuery, searchNews } from "../../src/lib/google-search.js";
 
 describe("getLastDateQuery", () => {
 	beforeEach(() => {

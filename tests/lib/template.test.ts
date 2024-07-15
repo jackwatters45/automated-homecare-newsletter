@@ -3,7 +3,12 @@ import path from "node:path";
 import { Mock, beforeEach, describe, expect, it, vi } from "vitest";
 import { BASE_PATH } from "../../src/lib/constants.js";
 import { renderTemplate } from "../../src/lib/template.js";
-import type { NewsletterData } from "../../src/types/index.js";
+import type {
+	NewsletterInput,
+	PopulatedNewCategory,
+	PopulatedNewNewsletter,
+	PopulatedNewsletter,
+} from "../../src/types/index.js";
 
 vi.mock("node:fs");
 vi.mock("node:path");
@@ -14,13 +19,18 @@ describe("renderTemplate", () => {
 	});
 
 	it("should render the template correctly with provided data", async () => {
-		const data: NewsletterData = {
+		const data: PopulatedNewNewsletter = {
 			categories: [
 				{
+					newsletterId: 1,
 					name: "Tech",
 					articles: [],
 				},
-				{ name: "Health", articles: [] },
+				{
+					newsletterId: 1,
+					name: "Health",
+					articles: [],
+				},
 			],
 			summary: "This is a summary.",
 		};
@@ -42,9 +52,10 @@ describe("renderTemplate", () => {
 	});
 
 	it("should use the default file name if none is provided", async () => {
-		const data: NewsletterData = {
+		const data: PopulatedNewNewsletter = {
 			categories: [
 				{
+					newsletterId: 1,
 					name: "Tech",
 					articles: [],
 				},
@@ -69,7 +80,7 @@ describe("renderTemplate", () => {
 	});
 
 	it("should handle empty categories and summary", async () => {
-		const data: NewsletterData = {
+		const data: PopulatedNewNewsletter = {
 			categories: [],
 			summary: "",
 		};
