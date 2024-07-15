@@ -40,7 +40,7 @@ export const articles = pgTable("articles", {
 	id: serial("id").primaryKey(),
 	title: text("title").notNull(),
 	link: text("link").notNull(),
-	description: text("description"),
+	description: text("description").notNull(),
 	categoryId: integer("category_id")
 		.notNull()
 		.references(() => categories.id),
