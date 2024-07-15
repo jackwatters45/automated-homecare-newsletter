@@ -1,12 +1,17 @@
 {
 	"$schema": "https://biomejs.dev/schemas/1.8.3/schema.json",
 	"organizeImports": {
-		"enabled": true
+		"enabled": true,
+		"ignore": ["node_modules", "dist"]
 	},
 	"linter": {
 		"enabled": true,
 		"rules": {
-			"recommended": true
+			"recommended": true,
+			"style": {
+				"useImportType": "error",
+				"useExportType": "error"
+			}
 		},
 		"ignore": ["tests/**/*", "dist/**/*"]
 	},
@@ -16,6 +21,7 @@
 		"useIgnoreFile": true
 	},
 	"formatter": {
+		"enabled": true,
 		"indentStyle": "tab",
 		"indentWidth": 1
 	}

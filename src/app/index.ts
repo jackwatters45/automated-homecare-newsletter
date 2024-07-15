@@ -5,14 +5,17 @@ import path from "node:path";
 import debug from "debug";
 import puppeteer from "puppeteer";
 
-import { createNewsletter, getNewsletter } from "src/db/routes/service.js";
 import { initializeGenAI } from "../lib/ai.js";
-import { BASE_PATH, SPECIFIC_PAGES } from "../lib/constants.js";
+import { BASE_PATH, CLIENT_URL, SPECIFIC_PAGES } from "../lib/constants.js";
 import { resend, sendTestEmail } from "../lib/email.js";
 import { searchNews } from "../lib/google-search.js";
 import { renderTemplate } from "../lib/template.js";
 import { useLogFile, writeTestData } from "../lib/utils.js";
-import type { NewsletterData, ValidArticleData } from "../types/index.js";
+import { createNewsletter, getNewsletter } from "../routes/api/service.js";
+import type {
+	PopulatedNewNewsletter,
+	ValidArticleData,
+} from "../types/index.js";
 import { scrapeArticles } from "./data-fetching.js";
 import {
 	filterAndRankArticles,
@@ -30,7 +33,9 @@ const writeLog = useLogFile("run.log");
 
 export const model = initializeGenAI();
 
-export async function generateNewsletterData() {
+export async function generateNewsletterData(): Promise<
+	PopulatedNewNewsletter | undefined
+> {
 	log("generating newsletter data");
 
 	const browser = await puppeteer.launch();
@@ -92,7 +97,8 @@ export async function generateNewsletterData() {
 
 export async function sendNewsletterReviewEmail() {
 	try {
-		const newsletterData = await generateNewsletterData();
+		// const newsletterData = await generateNewsletterData();
+		const newsletterData = await getNewsletter(5);
 
 		if (!newsletterData) {
 			throw new Error("Newsletter data not found");
@@ -103,12 +109,12 @@ export async function sendNewsletterReviewEmail() {
 			throw new Error("Newsletter ID not found");
 		}
 
-		// TODO: send email to user to check if they want to approve the newsletter
+		// TODO: send email to <user>
 		const { data, error } = await resend.emails.send({
 			from: "Yats Support <support@yatusabes.co>",
 			to: ["jack.watters@me.com", "jackwattersdev@gmail.com"],
 			subject: "Review TrollyCare Newsletter",
-			text: `Please review the newsletter and approve it if you want to receive it. link to newsletter: ${BASE_PATH}/newsletter/${id}`,
+			text: `Please review the newsletter and approve it before it is sent. link to newsletter: ${CLIENT_URL}/newsletter/${id}`,
 		});
 
 		if (error) {
@@ -163,9 +169,12 @@ export async function testGenerateNewsletter() {
 			"utf8",
 		);
 
-		const newsletterData: NewsletterData = {
+		const newsletterData: PopulatedNewNewsletter = {
+			id: 1,
 			categories: JSON.parse(categories),
 			summary: JSON.parse(summary),
+			createdAt: new Date(),
+			updatedAt: new Date(),
 		};
 
 		log(newsletterData);
@@ -192,7 +201,7 @@ export async function testGenerateNewsletter() {
 
 export default async function main() {
 	try {
-		const newsletter = await generateNewsletterData();
+		const newsletter = await sendNewsletterReviewEmail();
 
 		log(newsletter);
 

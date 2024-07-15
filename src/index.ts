@@ -13,11 +13,11 @@ import morgan from "morgan";
 
 import { engine } from "express-handlebars";
 import sendNewsletter, { generateNewsletterData } from "./app/index.js";
-import dbRouter from "./db/routes/router.js";
 import { API_URL, BASE_PATH, PORT } from "./lib/constants.js";
 import { setupCronJobs } from "./lib/cron.js";
 import { handleErrors } from "./lib/errors.js";
 import { retry } from "./lib/utils.js";
+import dbRouter from "./routes/api/router.js";
 import serverRouter from "./routes/preview.router.js";
 import exampleRouter from "./routes/test-generation.router.js";
 
@@ -54,25 +54,6 @@ app.set("views", path.join(BASE_PATH, "public", "views"));
 // app.use(limiter);
 
 app.use(express.static(path.join(BASE_PATH, "public")));
-
-// API routes
-app.post("/generate-newsletter-data", async (_, res) => {
-	try {
-		const result = await retry(generateNewsletterData);
-		res.json(result);
-	} catch (error) {
-		res.status(500).json({ error: "Failed to generate newsletter data" });
-	}
-});
-
-app.post("/generate-newsletter", async (_, res) => {
-	try {
-		const result = await retry(sendNewsletter);
-		res.json(result);
-	} catch (error) {
-		res.status(500).json({ error: "Failed to generate newsletter" });
-	}
-});
 
 app.get("/", (_, res) => {
 	res.redirect("/health");

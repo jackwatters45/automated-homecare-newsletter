@@ -18,8 +18,8 @@ import {
 	writeTestData,
 } from "../lib/utils.js";
 import type {
-	ArticleDisplayData,
-	Category,
+	ArticleInput,
+	CategoryInput,
 	ValidArticleData,
 } from "../types/index.js";
 
@@ -33,7 +33,7 @@ const rateLimiter = new Bottleneck({
 export const enrichArticleData = async (
 	articleData: ValidArticleData,
 	browserInstance: Page,
-): Promise<ArticleDisplayData> => {
+): Promise<ArticleInput> => {
 	try {
 		if (articleData.description && articleData.description.length > 120) {
 			return {
@@ -115,7 +115,7 @@ export function createDescriptionPrompt(articleText: string): string {
 export const enrichArticlesData = async (
 	prioritizedArticles: ValidArticleData[],
 	browserInstance: Page,
-): Promise<ArticleDisplayData[]> => {
+): Promise<ArticleInput[]> => {
 	try {
 		const enrichedArticles = await Promise.all(
 			prioritizedArticles.map((article) =>
@@ -188,7 +188,10 @@ async function writeSummaryToFile() {
 	await generateSummary(JSON.parse(articles));
 }
 
-export async function generateCategories(articles: ValidArticleData[]) {
+// TODO: add tests for this
+export async function generateCategories(
+	articles: ValidArticleData[],
+): Promise<CategoryInput[]> {
 	const prompt = `Analyze the following articles and categorize them according to the predefined categories:
 
 	${JSON.stringify(articles, null, 2)}
@@ -230,7 +233,7 @@ export async function generateCategories(articles: ValidArticleData[]) {
 	
 	Ensure your response is valid JSON that can be parsed programmatically.`;
 
-	const generatedCategories = await retry<Category[]>(() =>
+	const generatedCategories = await retry<CategoryInput[]>(() =>
 		generateJSONResponseFromModel(prompt),
 	);
 
@@ -239,7 +242,34 @@ export async function generateCategories(articles: ValidArticleData[]) {
 		throw new Error("Error generating categories");
 	}
 
-	return generatedCategories?.filter((category) => category.articles.length > 0);
+	return processCategories(generatedCategories);
+}
+
+function deduplicateArticles(articles: ArticleInput[]): ArticleInput[] {
+	const articleMap = new Map<string, ArticleInput>();
+
+	for (const article of articles) {
+		if (articleMap.has(article.title)) {
+			// biome-ignore lint/style/noNonNullAssertion: <>
+			const existingArticle = articleMap.get(article.title)!;
+			existingArticle.description += `\n\n${article.description}`;
+		} else {
+			articleMap.set(article.title, { ...article });
+		}
+	}
+
+	return Array.from(articleMap.values());
+}
+
+function processCategories(
+	generatedCategories: CategoryInput[],
+): CategoryInput[] {
+	return generatedCategories
+		.map((category) => ({
+			...category,
+			articles: deduplicateArticles(category.articles),
+		}))
+		.filter((category) => category.articles.length > 0);
 }
 
 async function writeCategoriesToFile() {

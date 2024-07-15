@@ -98,10 +98,17 @@ export const COMPANY_NAME = "TrollyCare";
 
 export const PORT = process.env.PORT || 8080;
 
+export const CLIENT_PORT = process.env.CLIENT_PORT || 5173;
+
 export const API_URL =
 	process.env.NODE_ENV === "production"
 		? "automated-homecare-newsletter-production.up.railway.app"
 		: `http://localhost:${PORT}`;
+
+export const CLIENT_URL =
+	process.env.NODE_ENV === "production"
+		? "TODO:"
+		: `http://localhost:${CLIENT_PORT}`;
 
 export const BASE_PATH = path.resolve();
 

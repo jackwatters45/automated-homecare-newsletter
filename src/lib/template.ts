@@ -5,14 +5,14 @@ import debug from "debug";
 import Handlebars from "handlebars";
 import juice from "juice";
 import postcss from "postcss";
-import type { NewsletterData } from "../types/index.js";
+import type { PopulatedNewNewsletter } from "../types/index.js";
 import { BASE_PATH, COMPANY_NAME } from "./constants.js";
 import { getPastWeekDate } from "./utils.js";
 
 const log = debug(`${process.env.APP_NAME}:template.ts`);
 
 export async function renderTemplate(
-	data: NewsletterData,
+	data: PopulatedNewNewsletter,
 	fileName = "newsletter.hbs",
 ): Promise<string> {
 	const source = await fs.readFile(
