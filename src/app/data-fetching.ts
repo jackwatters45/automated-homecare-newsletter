@@ -1,17 +1,53 @@
 import * as cheerio from "cheerio";
 import debug from "debug";
 import type { Page } from "puppeteer";
-import robotsParser from "robots-parser";
 
+import { SPECIFIC_PAGES } from "../lib/constants.js";
+import { searchNews } from "../lib/google-search.js";
 import {
 	checkRobotsTxtPermission,
 	constructFullUrl,
+	extractDate,
+	extractTextContent,
 	fetchPageContent,
 	retry,
 } from "../lib/utils.js";
-import type { ArticleData, PageToScrape } from "../types/index.js";
+import type {
+	ArticleData,
+	PageToScrape,
+	ValidArticleData,
+} from "../types/index.js";
+import { filterArticlesByPage } from "./data-filtering.js";
 
 const log = debug(`${process.env.APP_NAME}:web-scraper.ts`);
+
+export async function getArticleData(pags: PageToScrape[], browserPage: Page) {
+	const results: ValidArticleData[] = [];
+	// specific pages
+	for (const page of SPECIFIC_PAGES) {
+		const articleLinks = await scrapeArticles(page, browserPage);
+		const relevantArticles = await filterArticlesByPage(articleLinks, page);
+		results.push(...relevantArticles);
+	}
+
+	// google search
+	const googleSearchResults = await searchNews([
+		"homecare news medical",
+		"home health news medical",
+		"home care news medical",
+	]);
+
+	results.push(...googleSearchResults);
+
+	if (results.length === 0) {
+		throw new Error("No valid articles found");
+	}
+
+	// await writeTestData("raw-article-data.json", results);
+	log("raw articles generated", results.length);
+
+	return results;
+}
 
 export async function scrapeArticles(
 	targetPage: PageToScrape,
@@ -64,24 +100,4 @@ export function extractArticleData({
 		description: extractTextContent($, element, targetPage.descriptionSelector),
 		date: extractDate($, element, targetPage.dateSelector),
 	};
-}
-
-function extractTextContent(
-	$: cheerio.CheerioAPI,
-	element: cheerio.AnyNode,
-	selector: string | undefined,
-): string | undefined {
-	return $(element).find(selector).length
-		? $(element).find(selector).text().trim()
-		: undefined;
-}
-
-function extractDate(
-	$: cheerio.CheerioAPI,
-	element: cheerio.AnyNode,
-	selector: string | undefined,
-): Date | undefined {
-	return $(element).find(selector).length
-		? new Date($(element).find(selector).text().trim())
-		: undefined;
 }

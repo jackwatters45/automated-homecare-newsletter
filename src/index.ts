@@ -12,14 +12,11 @@ import helmet from "helmet";
 import morgan from "morgan";
 
 import { engine } from "express-handlebars";
-import sendNewsletter, { generateNewsletterData } from "./app/index.js";
 import { API_URL, BASE_PATH, PORT } from "./lib/constants.js";
 import { setupCronJobs } from "./lib/cron.js";
 import { handleErrors } from "./lib/errors.js";
-import { retry } from "./lib/utils.js";
-import dbRouter from "./routes/api/router.js";
-import serverRouter from "./routes/preview.router.js";
-import exampleRouter from "./routes/test-generation.router.js";
+import apiRouter from "./routes/api/router.js";
+import testRouter from "./routes/test-generation.router.js";
 
 const log = debug(`${process.env.APP_NAME}:index.ts`);
 
@@ -47,11 +44,11 @@ app.set("view engine", "hbs");
 app.set("views", path.join(BASE_PATH, "public", "views"));
 
 // Rate limiting
-// const limiter = rateLimit({
-// 	windowMs: 15 * 60 * 1000, // 15 minutes
-// 	max: 50,
-// });
-// app.use(limiter);
+const limiter = rateLimit({
+	windowMs: 15 * 60 * 1000, // 15 minutes
+	max: 50,
+});
+app.use(limiter);
 
 app.use(express.static(path.join(BASE_PATH, "public")));
 
@@ -65,9 +62,8 @@ app.get("/health", (_, res) => {
 		.json({ message: "OK - Server is up and running", status: "OK" });
 });
 
-app.use("/example", exampleRouter);
-app.use("/server", serverRouter);
-app.use("/api", dbRouter);
+app.use("/test", testRouter);
+app.use("/api", apiRouter);
 
 // Setup cron jobs
 setupCronJobs();
@@ -80,7 +76,6 @@ app.use(handleErrors);
 // Start the server
 app.listen(PORT, () => {
 	const message = `Server is running at ${API_URL}`;
-	console.log(message);
 	log(message);
 });
 

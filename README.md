@@ -2,8 +2,6 @@
 
 ## TODO
 
-- TODO: commits
-
 - TODO: implement send newsletter
 
 - TODO: tests (todos)
@@ -21,6 +19,8 @@
 - TODO: main page to edit recipients
 - TODO: add to db
 - TODO: implement
+
+- TODO: Cron
 
 - tests
 

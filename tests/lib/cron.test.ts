@@ -1,9 +1,12 @@
+import debug from "debug";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { schedule } from "node-cron";
-import { GenerateNewsletter } from "../../src/app/index.js";
+import { sendNewsletterReviewEmail } from "../../src/app/index.js";
 import { isAlternateMonday, setupCronJobs } from "../../src/lib/cron.js";
 import { pingServer } from "../../src/lib/health.js";
+
+const log = debug(`${process.env.APP_NAME}:cron.test.ts`);
 
 // Mock external dependencies
 
@@ -73,7 +76,7 @@ describe("setupCronJobs", () => {
 	it("calls GenerateNewsletter on alternate Mondays", async () => {
 		setupCronJobs();
 
-		console.log("Schedule calls:", (schedule as any).mock.calls);
+		log("Schedule calls:", (schedule as any).mock.calls);
 
 		// Advance time to trigger the job
 		vi.advanceTimersByTime(1000 * 60 * 60 * 24 * 15); // Advance by 15 days
@@ -87,7 +90,7 @@ describe("setupCronJobs", () => {
 		const scheduledFunctions = (schedule as any).mock.calls.map(
 			(call) => call[1],
 		);
-		console.log("Scheduled functions:", scheduledFunctions);
+		log("Scheduled functions:", scheduledFunctions);
 
 		scheduledFunctions.forEach((func) => {
 			if (typeof func === "function") {
@@ -95,7 +98,7 @@ describe("setupCronJobs", () => {
 			}
 		});
 
-		expect(GenerateNewsletter).toHaveBeenCalled();
+		expect(sendNewsletterReviewEmail).toHaveBeenCalled();
 	});
 
 	it("does not call GenerateNewsletter on non-alternate Mondays", () => {
@@ -105,13 +108,13 @@ describe("setupCronJobs", () => {
 		const newsletterJob = (schedule as any).mock.calls[0][1];
 		newsletterJob();
 
-		expect(GenerateNewsletter).not.toHaveBeenCalled();
+		expect(sendNewsletterReviewEmail).not.toHaveBeenCalled();
 	});
 
 	it("calls pingServer for health check job", async () => {
 		setupCronJobs();
 
-		console.log("Schedule calls:", (schedule as any).mock.calls);
+		log("Schedule calls:", (schedule as any).mock.calls);
 
 		// Advance time to trigger the job
 		vi.advanceTimersByTime(1000 * 60 * 60 * 48); // Advance by 25 hours
@@ -125,7 +128,7 @@ describe("setupCronJobs", () => {
 		const scheduledFunctions = (schedule as any).mock.calls.map(
 			(call) => call[1],
 		);
-		console.log("Scheduled functions:", scheduledFunctions);
+		log("Scheduled functions:", scheduledFunctions);
 
 		scheduledFunctions.forEach((func) => {
 			if (typeof func === "function") {

@@ -2,7 +2,7 @@ import debug from "debug";
 import express from "express";
 import type { Request, Response } from "express";
 
-import { generateNewsletterData } from "../../app/index.js";
+import { generateNewsletterData, sendNewsletter } from "../../app/index.js";
 import { DatabaseError } from "../../lib/errors.js";
 import {
 	createNewsletter,
@@ -117,10 +117,9 @@ export const newsletterController = {
 
 	send: async (req: Request, res: Response) => {
 		try {
-			// TODO:
-			log("send newsletter");
-			// const result = await ()
-			// res.json(result);
+			const { id } = req.params;
+			const result = await sendNewsletter(Number(id));
+			res.json(result);
 		} catch (error) {
 			res.status(500).json({ error: "Failed to generate newsletter" });
 		}

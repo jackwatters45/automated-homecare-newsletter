@@ -15,7 +15,6 @@ import {
 	generateJSONResponseFromModel,
 	retry,
 	truncateDescription,
-	writeTestData,
 } from "../lib/utils.js";
 import type {
 	ArticleInput,
@@ -124,6 +123,8 @@ export const enrichArticlesData = async (
 		);
 
 		log(`Enriched ${enrichedArticles.length} articles successfully`);
+		// await writeTestData("display-article-data.json", enrichedArticles);
+
 		return enrichedArticles;
 	} catch (error) {
 		log(`Error in enrichArticlesData: ${error}`);
@@ -174,7 +175,7 @@ export async function generateSummary(
 	}
 
 	log(`Generated summary: ${formattedDescription}`);
-	await writeTestData("summary.json", formattedDescription);
+	// await writeTestData("summary.json", formattedDescription);
 
 	return formattedDescription;
 }
@@ -242,7 +243,12 @@ export async function generateCategories(
 		throw new Error("Error generating categories");
 	}
 
-	return processCategories(generatedCategories);
+	const processedCategories = processCategories(generatedCategories);
+
+	// writeTestData("display-data-full.json", processedCategories);
+	log("categories generated", processedCategories);
+
+	return processedCategories;
 }
 
 function deduplicateArticles(articles: ArticleInput[]): ArticleInput[] {
@@ -284,5 +290,5 @@ async function writeCategoriesToFile() {
 
 	log(categories);
 
-	await writeTestData("display-data-full.json", categories);
+	// await writeTestData("display-data-full.json", categories);
 }

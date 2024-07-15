@@ -4,25 +4,25 @@ import express from "express";
 
 import { generateNewsletterData } from "../app/index.js";
 import { BASE_PATH, COMPANY_NAME } from "../lib/constants.js";
+import { renderTemplate } from "../lib/template.js";
 import { getPastWeekDate } from "../lib/utils.js";
 import type { PopulatedNewNewsletter } from "../types/index.js";
+import { getNewsletter } from "./api/service.js";
 
 const log = debug(`${process.env.APP_NAME}:example-router`);
 
 const router = express.Router();
 
-let data: PopulatedNewNewsletter | undefined = undefined;
-
 router.get("/", (req, res) => {
-	log("GET /example");
+	log("GET /test");
 	res.sendFile(path.join(BASE_PATH, "public", "views", "generate-button.html"));
 });
 
 router.get("/generate", async (req, res) => {
-	log("GET /example/generate");
+	log("GET /test/generate");
 	try {
-		data = await generateNewsletterData();
-		res.json({ success: true, message: "Data generated successfully" });
+		const id = (await generateNewsletterData())?.id;
+		res.json({ success: true, message: "Data generated successfully", id });
 	} catch (error) {
 		res.status(500).json({
 			success: false,
@@ -31,21 +31,24 @@ router.get("/generate", async (req, res) => {
 	}
 });
 
-router.get("/newsletter", async (req, res) => {
-	log("GET /example/newsletter");
+router.get("/newsletter/:id", async (req, res) => {
+	const id = req.params.id;
 
-	if (!data || !data.categories || !data.summary) {
+	log(`GET /test/newsletter/${id}`);
+
+	if (!id) {
 		res.status(500).send("Error loading newsletter data");
 		return;
 	}
 
 	try {
-		res.render("newsletter", {
-			name: COMPANY_NAME,
-			categories: data?.categories,
-			summary: data?.summary,
-			dates: getPastWeekDate(),
-		});
+		const newsletterData = await getNewsletter(Number.parseInt(id));
+
+		log(newsletterData);
+
+		const template = await renderTemplate(newsletterData);
+
+		res.send(template);
 	} catch (error) {
 		res.status(500).send("Error rendering newsletter");
 	}

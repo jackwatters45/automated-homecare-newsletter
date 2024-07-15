@@ -54,6 +54,12 @@
     a:hover {
       text-decoration: underline;
     }
+
+    #loading {
+      text-align: center;
+      font-size: 14px;
+      color: #7e8184;
+    }
   </style>
 </head>
 
@@ -61,27 +67,10 @@
   <h1>Newsletter Generator</h1>
   <button id="generateBtn">Generate New Data</button>
   <div id="result"></div>
-
-  <script>
-    document.getElementById('generateBtn').addEventListener('click', async () => {
-      const result = document.getElementById('result');
-      result.textContent = 'Generating data...';
-
-      try {
-        const response = await fetch('/generate');
-        const data = await response.json();
-
-        if (data.success) {
-          result.innerHTML = `Data generated successfully. <a href="/newsletter">View Newsletter</a>`;
-        } else {
-          result.textContent = data.message;
-        }
-      } catch (error) {
-        result.textContent = `Error generating data${JSON.stringify(error)}`
-
-      }
-    });
-  </script>
+  <div id="loading">
+    Generation will take a few minutes.
+  </div>
+  <script src="/views/js/newsletter-generator.js"></script>
 </body>
 
 </html>

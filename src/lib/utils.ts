@@ -1,5 +1,6 @@
 import fsSync, { promises as fs } from "node:fs";
 import path from "node:path";
+import type * as cheerio from "cheerio";
 import debug from "debug";
 import type { Page } from "puppeteer";
 
@@ -254,3 +255,21 @@ export async function retry<T>(fn: () => Promise<T>, maxRetries = 3) {
 		}
 	}
 }
+
+export const extractTextContent = (
+	$: cheerio.CheerioAPI,
+	element: cheerio.AnyNode,
+	selector: string | undefined,
+): string | undefined =>
+	$(element).find(selector).length
+		? $(element).find(selector).text().trim()
+		: undefined;
+
+export const extractDate = (
+	$: cheerio.CheerioAPI,
+	element: cheerio.AnyNode,
+	selector: string | undefined,
+): Date | undefined =>
+	$(element).find(selector).length
+		? new Date($(element).find(selector).text().trim())
+		: undefined;

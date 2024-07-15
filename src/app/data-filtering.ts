@@ -5,7 +5,6 @@ import {
 	generateJSONResponseFromModel,
 	retry,
 	shuffleArray,
-	writeTestData,
 } from "../lib/utils.js";
 import type {
 	ArticleData,
@@ -100,7 +99,7 @@ export async function filterArticles(
 		const filteredArticles =
 			(await retry(() => generateJSONResponseFromModel(aiFilteringPrompt))) ?? [];
 
-		await writeTestData("filtered-article-data.json", filteredArticles);
+		// await writeTestData("filtered-article-data.json", filteredArticles);
 
 		return filteredArticles;
 	} catch (error) {
@@ -151,7 +150,7 @@ export async function rankArticles(
 	const rankedArticles =
 		(await retry(() => generateJSONResponseFromModel(aiRankingPrompt))) ?? [];
 
-	await writeTestData("ranked-article-data.json", rankedArticles);
+	// await writeTestData("ranked-article-data.json", rankedArticles);
 
 	return rankedArticles;
 }
@@ -177,7 +176,15 @@ export async function filterAndRankArticles(
 		rankedArticles,
 	);
 
-	return rankedArticlesWithCount.slice(0, maxNumberOfArticles);
+	const fileteredAndRankedArticles = rankedArticlesWithCount.slice(
+		0,
+		maxNumberOfArticles,
+	);
+
+	// await writeTestData("filtered-ranked-article-data.json", fileteredAndRankedArticles);
+	log("filtered articles generated", fileteredAndRankedArticles.length);
+
+	return fileteredAndRankedArticles;
 }
 
 function extractArticleFilteringData(
