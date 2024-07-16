@@ -3,7 +3,9 @@ import { db } from "../../db/index.js";
 import {
 	articles,
 	categories as categoriesTable,
+	newsletterRecipients,
 	newsletters,
+	recipients,
 } from "../../db/schema.js";
 import { DatabaseError } from "../../lib/errors.js";
 import type {
@@ -12,6 +14,10 @@ import type {
 	PopulatedNewCategory,
 	PopulatedNewNewsletter,
 } from "../../types/index.js";
+
+import debug from "debug";
+
+const log = debug(`${process.env.APP_NAME}:routes/api/service.ts`);
 
 export async function getAllNewsletters() {
 	try {
@@ -58,12 +64,18 @@ export async function createNewsletter({
 	categories,
 }: NewsletterInput): Promise<PopulatedNewNewsletter> {
 	try {
+		log("Creating newsletter");
+		const allRecipients = await getAllRecipients();
+		log({ allRecipients });
+
 		return await db.transaction(async (tx) => {
+			// Create newsletter
 			const [newsletter] = await tx
 				.insert(newsletters)
 				.values({ summary })
 				.returning();
 
+			// Create categories and articles
 			const categoriesArr: PopulatedNewCategory[] = [];
 			for (const categoryData of categories) {
 				const [category] = await tx
@@ -93,6 +105,21 @@ export async function createNewsletter({
 					articles: articlesArr,
 				});
 			}
+
+			log({ allRecipients });
+
+			await tx.insert(newsletterRecipients).values(
+				allRecipients.map((recipient) => {
+					log({
+						newsletterId: newsletter.id,
+						recipientId: recipient.id,
+					});
+					return {
+						newsletterId: newsletter.id,
+						recipientId: recipient.id,
+					};
+				}),
+			);
 
 			return { ...newsletter, categories: categoriesArr };
 		});
@@ -176,5 +203,50 @@ export async function deleteArticle(id: number) {
 			throw error;
 		}
 		throw new DatabaseError("Failed to delete newsletter");
+	}
+}
+
+// Recipient Functions
+export async function getAllRecipients() {
+	try {
+		return await db.query.recipients.findMany();
+	} catch (error) {
+		throw new DatabaseError("Failed to retrieve recipients");
+	}
+}
+
+export async function addRecipient(rawEmail: string) {
+	const email = decodeURIComponent(rawEmail);
+
+	try {
+		return await db.transaction(async (tx) => {
+			const [recipient] = await tx
+				.insert(recipients)
+				.values({ email })
+				.returning();
+			return recipient;
+		});
+	} catch (error) {
+		throw new DatabaseError(`Failed to add recipient: ${error}`);
+	}
+}
+
+export async function deleteRecipient(rawEmail: string) {
+	const email = decodeURIComponent(rawEmail);
+
+	try {
+		const [deletedRecipient] = await db
+			.delete(recipients)
+			.where(eq(recipients.email, email))
+			.returning();
+		if (!deletedRecipient) {
+			throw new DatabaseError("Recipient not found");
+		}
+		return deletedRecipient;
+	} catch (error) {
+		if (error instanceof DatabaseError) {
+			throw error;
+		}
+		throw new DatabaseError("Failed to delete recipient");
 	}
 }

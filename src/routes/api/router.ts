@@ -1,5 +1,9 @@
 import express from "express";
-import { articleController, newsletterController } from "./controller.js";
+import {
+	articleController,
+	newsletterController,
+	recipientController,
+} from "./controller.js";
 
 const router = express.Router();
 
@@ -16,5 +20,10 @@ router.post("/newsletters/:id/send", newsletterController.send);
 // Article Routes
 router.patch("/articles/:id/description", articleController.updateDescription);
 router.delete("/articles/:id", articleController.delete);
+
+// Recipient Routes
+router.get("/recipients", recipientController.getAll);
+router.post("/recipients/:id", recipientController.addRecipient);
+router.delete("/recipients/:id", recipientController.deleteRecipient);
 
 export default router;

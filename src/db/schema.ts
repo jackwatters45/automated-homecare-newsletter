@@ -1,16 +1,22 @@
 import { relations } from "drizzle-orm";
 import {
 	integer,
+	pgEnum,
 	pgTable,
+	primaryKey,
 	serial,
 	text,
 	timestamp,
 	uniqueIndex,
 } from "drizzle-orm/pg-core";
 
+export const statusEnum = pgEnum("status", ["SENT", "FAILED"]);
+
 export const newsletters = pgTable("newsletters", {
 	id: serial("id").primaryKey(),
 	summary: text("summary"),
+	sendAt: timestamp("send_at").defaultNow(),
+	status: statusEnum("status").default("SENT"),
 	createdAt: timestamp("created_at").defaultNow(),
 	updatedAt: timestamp("updated_at").defaultNow(),
 });
@@ -48,9 +54,28 @@ export const articles = pgTable("articles", {
 	updatedAt: timestamp("updated_at").defaultNow(),
 });
 
-export const newslettersRelations = relations(newsletters, ({ many }) => ({
-	categories: many(categories),
-}));
+export const recipients = pgTable("recipients", {
+	id: serial("id").primaryKey(),
+	email: text("email").notNull(),
+	createdAt: timestamp("created_at").defaultNow(),
+	updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const newsletterRecipients = pgTable(
+	"newsletter_recipients",
+	{
+		newsletterId: integer("newsletter_id")
+			.notNull()
+			.references(() => newsletters.id),
+		recipientId: integer("recipient_id")
+			.notNull()
+			.references(() => recipients.id),
+		createdAt: timestamp("created_at").defaultNow(),
+	},
+	(table) => ({
+		pk: primaryKey({ columns: [table.newsletterId, table.recipientId] }),
+	}),
+);
 
 export const categoriesRelations = relations(categories, ({ one, many }) => ({
 	newsletter: one(newsletters, {
@@ -66,3 +91,27 @@ export const articlesRelations = relations(articles, ({ one }) => ({
 		references: [categories.id],
 	}),
 }));
+
+// New relations for newsletters and recipients
+export const newslettersRelations = relations(newsletters, ({ many }) => ({
+	categories: many(categories),
+	recipients: many(newsletterRecipients),
+}));
+
+export const recipientsRelations = relations(recipients, ({ many }) => ({
+	newsletters: many(newsletterRecipients),
+}));
+
+export const newsletterRecipientsRelations = relations(
+	newsletterRecipients,
+	({ one }) => ({
+		newsletter: one(newsletters, {
+			fields: [newsletterRecipients.newsletterId],
+			references: [newsletters.id],
+		}),
+		recipient: one(recipients, {
+			fields: [newsletterRecipients.recipientId],
+			references: [recipients.id],
+		}),
+	}),
+);

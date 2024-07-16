@@ -96,6 +96,8 @@ export const DESCRIPTION_MAX_LENGTH = 35;
 
 export const COMPANY_NAME = "TrollyCare";
 
+export const REVIEWER_EMAIL = process.env.REVIEWER_EMAIL || "";
+
 export const PORT = process.env.PORT || 8080;
 
 export const CLIENT_PORT = process.env.CLIENT_PORT || 5173;
@@ -120,9 +122,3 @@ export const CATEGORIES = [
 	"Patient Care & Caregiving Best Practices",
 	"Other",
 ];
-
-// - Industry trends & news
-// - Caregiving & Family Support
-
-// - Senior Care Tips & Resources
-// - In-Home Care Services & Solutions

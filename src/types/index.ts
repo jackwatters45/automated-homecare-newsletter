@@ -1,4 +1,9 @@
-import type { articles, categories, newsletters } from "../db/schema.js";
+import type {
+	articles,
+	categories,
+	newsletters,
+	recipients,
+} from "../db/schema.js";
 
 // Data collection + formatting types
 export interface PageToScrape {
@@ -59,8 +64,12 @@ export type NewNewsletter = typeof newsletters.$inferInsert;
 
 export type Category = typeof categories.$inferSelect;
 export type NewCategory = typeof categories.$inferInsert;
+
 export type Article = typeof articles.$inferSelect;
 export type NewArticle = typeof articles.$inferInsert;
+
+export type Recipients = typeof recipients.$inferSelect;
+export type NewRecipient = typeof recipients.$inferInsert;
 
 // Populated types (post-database retrieval)
 export type PopulatedNewCategory = NewCategory & {

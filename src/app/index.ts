@@ -4,7 +4,11 @@ import debug from "debug";
 import puppeteer from "puppeteer";
 
 import { initializeGenAI } from "../lib/ai.js";
-import { CLIENT_URL, SPECIFIC_PAGES } from "../lib/constants.js";
+import {
+	CLIENT_URL,
+	REVIEWER_EMAIL,
+	SPECIFIC_PAGES,
+} from "../lib/constants.js";
 import { resend } from "../lib/email.js";
 
 import { renderTemplate } from "../lib/template.js";
@@ -68,7 +72,7 @@ export async function sendNewsletterReviewEmail() {
 		// TODO: send email to <user>
 		const { data, error } = await resend.emails.send({
 			from: "Yats Support <support@yatusabes.co>",
-			to: ["jack.watters@me.com", "jackwattersdev@gmail.com"],
+			to: REVIEWER_EMAIL,
 			subject: "Review TrollyCare Newsletter",
 			text: `Please review the newsletter and approve it before it is sent. link to newsletter: ${CLIENT_URL}/newsletter/${id}`,
 		});
@@ -77,9 +81,10 @@ export async function sendNewsletterReviewEmail() {
 			return console.error({ error });
 		}
 
-		return { message: "Email sent successfully", data };
+		return data;
 	} catch (error) {
 		console.error(error);
+		return { message: "Error sending email", error };
 	}
 }
 

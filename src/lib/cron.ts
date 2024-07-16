@@ -25,7 +25,6 @@ export function setupCronJobs() {
 	schedule(
 		"0 9 * * 1",
 		() => {
-			// TODO: this needs to be the one that sends mom email
 			if (isAlternateMonday(new Date())) retry(sendNewsletterReviewEmail);
 		},
 		{ timezone: "America/Halifax" },

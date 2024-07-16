@@ -2,7 +2,10 @@ import path from "node:path";
 import debug from "debug";
 import express from "express";
 
-import { generateNewsletterData } from "../app/index.js";
+import {
+	generateNewsletterData,
+	sendNewsletterReviewEmail,
+} from "../app/index.js";
 import { BASE_PATH, COMPANY_NAME } from "../lib/constants.js";
 import { renderTemplate } from "../lib/template.js";
 import { getPastWeekDate } from "../lib/utils.js";
@@ -23,6 +26,19 @@ router.get("/generate", async (req, res) => {
 	try {
 		const id = (await generateNewsletterData())?.id;
 		res.json({ success: true, message: "Data generated successfully", id });
+	} catch (error) {
+		res.status(500).json({
+			success: false,
+			message: `Error generating data${JSON.stringify(error)}`,
+		});
+	}
+});
+
+router.get("/review", async (req, res) => {
+	log("GET /test/generate");
+	try {
+		const result = await sendNewsletterReviewEmail();
+		res.json({ success: true, message: "Data generated successfully", result });
 	} catch (error) {
 		res.status(500).json({
 			success: false,

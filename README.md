@@ -2,23 +2,17 @@
 
 ## TODO
 
-- TODO: main page to edit recipients outline
-- error components
-- update types
+- TODO: commits
 
-- TODO: tests (todos)
+- TODO: naviation
 
----
+- TODO: history
 
 - TODO: auth
 
-- TODO: main page to edit recipients
-- TODO: add to db
-- TODO: implement
-
 - TODO: Cron
 
-- tests
+- TODO: tests
 
 ## Roadmap
 

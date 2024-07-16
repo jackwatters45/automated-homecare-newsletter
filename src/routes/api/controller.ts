@@ -5,16 +5,19 @@ import type { Request, Response } from "express";
 import { generateNewsletterData, sendNewsletter } from "../../app/index.js";
 import { DatabaseError } from "../../lib/errors.js";
 import {
+	addRecipient,
 	createNewsletter,
 	deleteArticle,
 	deleteNewsletter,
+	deleteRecipient,
 	getAllNewsletters,
+	getAllRecipients,
 	getNewsletter,
 	updateArticleDescription,
 	updateNewsletterSummary,
 } from "./service.js";
 
-const log = debug("newsletter-api");
+const log = debug(`${process.env.APP_NAME}:routes/api/controller.ts`);
 
 const router = express.Router();
 
@@ -161,6 +164,52 @@ export const articleController = {
 		} catch (error) {
 			if (error instanceof DatabaseError) {
 				if (error.message === "Article not found") {
+					res.status(404).json({ error: error.message });
+				} else {
+					res.status(500).json({ error: error.message });
+				}
+			} else {
+				res.status(500).json({ error: "An unexpected error occurred" });
+			}
+		}
+	},
+};
+
+// Recipient Controllers
+export const recipientController = {
+	getAll: async (req: Request, res: Response) => {
+		try {
+			const recipients = await getAllRecipients();
+			res.json(recipients);
+		} catch (error) {
+			if (error instanceof DatabaseError) {
+				res.status(500).json({ error: error.message });
+			} else {
+				res.status(500).json({ error: "An unexpected error occurred" });
+			}
+		}
+	},
+	addRecipient: async (req: Request, res: Response) => {
+		const { id: email } = req.params;
+		try {
+			const recipient = await addRecipient(email);
+			res.json(recipient);
+		} catch (error) {
+			if (error instanceof DatabaseError) {
+				res.status(500).json({ error: error.message });
+			} else {
+				res.status(500).json({ error: "An unexpected error occurred" });
+			}
+		}
+	},
+	deleteRecipient: async (req: Request, res: Response) => {
+		const { id: email } = req.params;
+		try {
+			await deleteRecipient(email);
+			res.json({ message: "Recipient deleted successfully" });
+		} catch (error) {
+			if (error instanceof DatabaseError) {
+				if (error.message === "Recipient not found") {
 					res.status(404).json({ error: error.message });
 				} else {
 					res.status(500).json({ error: error.message });

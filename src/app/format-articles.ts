@@ -238,7 +238,7 @@ export async function generateCategories(
 		generateJSONResponseFromModel(prompt),
 	);
 
-	if (!generatedCategories) {
+	if (!generatedCategories || generatedCategories.length === 0) {
 		log("Error generating summary");
 		throw new Error("Error generating categories");
 	}
@@ -270,6 +270,8 @@ function deduplicateArticles(articles: ArticleInput[]): ArticleInput[] {
 function processCategories(
 	generatedCategories: CategoryInput[],
 ): CategoryInput[] {
+	log("generated categories", generatedCategories);
+
 	return generatedCategories
 		.map((category) => ({
 			...category,

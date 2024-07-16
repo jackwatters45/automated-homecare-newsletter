@@ -45,7 +45,7 @@ app.set("views", path.join(BASE_PATH, "public", "views"));
 
 // Rate limiting
 const limiter = rateLimit({
-	windowMs: 15 * 60 * 1000, // 15 minutes
+	windowMs: 60 * 1000, // 1 minute
 	max: 50,
 });
 app.use(limiter);
