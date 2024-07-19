@@ -155,7 +155,7 @@ export async function fetchPageContent(
 	try {
 		const response = await fetch(url);
 		if (!response.ok) {
-			throw new Error(`HTTP error! status: ${response.status}`);
+			throw new Error(`HTTP error! Status: ${response.status}`);
 		}
 		return await response.text();
 	} catch (error) {

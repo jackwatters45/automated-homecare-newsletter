@@ -20,6 +20,7 @@
 	"license": "ISC",
 	"dependencies": {
 		"@google/generative-ai": "^0.14.0",
+		"@kinde-oss/kinde-node-express": "^1.6.0",
 		"@sentry/cli": "^2.32.1",
 		"@sentry/node": "^8.14.0",
 		"@sentry/profiling-node": "^8.14.0",

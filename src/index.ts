@@ -2,6 +2,7 @@ import "dotenv/config";
 
 import fs from "node:fs";
 import path from "node:path";
+import { GrantType, setupKinde } from "@kinde-oss/kinde-node-express";
 import * as Sentry from "@sentry/node";
 import compression from "compression";
 import cors from "cors";
@@ -21,6 +22,26 @@ import testRouter from "./routes/test-generation.router.js";
 const log = debug(`${process.env.APP_NAME}:index.ts`);
 
 const app = express();
+
+// Auth
+const config = {
+	// TODO: fill in
+	clientId: "67671606740d4f899d4e371666a9446c",
+	secret: "QRJ9ruVymupqkC6hSPlA7OpyahaAhLSOlXoyLis9aPOqvMDxDJbu",
+	issuerBaseUrl: "https://yats-development.us.kinde.com",
+	siteUrl: "http://localhost:8080",
+	redirectUrl: "http://localhost:8080",
+	scope: "openid profile email",
+	grantType: GrantType.AUTHORIZATION_CODE, //or CLIENT_CREDENTIALS or PKCE
+	unAuthorisedUrl: "http://localhost:8080/unauthorised",
+	postLogoutRedirectUrl: "http://localhost:8080",
+};
+
+// Environments
+// Link to this section
+// As part of your development process, we highly recommend you create a development environment within your Kinde account. In this case, you’d use the Environment subdomain and app key values in the code block above.
+
+setupKinde(config, app);
 
 // Middleware
 app.use(helmet());

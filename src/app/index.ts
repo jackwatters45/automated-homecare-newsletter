@@ -11,6 +11,9 @@ import {
 } from "../lib/constants.js";
 import { resend } from "../lib/email.js";
 
+import { eq } from "drizzle-orm";
+import { db } from "../db/index.js";
+import { newsletters } from "../db/schema.js";
 import { renderTemplate } from "../lib/template.js";
 import { createNewsletter, getNewsletter } from "../routes/api/service.js";
 import type { PopulatedNewNewsletter } from "../types/index.js";
@@ -118,10 +121,26 @@ export async function sendNewsletter(id: number) {
 		});
 
 		if (error) {
+			const updatedNewsletter = await db
+				.update(newsletters)
+				.set({ status: "FAILED" })
+				.where(eq(newsletters.id, id))
+				.returning();
+
 			return console.error({ error });
 		}
 
-		return { message: "Email sent successfully", data };
+		const updatedNewsletter = await db
+			.update(newsletters)
+			.set({ status: "SENT" })
+			.where(eq(newsletters.id, id))
+			.returning();
+
+		return {
+			message: "Email sent successfully",
+			email: data,
+			newsletter: updatedNewsletter,
+		};
 	} catch (error) {
 		console.error("An error occurred in main:", error);
 	}

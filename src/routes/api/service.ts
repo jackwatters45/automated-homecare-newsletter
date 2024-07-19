@@ -72,7 +72,7 @@ export async function createNewsletter({
 			// Create newsletter
 			const [newsletter] = await tx
 				.insert(newsletters)
-				.values({ summary })
+				.values({ summary, status: "DRAFT" })
 				.returning();
 
 			// Create categories and articles

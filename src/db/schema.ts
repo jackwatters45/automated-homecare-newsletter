@@ -10,13 +10,13 @@ import {
 	uniqueIndex,
 } from "drizzle-orm/pg-core";
 
-export const statusEnum = pgEnum("status", ["SENT", "FAILED"]);
+export const statusEnum = pgEnum("status", ["SENT", "FAILED", "DRAFT"]);
 
 export const newsletters = pgTable("newsletters", {
 	id: serial("id").primaryKey(),
 	summary: text("summary"),
 	sendAt: timestamp("send_at").defaultNow(),
-	status: statusEnum("status").default("SENT"),
+	status: statusEnum("status").default("DRAFT"),
 	createdAt: timestamp("created_at").defaultNow(),
 	updatedAt: timestamp("updated_at").defaultNow(),
 });

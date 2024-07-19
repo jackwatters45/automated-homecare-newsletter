@@ -4,14 +4,17 @@
 
 - TODO: commits
 
-- TODO: naviation
+---
 
-- TODO: history
+- TODO: test status change
+
 
 - TODO: auth
+  - connect backend
+  
+Final Setup:
 
-- TODO: Cron
-
+- TODO: Cron make sure working well
 - TODO: tests
 
 ## Roadmap

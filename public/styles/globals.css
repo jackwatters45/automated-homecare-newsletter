@@ -112,37 +112,6 @@ img {
   text-decoration: none;
 }
 
-/* .nav {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 2px solid #e2e8f0;
-  padding-bottom: 12px;
-}
-
-.nav .company-name,
-.nav a {
-  font-weight: normal;
-  font-size: 14px;
-  color: #64748b;
-}
-
-.nav .nav-links {
-  font-size: 24px;
-  display: block;
-  margin-inline-start: 0px;
-  margin-inline-end: 0px;
-  unicode-bidi: isolate;
-}
-
-@media screen and (max-width: 475px) {
-  .nav .nav-links {
-    display: none;
-  }
-} */
-
-
-
 .container {
   padding: 20px 0;
 }
