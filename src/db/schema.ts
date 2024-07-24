@@ -115,3 +115,15 @@ export const newsletterRecipientsRelations = relations(
 		}),
 	}),
 );
+
+export const cronStatusEnum = pgEnum("cron_status", ["SUCCESS", "FAILURE"]);
+export const cronLogs = pgTable("cron_logs", {
+	id: serial("id").primaryKey(),
+	jobName: text("job_name").notNull(),
+	executionTime: timestamp("execution_time").notNull(),
+	status: text("status").notNull(),
+	message: text("message"),
+	createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const cronLogsRelations = relations(cronLogs, ({ many }) => ({}));

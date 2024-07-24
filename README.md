@@ -2,26 +2,19 @@
 
 ## TODO
 
-- TODO: commits
+- check deployments working
 
----
-
-- TODO: test status change
-
-
-- TODO: auth
-  - connect backend
-  
-Final Setup:
-
+- TODO: add recipients tab
+- TODO: better logging / cron logging
 - TODO: Cron make sure working well
+
 - TODO: tests
+
+- TODO: connect proper email to send newsletter
 
 ## Roadmap
 
-- [ ] better logging
-- [ ] better error handling
-- [ ] add desc before ranking to improve ranking
+- [ ] add desc besemntfore ranking to improve ranking
 - [ ] use ai to parse articles
 - [ ] use actual machine learning
 - [ ] Generic version of app that user can set up
