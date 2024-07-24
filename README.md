@@ -2,9 +2,10 @@
 
 ## TODO
 
-- check deployments working
-
 - TODO: add recipients tab
+
+  - did fetch, test and add to types next
+
 - TODO: better logging / cron logging
 - TODO: Cron make sure working well
 

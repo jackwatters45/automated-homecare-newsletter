@@ -26,15 +26,28 @@ const log = debug(`${process.env.APP_NAME}:routes/api/service.ts`);
 
 export async function getAllNewsletters() {
 	try {
-		return await db.query.newsletters.findMany({
-			with: {
-				categories: {
-					with: {
-						articles: true,
+		return await db.query.newsletters
+			.findMany({
+				with: {
+					categories: {
+						with: {
+							articles: true,
+						},
+					},
+					recipients: {
+						columns: {},
+						with: {
+							recipient: true,
+						},
 					},
 				},
-			},
-		});
+			})
+			.then((newsletters) =>
+				newsletters.map((newsletter) => ({
+					...newsletter,
+					recipients: newsletter.recipients.map((nr) => nr.recipient),
+				})),
+			);
 	} catch (error) {
 		throw new DatabaseError("Failed to retrieve newsletters");
 	}
@@ -50,12 +63,23 @@ export async function getNewsletter(id: number) {
 						articles: true,
 					},
 				},
+				recipients: {
+					columns: {},
+					with: {
+						recipient: true,
+					},
+				},
 			},
 		});
+
 		if (!newsletter) {
 			throw new DatabaseError("Newsletter not found");
 		}
-		return newsletter;
+
+		return {
+			...newsletter,
+			recipients: newsletter.recipients.map((nr) => nr.recipient),
+		};
 	} catch (error) {
 		if (error instanceof DatabaseError) {
 			throw error;
