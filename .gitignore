@@ -36,3 +36,6 @@ yarn-error.log*
 
 # Access log
 access.log
+error.log
+combined.log
+health.log
