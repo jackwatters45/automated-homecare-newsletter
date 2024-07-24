@@ -12,10 +12,10 @@ import {
 import { resend } from "../lib/email.js";
 
 import { eq } from "drizzle-orm";
+import { createNewsletter, getNewsletter } from "../api/service.js";
 import { db } from "../db/index.js";
 import { newsletters } from "../db/schema.js";
 import { renderTemplate } from "../lib/template.js";
-import { createNewsletter, getNewsletter } from "../routes/api/service.js";
 import type { PopulatedNewNewsletter } from "../types/index.js";
 import { getArticleData } from "./data-fetching.js";
 import { filterAndRankArticles } from "./data-filtering.js";

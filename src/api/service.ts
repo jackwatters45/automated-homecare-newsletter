@@ -1,21 +1,26 @@
 import { eq } from "drizzle-orm";
-import { db } from "../../db/index.js";
+import { db } from "../db/index.js";
 import {
 	articles,
 	categories as categoriesTable,
 	newsletterRecipients,
 	newsletters,
 	recipients,
-} from "../../db/schema.js";
-import { DatabaseError } from "../../lib/errors.js";
+} from "../db/schema.js";
+import { DatabaseError } from "../lib/errors.js";
 import type {
 	ArticleInput,
 	NewsletterInput,
 	PopulatedNewCategory,
 	PopulatedNewNewsletter,
-} from "../../types/index.js";
+} from "../types/index.js";
 
 import debug from "debug";
+import {
+	generateNewsletterData,
+	sendNewsletterReviewEmail,
+} from "../app/index.js";
+import { renderTemplate } from "../lib/template.js";
 
 const log = debug(`${process.env.APP_NAME}:routes/api/service.ts`);
 

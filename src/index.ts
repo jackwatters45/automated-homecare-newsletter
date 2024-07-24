@@ -13,11 +13,10 @@ import helmet from "helmet";
 import morgan from "morgan";
 
 import { engine } from "express-handlebars";
+import apiRouter from "./api/router.js";
 import { API_URL, BASE_PATH, PORT } from "./lib/constants.js";
 import { setupCronJobs } from "./lib/cron.js";
 import { handleErrors } from "./lib/errors.js";
-import apiRouter from "./routes/api/router.js";
-import testRouter from "./routes/test-generation.router.js";
 
 const log = debug(`${process.env.APP_NAME}:index.ts`);
 
@@ -83,7 +82,6 @@ app.get("/health", (_, res) => {
 		.json({ message: "OK - Server is up and running", status: "OK" });
 });
 
-app.use("/test", testRouter);
 app.use("/api", apiRouter);
 
 // Setup cron jobs
@@ -99,5 +97,3 @@ app.listen(PORT, () => {
 	const message = `Server is running at ${API_URL}`;
 	log(message);
 });
-
-export { app };

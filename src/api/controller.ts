@@ -1,9 +1,15 @@
-import debug from "debug";
 import express from "express";
 import type { Request, Response } from "express";
 
-import { generateNewsletterData, sendNewsletter } from "../../app/index.js";
-import { DatabaseError } from "../../lib/errors.js";
+import path from "node:path";
+import {
+	generateNewsletterData,
+	sendNewsletter,
+	sendNewsletterReviewEmail,
+} from "../app/index.js";
+import { BASE_PATH } from "../lib/constants.js";
+import { DatabaseError } from "../lib/errors.js";
+import { renderTemplate } from "../lib/template.js";
 import {
 	addRecipient,
 	createNewsletter,
@@ -16,8 +22,6 @@ import {
 	updateArticleDescription,
 	updateNewsletterSummary,
 } from "./service.js";
-
-const log = debug(`${process.env.APP_NAME}:routes/api/controller.ts`);
 
 const router = express.Router();
 
@@ -108,23 +112,33 @@ export const newsletterController = {
 			}
 		}
 	},
-
+	// generate a new newsletter
 	generate: async (req: Request, res: Response) => {
 		try {
 			const result = await generateNewsletterData();
-			res.json(result);
+			res.json({ result, id: result?.id });
 		} catch (error) {
-			res.status(500).json({ error: "Failed to generate newsletter data" });
+			res.status(500).json({ error });
 		}
 	},
 
+	review: async (req: Request, res: Response) => {
+		try {
+			const result = await sendNewsletterReviewEmail();
+			res.json({ result });
+		} catch (error) {
+			res.status(500).json({ error });
+		}
+	},
+
+	// Send a newsletter
 	send: async (req: Request, res: Response) => {
 		try {
 			const { id } = req.params;
 			const result = await sendNewsletter(Number(id));
 			res.json(result);
 		} catch (error) {
-			res.status(500).json({ error: "Failed to generate newsletter" });
+			res.status(500).json({ error });
 		}
 	},
 };
@@ -217,6 +231,34 @@ export const recipientController = {
 			} else {
 				res.status(500).json({ error: "An unexpected error occurred" });
 			}
+		}
+	},
+};
+
+// Pages Controllers
+export const pagesController = {
+	// Update an article's description
+	renderGenerateButton: async (req: Request, res: Response) => {
+		try {
+			res.sendFile(
+				path.join(BASE_PATH, "public", "views", "generate-button.html"),
+			);
+		} catch (error) {
+			res.status(500).json({ error: "An unexpected error occurred" });
+		}
+	},
+	// Render newsletter preview
+	renderNewsletterPreview: async (req: Request, res: Response) => {
+		const { id } = req.params;
+
+		try {
+			const newsletterData = await getNewsletter(Number(id));
+
+			const template = await renderTemplate(newsletterData);
+
+			res.send(template);
+		} catch (error) {
+			res.status(500).send("Error rendering newsletter");
 		}
 	},
 };
