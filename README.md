@@ -2,12 +2,17 @@
 
 ## TODO
 
-- TODO: add recipients tab
+- TODO: add recipients tab - just test and commits
 
-  - did fetch, test and add to types next
+- input validation not working when press button
+- TODO: delete newsletter
 
 - TODO: better logging / cron logging
 - TODO: Cron make sure working well
+
+- show
+
+- better way to sync recipients
 
 - TODO: tests
 
@@ -15,7 +20,7 @@
 
 ## Roadmap
 
-- [ ] add desc besemntfore ranking to improve ranking
+- [ ] add desc before ranking to improve ranking
 - [ ] use ai to parse articles
 - [ ] use actual machine learning
 - [ ] Generic version of app that user can set up

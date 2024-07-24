@@ -10,6 +10,10 @@ const router = express.Router();
 
 // Newsletter Routes
 router.get("/newsletters", newsletterController.getAll);
+router.get(
+	"/newsletters/with-recipients",
+	newsletterController.getAllWithRecipients,
+);
 router.get("/newsletters/:id", newsletterController.getOne);
 router.post("/newsletters", newsletterController.create);
 router.patch("/newsletters/:id/summary", newsletterController.updateSummary);

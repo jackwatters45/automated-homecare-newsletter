@@ -17,6 +17,7 @@ import {
 	deleteNewsletter,
 	deleteRecipient,
 	getAllNewsletters,
+	getAllNewslettersWithRecipients,
 	getAllRecipients,
 	getNewsletter,
 	updateArticleDescription,
@@ -31,6 +32,19 @@ export const newsletterController = {
 	getAll: async (req: Request, res: Response) => {
 		try {
 			const allNewsletters = await getAllNewsletters();
+			res.json(allNewsletters);
+		} catch (error) {
+			if (error instanceof DatabaseError) {
+				res.status(500).json({ error: error.message });
+			} else {
+				res.status(500).json({ error: "An unexpected error occurred" });
+			}
+		}
+	},
+
+	getAllWithRecipients: async (req: Request, res: Response) => {
+		try {
+			const allNewsletters = await getAllNewslettersWithRecipients();
 			res.json(allNewsletters);
 		} catch (error) {
 			if (error instanceof DatabaseError) {
@@ -205,6 +219,7 @@ export const recipientController = {
 	},
 	addRecipient: async (req: Request, res: Response) => {
 		const { id: email } = req.params;
+
 		try {
 			const recipient = await addRecipient(email);
 			res.json(recipient);

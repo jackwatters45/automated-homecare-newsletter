@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { and, eq, not } from "drizzle-orm";
 import { db } from "../db/index.js";
 import {
 	articles,
@@ -16,15 +16,10 @@ import type {
 } from "../types/index.js";
 
 import debug from "debug";
-import {
-	generateNewsletterData,
-	sendNewsletterReviewEmail,
-} from "../app/index.js";
-import { renderTemplate } from "../lib/template.js";
 
 const log = debug(`${process.env.APP_NAME}:routes/api/service.ts`);
 
-export async function getAllNewsletters() {
+export async function getAllNewslettersWithRecipients() {
 	try {
 		return await db.query.newsletters
 			.findMany({
@@ -48,6 +43,22 @@ export async function getAllNewsletters() {
 					recipients: newsletter.recipients.map((nr) => nr.recipient),
 				})),
 			);
+	} catch (error) {
+		throw new DatabaseError("Failed to retrieve newsletters with recipients");
+	}
+}
+
+export async function getAllNewsletters() {
+	try {
+		return await db.query.newsletters.findMany({
+			with: {
+				categories: {
+					with: {
+						articles: true,
+					},
+				},
+			},
+		});
 	} catch (error) {
 		throw new DatabaseError("Failed to retrieve newsletters");
 	}
@@ -253,6 +264,23 @@ export async function addRecipient(rawEmail: string) {
 				.insert(recipients)
 				.values({ email })
 				.returning();
+
+			// Get all unsent newsletters
+			const unsentNewsletters = await tx
+				.select({ id: newsletters.id })
+				.from(newsletters)
+				.where(not(eq(newsletters.status, "SENT")));
+
+			// Add the new recipient to all unsent newsletters
+			if (unsentNewsletters.length > 0) {
+				await tx.insert(newsletterRecipients).values(
+					unsentNewsletters.map((newsletter) => ({
+						newsletterId: newsletter.id,
+						recipientId: recipient.id,
+					})),
+				);
+			}
+
 			return recipient;
 		});
 	} catch (error) {
@@ -263,19 +291,39 @@ export async function addRecipient(rawEmail: string) {
 export async function deleteRecipient(rawEmail: string) {
 	const email = decodeURIComponent(rawEmail);
 
+	if (!email) {
+		throw new Error("Email is missing or invalid");
+	}
+
 	try {
-		const [deletedRecipient] = await db
-			.delete(recipients)
-			.where(eq(recipients.email, email))
-			.returning();
-		if (!deletedRecipient) {
-			throw new DatabaseError("Recipient not found");
-		}
-		return deletedRecipient;
+		return await db.transaction(async (tx) => {
+			// find the recipient
+			const [recipient] = await tx
+				.select()
+				.from(recipients)
+				.where(eq(recipients.email, email));
+
+			if (!recipient) {
+				throw new DatabaseError("Recipient not found");
+			}
+
+			// Delete all newsletter_recipients entries for this recipient
+			await tx
+				.delete(newsletterRecipients)
+				.where(eq(newsletterRecipients.recipientId, recipient.id));
+
+			// delete the recipient
+			const [deletedRecipient] = await tx
+				.delete(recipients)
+				.where(eq(recipients.id, recipient.id))
+				.returning();
+
+			return deletedRecipient;
+		});
 	} catch (error) {
 		if (error instanceof DatabaseError) {
 			throw error;
 		}
-		throw new DatabaseError("Failed to delete recipient");
+		throw new DatabaseError(`Failed to delete recipient: ${error}`);
 	}
 }
