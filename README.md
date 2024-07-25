@@ -2,17 +2,18 @@
 
 ## TODO
 
-
-- TODO: better logging / cron logging
-- TODO: Cron make sure working well
+- add global filter to local finance
+- add env to prod (still use old emails)
 
 - show
 
 - better way to sync recipients
+- connect proper email to send newsletter
 
-- TODO: tests
+## Testing (in progress)
 
-- TODO: connect proper email to send newsletter
+- Fix newly broken tests
+- Cron Job timing
 
 ## Roadmap
 

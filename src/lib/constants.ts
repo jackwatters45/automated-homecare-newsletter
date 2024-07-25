@@ -78,14 +78,6 @@ export const SPECIFIC_PAGES: PageToScrape[] = [
 		descriptionSelector: "p",
 		dateSelector: undefined,
 	},
-	// {
-	// 	url: "https://www.healthcarefinancenews.com/news",
-	// 	articleContainerSelector: ".views-row",
-	// 	linkSelector: "a",
-	// 	titleSelector: ".field-content > a",
-	// 	descriptionSelector: ".teaser",
-	// 	dateSelector: undefined,
-	// },
 ];
 
 export const TOPIC = "homecare (medical) and home health (medical)";
@@ -109,7 +101,7 @@ export const API_URL =
 
 export const CLIENT_URL =
 	process.env.NODE_ENV === "production"
-		? "TODO:"
+		? "https://trollycare-newsletter.vercel.app"
 		: `http://localhost:${CLIENT_PORT}`;
 
 export const BASE_PATH = path.resolve();

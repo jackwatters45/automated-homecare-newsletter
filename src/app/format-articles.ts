@@ -191,7 +191,6 @@ async function writeSummaryToFile() {
 	await generateSummary(JSON.parse(articles));
 }
 
-// TODO: add tests for this
 export async function generateCategories(
 	articles: ValidArticleData[],
 ): Promise<CategoryInput[]> {

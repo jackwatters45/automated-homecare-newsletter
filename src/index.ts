@@ -16,6 +16,7 @@ import { engine } from "express-handlebars";
 import apiRouter from "./api/router.js";
 import { API_URL, BASE_PATH, PORT } from "./lib/constants.js";
 import { setupCronJobs } from "./lib/cron.js";
+import { getEnvVariables } from "./lib/env.js";
 import { handleErrors } from "./lib/errors.js";
 import { healthCheck } from "./lib/health.js";
 
@@ -23,23 +24,20 @@ const log = debug(`${process.env.APP_NAME}:index.ts`);
 
 const app = express();
 
+const env = getEnvVariables();
+
 // Auth
 const config = {
-	// TODO: fill in
-	clientId: "67671606740d4f899d4e371666a9446c",
-	secret: "QRJ9ruVymupqkC6hSPlA7OpyahaAhLSOlXoyLis9aPOqvMDxDJbu",
-	issuerBaseUrl: "https://yats-development.us.kinde.com",
-	siteUrl: "http://localhost:8080",
-	redirectUrl: "http://localhost:8080",
+	clientId: env.KINDE_CLIENT_ID,
+	secret: env.KINDE_CLIENT_SECRET,
+	issuerBaseUrl: env.KINDE_BASE_URL,
+	siteUrl: env.BASE_URL,
+	redirectUrl: env.BASE_URL,
 	scope: "openid profile email",
-	grantType: GrantType.AUTHORIZATION_CODE, //or CLIENT_CREDENTIALS or PKCE
-	unAuthorisedUrl: "http://localhost:8080/unauthorised",
-	postLogoutRedirectUrl: "http://localhost:8080",
+	grantType: GrantType.AUTHORIZATION_CODE,
+	unAuthorisedUrl: `${env.BASE_URL}/unauthorised`,
+	postLogoutRedirectUrl: env.BASE_URL,
 };
-
-// Environments
-// Link to this section
-// As part of your development process, we highly recommend you create a development environment within your Kinde account. In this case, you’d use the Environment subdomain and app key values in the code block above.
 
 setupKinde(config, app);
 
