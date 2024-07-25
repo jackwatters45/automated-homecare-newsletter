@@ -2,10 +2,7 @@
 
 ## TODO
 
-- TODO: add recipients tab - just test and commits
-
-- input validation not working when press button
-- TODO: delete newsletter
+- TODO: commits
 
 - TODO: better logging / cron logging
 - TODO: Cron make sure working well

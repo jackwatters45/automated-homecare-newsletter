@@ -1,7 +1,8 @@
-import { and, eq, not } from "drizzle-orm";
+import { and, eq, exists, inArray, not } from "drizzle-orm";
 import { db } from "../db/index.js";
 import {
 	articles,
+	categories,
 	categories as categoriesTable,
 	newsletterRecipients,
 	newsletters,
@@ -44,7 +45,9 @@ export async function getAllNewslettersWithRecipients() {
 				})),
 			);
 	} catch (error) {
-		throw new DatabaseError("Failed to retrieve newsletters with recipients");
+		throw new DatabaseError(
+			`Failed to retrieve newsletters with recipients: ${error}`,
+		);
 	}
 }
 
@@ -95,7 +98,7 @@ export async function getNewsletter(id: number) {
 		if (error instanceof DatabaseError) {
 			throw error;
 		}
-		throw new DatabaseError("Failed to retrieve newsletter");
+		throw new DatabaseError(`Failed to retrieve newsletter: ${error}`);
 	}
 }
 
@@ -106,7 +109,6 @@ export async function createNewsletter({
 	try {
 		log("Creating newsletter");
 		const allRecipients = await getAllRecipients();
-		log({ allRecipients });
 
 		return await db.transaction(async (tx) => {
 			// Create newsletter
@@ -146,8 +148,6 @@ export async function createNewsletter({
 				});
 			}
 
-			log({ allRecipients });
-
 			await tx.insert(newsletterRecipients).values(
 				allRecipients.map((recipient) => {
 					log({
@@ -183,25 +183,54 @@ export async function updateNewsletterSummary(id: number, summary: string) {
 		if (error instanceof DatabaseError) {
 			throw error;
 		}
-		throw new DatabaseError("Failed to update newsletter summary");
+		throw new DatabaseError(`Failed to update newsletter summary: ${error}`);
 	}
 }
 
 export async function deleteNewsletter(id: number) {
 	try {
-		const [deletedNewsletter] = await db
-			.delete(newsletters)
-			.where(eq(newsletters.id, id))
-			.returning();
-		if (!deletedNewsletter) {
-			throw new DatabaseError("Newsletter not found");
-		}
-		return deletedNewsletter;
+		return await db.transaction(async (tx) => {
+			// First, get all category IDs associated with this newsletter
+			const categoryIds = await tx
+				.select({ id: categories.id })
+				.from(categories)
+				.where(eq(categories.newsletterId, id));
+
+			if (categoryIds.length > 0) {
+				// Delete all articles associated with these categories
+				await tx.delete(articles).where(
+					inArray(
+						articles.categoryId,
+						categoryIds.map((cat) => cat.id),
+					),
+				);
+
+				// Now delete the categories
+				await tx.delete(categories).where(eq(categories.newsletterId, id));
+			}
+
+			// Delete related newsletter recipients
+			await tx
+				.delete(newsletterRecipients)
+				.where(eq(newsletterRecipients.newsletterId, id));
+
+			// Finally, delete the newsletter
+			const [deletedNewsletter] = await tx
+				.delete(newsletters)
+				.where(eq(newsletters.id, id))
+				.returning();
+
+			if (!deletedNewsletter) {
+				throw new DatabaseError("Newsletter not found");
+			}
+
+			return deletedNewsletter;
+		});
 	} catch (error) {
 		if (error instanceof DatabaseError) {
 			throw error;
 		}
-		throw new DatabaseError("Failed to delete newsletter");
+		throw new DatabaseError(`Failed to delete newsletter: ${error}`);
 	}
 }
 
@@ -224,25 +253,29 @@ export async function updateArticleDescription(
 		if (error instanceof DatabaseError) {
 			throw error;
 		}
-		throw new DatabaseError("Failed to update article description");
+		throw new DatabaseError(`Failed to update article description: ${error}`);
 	}
 }
 
 export async function deleteArticle(id: number) {
 	try {
-		const [deletedNewsletter] = await db
-			.delete(articles)
-			.where(eq(articles.id, id))
-			.returning();
-		if (!deletedNewsletter) {
-			throw new DatabaseError("Newsletter not found");
-		}
-		return deletedNewsletter;
+		return await db.transaction(async (tx) => {
+			const [deletedArticle] = await tx
+				.delete(articles)
+				.where(eq(articles.id, id))
+				.returning();
+
+			if (!deletedArticle) {
+				throw new DatabaseError("Article not found");
+			}
+
+			return deletedArticle;
+		});
 	} catch (error) {
 		if (error instanceof DatabaseError) {
 			throw error;
 		}
-		throw new DatabaseError("Failed to delete newsletter");
+		throw new DatabaseError(`Failed to delete article: ${error}`);
 	}
 }
 
@@ -251,7 +284,7 @@ export async function getAllRecipients() {
 	try {
 		return await db.query.recipients.findMany();
 	} catch (error) {
-		throw new DatabaseError("Failed to retrieve recipients");
+		throw new DatabaseError(`Failed to retrieve recipients: ${error}`);
 	}
 }
 
