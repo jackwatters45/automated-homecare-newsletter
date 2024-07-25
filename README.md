@@ -2,7 +2,6 @@
 
 ## TODO
 
-- TODO: commits
 
 - TODO: better logging / cron logging
 - TODO: Cron make sure working well

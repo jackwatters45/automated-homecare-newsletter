@@ -1,8 +1,12 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import logger from "./logger.js";
 
 export function initializeGenAI() {
 	const apiKey = process.env.GEMINI_API_KEY;
 	if (!apiKey) {
+		logger.error("GEMINI_API_KEY environment variable is not set", {
+			apiKey,
+		});
 		throw new Error("GEMINI_API_KEY environment variable is not set");
 	}
 

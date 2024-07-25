@@ -4,6 +4,7 @@ import type { Page } from "puppeteer";
 
 import { SPECIFIC_PAGES } from "../lib/constants.js";
 import { searchNews } from "../lib/google-search.js";
+import logger from "../lib/logger.js";
 import {
 	checkRobotsTxtPermission,
 	constructFullUrl,
@@ -21,7 +22,7 @@ import { filterArticlesByPage } from "./data-filtering.js";
 
 const log = debug(`${process.env.APP_NAME}:web-scraper.ts`);
 
-export async function getArticleData(pags: PageToScrape[], browserPage: Page) {
+export async function getArticleData(browserPage: Page) {
 	const results: ValidArticleData[] = [];
 	// specific pages
 	for (const page of SPECIFIC_PAGES) {
@@ -40,6 +41,7 @@ export async function getArticleData(pags: PageToScrape[], browserPage: Page) {
 	results.push(...googleSearchResults);
 
 	if (results.length === 0) {
+		logger.error("No valid articles found");
 		throw new Error("No valid articles found");
 	}
 
@@ -75,7 +77,11 @@ export async function scrapeArticles(
 			.map((_, element) => extractArticleData({ targetPage, $, element }))
 			.get() as ArticleData[];
 	} catch (error) {
-		console.error("Error in scrapeArticles:", error);
+		logger.error("Error in scrapeArticles:", {
+			error,
+			targetPage,
+			browserInstance,
+		});
 		return [];
 	}
 }

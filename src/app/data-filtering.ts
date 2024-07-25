@@ -1,6 +1,7 @@
 import debug from "debug";
 
 import { CATEGORIES, RECURRING_FREQUENCY, TOPIC } from "../lib/constants.js";
+import logger from "../lib/logger.js";
 import {
 	generateJSONResponseFromModel,
 	retry,
@@ -22,6 +23,10 @@ export async function filterArticlesByPage(
 ) {
 	try {
 		if (!articles.length) {
+			logger.error(
+				"No articles found. Please check the scraping process and try again.",
+				{ page, articles },
+			);
 			throw new Error(
 				"No articles found. Please check the scraping process and try again.",
 			);

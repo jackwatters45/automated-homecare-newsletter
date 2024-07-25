@@ -6,6 +6,7 @@ import { sendNewsletterReviewEmail } from "../app/index.js";
 import { db } from "../db/index.js";
 import { cronLogs } from "../db/schema.js";
 import { pingServer } from "./health.js";
+import logger from "./logger.js";
 import { retry } from "./utils.js";
 
 const log = debug(`${process.env.APP_NAME}:cron.ts`);
@@ -35,10 +36,14 @@ async function logCronExecution(
 			status,
 			message,
 		});
-		log(`Cron job ${jobName} ${status}: ${message}`);
+
+		if (status === "success") {
+			logger.info("Cron job success", { jobName, message });
+		} else {
+			logger.error("Cron job failure", { jobName, message });
+		}
 	} catch (error) {
-		console.error(`Failed to log cron execution: ${error}`);
-		log(`Failed to log cron execution: ${error}`);
+		logger.error("Failed to log cron execution", { error, jobName, message });
 	}
 }
 

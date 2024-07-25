@@ -12,6 +12,7 @@ import {
 	RECURRING_FREQUENCY,
 } from "../lib/constants.js";
 import type { PageToScrape } from "../types/index.js";
+import logger from "./logger.js";
 
 const log = debug(`${process.env.APP_NAME}:utils.ts`);
 
@@ -19,19 +20,6 @@ let aiCallCount = 0;
 export function logAiCall(prompt: string) {
 	aiCallCount++;
 	log(`AI model called ${aiCallCount} times. Prompt: ${prompt.slice(0, 50)}...`);
-}
-
-export function useLogFile(name: string) {
-	return (message: string) => {
-		const logPath = path.join(BASE_PATH, name);
-		const timestamp = new Date().toISOString();
-		const logMessage = `[${timestamp}] ${message}\n`;
-		fsSync.appendFile(logPath, logMessage, (err) => {
-			if (err) {
-				console.error(`Failed to write to ${name}: ${err.message}`);
-			}
-		});
-	};
 }
 
 export async function generateJSONResponseFromModel(prompt: string) {
@@ -155,6 +143,7 @@ export async function fetchPageContent(
 	try {
 		const response = await fetch(url);
 		if (!response.ok) {
+			logger.error(`HTTP error! Status: ${response.status}`, { url });
 			throw new Error(`HTTP error! Status: ${response.status}`);
 		}
 		return await response.text();
@@ -163,7 +152,7 @@ export async function fetchPageContent(
 			await browserInstance.goto(url);
 			return await browserInstance.content();
 		} catch (error) {
-			console.error("Error in fetchPageContent:", error);
+			logger.error("Error in fetchPageContent:", { error });
 			throw error;
 		}
 	}
@@ -220,7 +209,7 @@ export async function checkRobotsTxtPermission(targetUrl: string) {
 		);
 
 		if (!response || !response.ok) {
-			console.warn(
+			logger.warn(
 				`Failed to fetch robots.txt: ${response?.status} ${response?.statusText}`,
 			);
 			return true; // Assume scraping is allowed if robots.txt can't be fetched
@@ -233,7 +222,7 @@ export async function checkRobotsTxtPermission(targetUrl: string) {
 
 		return robotsRules.isAllowed(targetUrl);
 	} catch (error) {
-		console.error(
+		logger.error(
 			"Error in checkRobotsTxtPermission for URL:",
 			targetUrl,
 			"Error:",

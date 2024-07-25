@@ -17,6 +17,7 @@ import apiRouter from "./api/router.js";
 import { API_URL, BASE_PATH, PORT } from "./lib/constants.js";
 import { setupCronJobs } from "./lib/cron.js";
 import { handleErrors } from "./lib/errors.js";
+import { healthCheck } from "./lib/health.js";
 
 const log = debug(`${process.env.APP_NAME}:index.ts`);
 
@@ -76,11 +77,7 @@ app.get("/", (_, res) => {
 	res.redirect("/health");
 });
 
-app.get("/health", (_, res) => {
-	res
-		.status(200)
-		.json({ message: "OK - Server is up and running", status: "OK" });
-});
+app.get("/health", healthCheck);
 
 app.use("/api", apiRouter);
 

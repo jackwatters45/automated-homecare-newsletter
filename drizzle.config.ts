@@ -1,5 +1,6 @@
 import dotenv from "dotenv";
 import type { Config } from "drizzle-kit";
+import logger from "./src/lib/logger";
 
 dotenv.config();
 
@@ -10,6 +11,12 @@ const schemaPath = isProduction ? "./dist/db/schema.js" : "./src/db/schema.ts";
 const getDbUrl = () => {
 	const dbUrl = process.env.DATABASE_URL;
 	if (!dbUrl) {
+		logger.error("DATABASE_URL is not set", {
+			env: process.env,
+			isProduction,
+			schemaPath,
+			dbUrl,
+		});
 		throw new Error("DATABASE_URL is not set");
 	}
 	return dbUrl;

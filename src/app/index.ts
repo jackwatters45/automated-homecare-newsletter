@@ -4,17 +4,14 @@ import debug from "debug";
 import puppeteer from "puppeteer";
 
 import { initializeGenAI } from "../lib/ai.js";
-import {
-	CLIENT_URL,
-	REVIEWER_EMAIL,
-	SPECIFIC_PAGES,
-} from "../lib/constants.js";
+import { CLIENT_URL, REVIEWER_EMAIL } from "../lib/constants.js";
 import { resend } from "../lib/email.js";
 
 import { eq } from "drizzle-orm";
 import { createNewsletter, getNewsletter } from "../api/service.js";
 import { db } from "../db/index.js";
 import { newsletters } from "../db/schema.js";
+import logger from "../lib/logger.js";
 import { renderTemplate } from "../lib/template.js";
 import type { PopulatedNewNewsletter } from "../types/index.js";
 import { getArticleData } from "./data-fetching.js";
@@ -38,7 +35,7 @@ export async function generateNewsletterData(): Promise<
 	const browserPage = await browser.newPage();
 
 	try {
-		const results = await getArticleData(SPECIFIC_PAGES, browserPage);
+		const results = await getArticleData(browserPage);
 
 		const articles = await filterAndRankArticles(results);
 
@@ -53,7 +50,7 @@ export async function generateNewsletterData(): Promise<
 		log("newsletter data generated", newsletter);
 		return newsletter;
 	} catch (error) {
-		console.error(error);
+		logger.error("Error in generateNewsletterData:", { error });
 	} finally {
 		await browser.close();
 	}
@@ -64,11 +61,13 @@ export async function sendNewsletterReviewEmail() {
 		const newsletterData = await generateNewsletterData();
 
 		if (!newsletterData) {
+			logger.error("Newsletter data not found");
 			throw new Error("Newsletter data not found");
 		}
 
 		const id = newsletterData?.id;
 		if (!id) {
+			logger.error("Newsletter ID not found");
 			throw new Error("Newsletter ID not found");
 		}
 
@@ -81,12 +80,12 @@ export async function sendNewsletterReviewEmail() {
 		});
 
 		if (error) {
-			return console.error({ error });
+			return logger.error("Error in sendNewsletterReviewEmail:", { error });
 		}
 
 		return data;
 	} catch (error) {
-		console.error(error);
+		logger.error("Error in sendNewsletterReviewEmail:", { error });
 		return { message: "Error sending email", error };
 	}
 }
@@ -101,7 +100,7 @@ export async function generateNewsletterTemplate(id: number) {
 
 		return template;
 	} catch (error) {
-		console.error(error);
+		logger.error("Error in generateNewsletterTemplate:", { error });
 	}
 }
 
@@ -110,6 +109,7 @@ export async function sendNewsletter(id: number) {
 		const html = await generateNewsletterTemplate(id);
 
 		if (!html) {
+			logger.error("Incomplete newsletter template");
 			throw new Error("Incomplete newsletter template");
 		}
 
@@ -127,7 +127,7 @@ export async function sendNewsletter(id: number) {
 				.where(eq(newsletters.id, id))
 				.returning();
 
-			return console.error({ error });
+			return logger.error("Error in sendNewsletter:", { error });
 		}
 
 		const updatedNewsletter = await db
@@ -142,6 +142,6 @@ export async function sendNewsletter(id: number) {
 			newsletter: updatedNewsletter,
 		};
 	} catch (error) {
-		console.error("An error occurred in main:", error);
+		logger.error("Error in sendNewsletter:", { error });
 	}
 }

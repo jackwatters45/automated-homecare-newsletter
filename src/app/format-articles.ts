@@ -10,6 +10,7 @@ import {
 	CATEGORIES,
 	DESCRIPTION_MAX_LENGTH,
 } from "../lib/constants.js";
+import logger from "../lib/logger.js";
 import {
 	fetchPageContent,
 	generateJSONResponseFromModel,
@@ -171,6 +172,7 @@ export async function generateSummary(
 	const formattedDescription = generatedDescription?.trim();
 
 	if (!formattedDescription) {
+		logger.error("Error generating summary", { articles });
 		throw new Error("Error generating summary");
 	}
 
@@ -239,7 +241,7 @@ export async function generateCategories(
 	);
 
 	if (!generatedCategories || generatedCategories.length === 0) {
-		log("Error generating summary");
+		logger.error("Error generating categories", { articles });
 		throw new Error("Error generating categories");
 	}
 
