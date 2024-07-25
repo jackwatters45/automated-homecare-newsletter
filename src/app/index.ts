@@ -7,7 +7,7 @@ import { initializeGenAI } from "../lib/ai.js";
 import { CLIENT_URL, REVIEWER_EMAIL } from "../lib/constants.js";
 import { resend } from "../lib/email.js";
 
-import { eq } from "drizzle-orm";
+import { eq } from "drizzle-orm/expressions";
 import { createNewsletter, getNewsletter } from "../api/service.js";
 import { db } from "../db/index.js";
 import { newsletters } from "../db/schema.js";

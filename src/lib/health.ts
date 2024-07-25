@@ -1,6 +1,6 @@
 import os from "node:os";
 import debug from "debug";
-import { desc, gte } from "drizzle-orm";
+import { desc, gte } from "drizzle-orm/expressions";
 import type { Request, Response } from "express";
 import { db } from "../db/index.js";
 import { recipients } from "../db/schema.js";

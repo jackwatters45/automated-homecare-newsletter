@@ -1,4 +1,4 @@
-import { and, eq, exists, inArray, not } from "drizzle-orm";
+import { eq, inArray, not } from "drizzle-orm/expressions";
 import { db } from "../db/index.js";
 import {
 	articles,
@@ -75,7 +75,7 @@ export async function getAllNewsletters() {
 export async function getNewsletter(id: number) {
 	try {
 		const newsletter = await db.query.newsletters.findFirst({
-			where: eq(newsletters.id, id),
+			where: (newsletters, { eq }) => eq(newsletters.id, id),
 			with: {
 				categories: {
 					with: {

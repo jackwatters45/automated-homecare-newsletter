@@ -39,6 +39,8 @@ const config = {
 	postLogoutRedirectUrl: env.BASE_URL,
 };
 
+console.warn(config);
+
 setupKinde(config, app);
 
 // Middleware

@@ -2,8 +2,8 @@
 
 ## TODO
 
+- figure out prod
 - add global filter to local finance
-- add env to prod (still use old emails)
 
 - show
 
