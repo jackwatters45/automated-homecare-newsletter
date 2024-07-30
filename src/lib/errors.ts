@@ -17,6 +17,9 @@ export function handleErrors(
 	res: express.Response,
 	next: express.NextFunction,
 ) {
+	if (err.name === "UnauthorizedError") {
+		res.status(401).json({ error: "Invalid token" });
+	}
 	if (err instanceof HttpException) {
 		res.status(err.errorCode).json(err.message);
 		throw new Error(err.message);
