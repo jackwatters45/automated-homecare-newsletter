@@ -17,11 +17,11 @@ export interface PageToScrape {
 }
 
 export interface ArticleData {
-	link?: string;
-	title?: string;
-	description?: string;
-	date?: Date;
-	snippet?: string;
+	link?: string | null;
+	title?: string | null;
+	description?: string | null;
+	date?: Date | null;
+	snippet?: string | null;
 }
 
 export interface ValidArticleData {

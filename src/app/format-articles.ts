@@ -3,7 +3,6 @@ import path from "node:path";
 import Bottleneck from "bottleneck";
 import * as cheerio from "cheerio";
 import debug from "debug";
-import type { Page } from "puppeteer";
 
 import {
 	BASE_PATH,
@@ -26,8 +25,8 @@ import type {
 const log = debug(`${process.env.APP_NAME}:format-articles.ts`);
 
 const rateLimiter = new Bottleneck({
-	maxConcurrent: 10,
-	minTime: 2500,
+	maxConcurrent: 15,
+	minTime: 2000,
 });
 
 export const enrichArticleData = async (

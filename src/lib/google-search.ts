@@ -1,13 +1,14 @@
 import debug from "debug";
 import { google } from "googleapis";
-
+import type { Browser, Page } from "puppeteer";
 import type { ArticleData, ValidArticleData } from "../types/index.js";
+import { getBrowser } from "./browser.js";
 import { RECURRING_FREQUENCY } from "./constants.js";
 import { retry } from "./utils.js";
 
 const log = debug(`${process.env.APP_NAME}:google-search.ts`);
-
 const customsearch = google.customsearch("v1");
+const BLACKLISTED_DOMAINS = ["https://nahc.org"];
 
 export function getLastDateQuery(
 	q: string,
@@ -16,9 +17,6 @@ export function getLastDateQuery(
 	try {
 		const pastDate = new Date().getTime() - beforeMs;
 		const formattedPastDate = new Date(pastDate).toISOString().split("T")[0];
-
-		log(`google search query: ${q} after:${formattedPastDate}`);
-
 		return `${q} after:${formattedPastDate}`;
 	} catch (error) {
 		log(`Error in getLastDateQuery: ${error}`);
@@ -26,47 +24,77 @@ export function getLastDateQuery(
 	}
 }
 
+async function getPageUrl(page: Page, url: string): Promise<URL | null> {
+	try {
+		await page.goto(url, { waitUntil: "networkidle0" });
+		return new URL(page.url());
+	} catch (error) {
+		log(`Error navigating to ${url}: ${error}`);
+		return null;
+	}
+}
+
 export async function searchNews(qs: string[]): Promise<ValidArticleData[]> {
 	const allResults: ArticleData[] = [];
+	let browser: Browser | null = null;
 
-	for (const q of qs) {
-		for (let i = 0; i < 4; i++) {
-			const startIndex = i * 10 + 1;
+	try {
+		browser = await getBrowser();
+		const page = await browser.newPage();
 
-			try {
-				let retryCount = 0;
-				const res = await retry(() => {
-					log(`Google search query retry count: ${retryCount++}`);
-					return customsearch.cse.list({
-						cx: process.env.CUSTOM_ENGINE_ID,
-						auth: process.env.CUSTOM_SEARCH_API_KEY,
-						q: getLastDateQuery(q),
-						start: startIndex,
+		for (const q of qs) {
+			for (let i = 0; i < 4; i++) {
+				const startIndex = i * 10 + 1;
+				try {
+					const res = await retry(() => {
+						return customsearch.cse.list({
+							cx: process.env.CUSTOM_ENGINE_ID,
+							auth: process.env.CUSTOM_SEARCH_API_KEY,
+							q: getLastDateQuery(q),
+							start: startIndex,
+						});
 					});
-				});
 
-				if (!res) {
-					log(`Error searching for query "${q}": no response`);
-					continue;
+					if (!res?.data.items) {
+						log(`No results found for query: ${q}`);
+						continue;
+					}
+
+					for (const item of res.data.items) {
+						if (!item.link) continue;
+
+						const url = await getPageUrl(page, item.link);
+
+						const origin = url?.origin;
+
+						if (origin === "https://news.google.com" || !origin) continue;
+
+						const isBlacklisted = BLACKLISTED_DOMAINS.some((blacklisted) => {
+							return origin.includes(blacklisted);
+						});
+
+						if (isBlacklisted) {
+							log(`Blacklisted domain: ${origin}`);
+							continue;
+						}
+
+						allResults.push({
+							title: item.title,
+							link: origin,
+							description: undefined,
+							snippet: item.snippet,
+						});
+					}
+				} catch (error) {
+					log(`Error searching for query "${q}": ${error}`);
 				}
-
-				if (!res.data.items) {
-					log(`No results found for query: ${q}`);
-					continue;
-				}
-
-				const formattedResults = res.data.items.map((item) => ({
-					title: item.title,
-					link: item.link,
-					description: undefined,
-					snippet: item.snippet,
-				})) as ArticleData[];
-
-				allResults.push(...formattedResults);
-			} catch (error) {
-				log(`Error searching for query "${q}": ${error}`);
-				// Continue with the next query even if this one fails
 			}
+		}
+	} catch (error) {
+		log(`Error in searchNews: ${error}`);
+	} finally {
+		if (browser) {
+			await browser.close();
 		}
 	}
 
@@ -77,7 +105,6 @@ export async function searchNews(qs: string[]): Promise<ValidArticleData[]> {
 	log(
 		`Found ${validResults.length} valid results out of ${allResults.length} total results`,
 	);
-
 	return validResults;
 }
 

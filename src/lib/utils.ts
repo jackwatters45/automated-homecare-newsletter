@@ -19,7 +19,7 @@ const log = debug(`${process.env.APP_NAME}:utils.ts`);
 let aiCallCount = 0;
 export function logAiCall(prompt: string) {
 	aiCallCount++;
-	log(`AI model called ${aiCallCount} times. Prompt: ${prompt.slice(0, 50)}...`);
+	log(`AI model called ${aiCallCount} times. Prompt: ${prompt.slice(0, 55)}...`);
 }
 
 export async function generateJSONResponseFromModel(prompt: string) {
@@ -149,7 +149,7 @@ export async function fetchPageContent(url: string): Promise<string> {
 		const page = await browser.newPage();
 
 		try {
-			await page.goto(url, { waitUntil: "networkidle0" });
+			await page.goto(url, { waitUntil: "networkidle2" });
 			return await page.content();
 		} catch (error) {
 			logger.error("Error in fetchPageContent:", { error });

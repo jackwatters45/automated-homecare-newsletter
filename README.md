@@ -1,13 +1,5 @@
 # Automated Homecare Newsletter
 
-## TODO
-
-- fix puppeteer bs
-- need to blacklist some sites for google search
-- connect proper email to send newsletter
-
-- better way to sync recipients
-
 ## Testing (in progress)
 
 - Fix newly broken tests

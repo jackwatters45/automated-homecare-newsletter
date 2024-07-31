@@ -23,12 +23,6 @@ const log = debug(`${process.env.APP_NAME}:web-scraper.ts`);
 
 export async function getArticleData() {
 	const results: ValidArticleData[] = [];
-	// specific pages
-	for (const page of SPECIFIC_PAGES) {
-		const articleLinks = await scrapeArticles(page);
-		const relevantArticles = await filterArticlesByPage(articleLinks, page);
-		results.push(...relevantArticles);
-	}
 
 	// google search
 	const googleSearchResults = await searchNews([
@@ -38,6 +32,13 @@ export async function getArticleData() {
 	]);
 
 	results.push(...googleSearchResults);
+
+	// specific pages
+	for (const page of SPECIFIC_PAGES) {
+		const articleLinks = await scrapeArticles(page);
+		const relevantArticles = await filterArticlesByPage(articleLinks, page);
+		results.push(...relevantArticles);
+	}
 
 	if (results.length === 0) {
 		logger.error("No valid articles found");
