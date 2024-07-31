@@ -133,6 +133,7 @@ export const newsletterController = {
 			}
 		}
 	},
+
 	// generate a new newsletter
 	generate: async (req: Request, res: Response) => {
 		try {

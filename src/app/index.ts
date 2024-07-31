@@ -30,11 +30,12 @@ export async function generateNewsletterData(): Promise<
 	PopulatedNewNewsletter | undefined
 > {
 	log("generating newsletter data");
+	logger.log("generating newsletter data", {});
 
 	const browser = await puppeteer.launch();
-	const browserPage = await browser.newPage();
-
 	try {
+		const browserPage = await browser.newPage();
+
 		const results = await getArticleData(browserPage);
 
 		const articles = await filterAndRankArticles(results);
@@ -51,6 +52,7 @@ export async function generateNewsletterData(): Promise<
 		return newsletter;
 	} catch (error) {
 		logger.error("Error in generateNewsletterData:", { error });
+		throw error;
 	} finally {
 		await browser.close();
 	}
