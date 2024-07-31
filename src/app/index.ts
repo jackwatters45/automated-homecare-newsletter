@@ -29,7 +29,6 @@ export async function generateNewsletterData(): Promise<
 	PopulatedNewNewsletter | undefined
 > {
 	log("generating newsletter data");
-	logger.log("generating newsletter data", {});
 
 	try {
 		const results = await getArticleData();

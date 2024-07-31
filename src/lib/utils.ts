@@ -1,4 +1,4 @@
-import fsSync, { promises as fs } from "node:fs";
+import { promises as fs } from "node:fs";
 import path from "node:path";
 import type * as cheerio from "cheerio";
 import debug from "debug";
@@ -11,6 +11,7 @@ import {
 	RECURRING_FREQUENCY,
 } from "../lib/constants.js";
 import type { PageToScrape } from "../types/index.js";
+import { getBrowser } from "./browser.js";
 import logger from "./logger.js";
 
 const log = debug(`${process.env.APP_NAME}:utils.ts`);
@@ -144,8 +145,16 @@ export async function fetchPageContent(url: string): Promise<string> {
 		}
 		return await response.text();
 	} catch (error) {
-		logger.error("Error in fetchPageContent:", { error });
-		throw error;
+		const browser = await getBrowser();
+		const page = await browser.newPage();
+
+		try {
+			await page.goto(url, { waitUntil: "networkidle0" });
+			return await page.content();
+		} catch (error) {
+			logger.error("Error in fetchPageContent:", { error });
+			throw error;
+		}
 	}
 }
 

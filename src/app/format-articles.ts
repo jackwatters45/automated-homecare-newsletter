@@ -3,6 +3,7 @@ import path from "node:path";
 import Bottleneck from "bottleneck";
 import * as cheerio from "cheerio";
 import debug from "debug";
+import type { Page } from "puppeteer";
 
 import {
 	BASE_PATH,
