@@ -9,6 +9,7 @@ import {
 } from "../app/index.js";
 import { BASE_PATH } from "../lib/constants.js";
 import { DatabaseError } from "../lib/errors.js";
+import logger from "../lib/logger.js";
 import { renderTemplate } from "../lib/template.js";
 import {
 	addRecipient,
@@ -34,6 +35,7 @@ export const newsletterController = {
 			const allNewsletters = await getAllNewsletters();
 			res.json(allNewsletters);
 		} catch (error) {
+			logger.error("Error in getAllNewsletters:", { error });
 			if (error instanceof DatabaseError) {
 				res.status(500).json({ error: error.message });
 			} else {
@@ -47,6 +49,7 @@ export const newsletterController = {
 			const allNewsletters = await getAllNewslettersWithRecipients();
 			res.json(allNewsletters);
 		} catch (error) {
+			logger.error("Error in getAllNewslettersWithRecipients:", { error });
 			if (error instanceof DatabaseError) {
 				res.status(500).json({ error: error.message });
 			} else {
@@ -62,6 +65,7 @@ export const newsletterController = {
 			const newsletter = await getNewsletter(Number(id));
 			res.json(newsletter);
 		} catch (error) {
+			logger.error("Error in getNewsletter:", { error });
 			if (error instanceof DatabaseError) {
 				if (error.message === "Newsletter not found") {
 					res.status(404).json({ error: error.message });
@@ -80,6 +84,7 @@ export const newsletterController = {
 			const newNewsletter = await createNewsletter(req.body);
 			res.status(201).json(newNewsletter);
 		} catch (error) {
+			logger.error("Error in createNewsletter:", { error });
 			if (error instanceof DatabaseError) {
 				res.status(500).json({ error: error.message });
 			} else {
@@ -96,6 +101,7 @@ export const newsletterController = {
 			const updatedNewsletter = await updateNewsletterSummary(Number(id), summary);
 			res.json(updatedNewsletter);
 		} catch (error) {
+			logger.error("Error in updateNewsletterSummary:", { error });
 			if (error instanceof DatabaseError) {
 				if (error.message === "Newsletter not found") {
 					res.status(404).json({ error: error.message });
@@ -115,6 +121,7 @@ export const newsletterController = {
 			await deleteNewsletter(Number(id));
 			res.json({ message: "Newsletter deleted successfully" });
 		} catch (error) {
+			logger.error("Error in deleteNewsletter:", { error });
 			if (error instanceof DatabaseError) {
 				if (error.message === "Newsletter not found") {
 					res.status(404).json({ error: error.message });
@@ -132,6 +139,7 @@ export const newsletterController = {
 			const result = await generateNewsletterData();
 			res.json({ result, id: result?.id });
 		} catch (error) {
+			logger.error("Error in generateNewsletterData:", { error });
 			res.status(500).json({ error });
 		}
 	},
@@ -141,6 +149,7 @@ export const newsletterController = {
 			const result = await sendNewsletterReviewEmail();
 			res.json({ result });
 		} catch (error) {
+			logger.error("Error in sendNewsletterReviewEmail:", { error });
 			res.status(500).json({ error });
 		}
 	},
@@ -152,6 +161,7 @@ export const newsletterController = {
 			const result = await sendNewsletter(Number(id));
 			res.json(result);
 		} catch (error) {
+			logger.error("Error in sendNewsletter:", { error });
 			res.status(500).json({ error });
 		}
 	},
@@ -170,6 +180,7 @@ export const articleController = {
 			);
 			res.json(updatedArticle);
 		} catch (error) {
+			logger.error("Error in updateArticleDescription:", { error });
 			if (error instanceof DatabaseError) {
 				if (error.message === "Article not found") {
 					res.status(404).json({ error: error.message });
@@ -190,6 +201,7 @@ export const articleController = {
 				message: "Article deleted successfully",
 			});
 		} catch (error) {
+			logger.error("Error in deleteArticle:", { error });
 			if (error instanceof DatabaseError) {
 				if (error.message === "Article not found") {
 					res.status(404).json({ error: error.message });
@@ -210,6 +222,7 @@ export const recipientController = {
 			const recipients = await getAllRecipients();
 			res.json(recipients);
 		} catch (error) {
+			logger.error("Error in getAllRecipients:", { error });
 			if (error instanceof DatabaseError) {
 				res.status(500).json({ error: error.message });
 			} else {
@@ -224,6 +237,7 @@ export const recipientController = {
 			const recipient = await addRecipient(email);
 			res.json(recipient);
 		} catch (error) {
+			logger.error("Error in addRecipient:", { error });
 			if (error instanceof DatabaseError) {
 				res.status(500).json({ error: error.message });
 			} else {
@@ -237,6 +251,7 @@ export const recipientController = {
 			await deleteRecipient(email);
 			res.json({ message: "Recipient deleted successfully" });
 		} catch (error) {
+			logger.error("Error in deleteRecipient:", { error });
 			if (error instanceof DatabaseError) {
 				if (error.message === "Recipient not found") {
 					res.status(404).json({ error: error.message });
@@ -259,6 +274,7 @@ export const pagesController = {
 				path.join(BASE_PATH, "public", "views", "generate-button.html"),
 			);
 		} catch (error) {
+			logger.error("Error in renderGenerateButton:", { error });
 			res.status(500).json({ error: "An unexpected error occurred" });
 		}
 	},
@@ -273,6 +289,7 @@ export const pagesController = {
 
 			res.send(template);
 		} catch (error) {
+			logger.error("Error in renderNewsletterPreview:", { error });
 			res.status(500).send("Error rendering newsletter");
 		}
 	},

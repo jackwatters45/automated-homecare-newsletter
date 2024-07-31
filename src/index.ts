@@ -28,7 +28,10 @@ const app = express();
 app.use(helmet());
 app.use(compression());
 
-const allowedOrigins = ["https://trollycare-newsletter.vercel.app"];
+const allowedOrigins = [
+	"https://trollycare-newsletter.vercel.app",
+	"http://localhost:5173",
+];
 const corsOptions = {
 	origin: (
 		origin: string | undefined,
