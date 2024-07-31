@@ -2,13 +2,9 @@
 
 ## TODO
 
-- figure out prod
-- add global filter to local finance
-
-- show
+- connect proper email to send newsletter
 
 - better way to sync recipients
-- connect proper email to send newsletter
 
 ## Testing (in progress)
 
