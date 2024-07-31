@@ -1,6 +1,5 @@
 import * as cheerio from "cheerio";
 import debug from "debug";
-import type { Page } from "puppeteer";
 
 import { SPECIFIC_PAGES } from "../lib/constants.js";
 import { searchNews } from "../lib/google-search.js";
@@ -22,11 +21,11 @@ import { filterArticlesByPage } from "./data-filtering.js";
 
 const log = debug(`${process.env.APP_NAME}:web-scraper.ts`);
 
-export async function getArticleData(browserPage: Page) {
+export async function getArticleData() {
 	const results: ValidArticleData[] = [];
 	// specific pages
 	for (const page of SPECIFIC_PAGES) {
-		const articleLinks = await scrapeArticles(page, browserPage);
+		const articleLinks = await scrapeArticles(page);
 		const relevantArticles = await filterArticlesByPage(articleLinks, page);
 		results.push(...relevantArticles);
 	}
@@ -51,10 +50,7 @@ export async function getArticleData(browserPage: Page) {
 	return results;
 }
 
-export async function scrapeArticles(
-	targetPage: PageToScrape,
-	browserInstance: Page,
-) {
+export async function scrapeArticles(targetPage: PageToScrape) {
 	try {
 		const isScrapingAllowed = await checkRobotsTxtPermission(targetPage.url);
 		if (!isScrapingAllowed) {
@@ -62,9 +58,7 @@ export async function scrapeArticles(
 			return [];
 		}
 
-		const pageContent = await retry(() =>
-			fetchPageContent(targetPage.url, browserInstance),
-		);
+		const pageContent = await retry(() => fetchPageContent(targetPage.url));
 
 		if (!pageContent) {
 			log("Page content is empty");
@@ -80,7 +74,6 @@ export async function scrapeArticles(
 		logger.error("Error in scrapeArticles:", {
 			error,
 			targetPage,
-			browserInstance,
 		});
 		return [];
 	}

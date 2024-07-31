@@ -3,7 +3,6 @@ import path from "node:path";
 import Bottleneck from "bottleneck";
 import * as cheerio from "cheerio";
 import debug from "debug";
-import type { Page } from "puppeteer";
 
 import {
 	BASE_PATH,
@@ -32,7 +31,6 @@ const rateLimiter = new Bottleneck({
 
 export const enrichArticleData = async (
 	articleData: ValidArticleData,
-	browserInstance: Page,
 ): Promise<ArticleInput> => {
 	try {
 		if (articleData.description && articleData.description.length > 120) {
@@ -43,9 +41,7 @@ export const enrichArticleData = async (
 			};
 		}
 
-		const pageContent = await retry(() =>
-			fetchPageContent(articleData.link, browserInstance),
-		);
+		const pageContent = await retry(() => fetchPageContent(articleData.link));
 
 		if (!pageContent) {
 			log("Page content is empty");
@@ -114,12 +110,11 @@ export function createDescriptionPrompt(articleText: string): string {
 
 export const enrichArticlesData = async (
 	prioritizedArticles: ValidArticleData[],
-	browserInstance: Page,
 ): Promise<ArticleInput[]> => {
 	try {
 		const enrichedArticles = await Promise.all(
 			prioritizedArticles.map((article) =>
-				rateLimiter.schedule(() => enrichArticleData(article, browserInstance)),
+				rateLimiter.schedule(() => enrichArticleData(article)),
 			),
 		);
 

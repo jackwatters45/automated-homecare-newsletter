@@ -2,7 +2,6 @@ import fsSync, { promises as fs } from "node:fs";
 import path from "node:path";
 import type * as cheerio from "cheerio";
 import debug from "debug";
-import type { Page } from "puppeteer";
 
 import robotsParser from "robots-parser";
 import { model } from "../app/index.js";
@@ -136,10 +135,7 @@ export function truncateDescription(description: string): string {
 	return truncatedStr.trim().endsWith(".") ? truncatedStr : `${truncatedStr}.`;
 }
 
-export async function fetchPageContent(
-	url: string,
-	browserInstance: Page,
-): Promise<string> {
+export async function fetchPageContent(url: string): Promise<string> {
 	try {
 		const response = await fetch(url);
 		if (!response.ok) {
@@ -148,13 +144,8 @@ export async function fetchPageContent(
 		}
 		return await response.text();
 	} catch (error) {
-		try {
-			await browserInstance.goto(url);
-			return await browserInstance.content();
-		} catch (error) {
-			logger.error("Error in fetchPageContent:", { error });
-			throw error;
-		}
+		logger.error("Error in fetchPageContent:", { error });
+		throw error;
 	}
 }
 

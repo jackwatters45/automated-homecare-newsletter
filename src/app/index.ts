@@ -1,7 +1,6 @@
 import "dotenv/config";
 
 import debug from "debug";
-import puppeteer from "puppeteer";
 
 import { initializeGenAI } from "../lib/ai.js";
 import { CLIENT_URL, REVIEWER_EMAIL } from "../lib/constants.js";
@@ -32,15 +31,12 @@ export async function generateNewsletterData(): Promise<
 	log("generating newsletter data");
 	logger.log("generating newsletter data", {});
 
-	const browser = await puppeteer.launch();
 	try {
-		const browserPage = await browser.newPage();
-
-		const results = await getArticleData(browserPage);
+		const results = await getArticleData();
 
 		const articles = await filterAndRankArticles(results);
 
-		const articlesData = await enrichArticlesData(articles, browserPage);
+		const articlesData = await enrichArticlesData(articles);
 
 		const summary = await generateSummary(articlesData);
 
@@ -53,8 +49,6 @@ export async function generateNewsletterData(): Promise<
 	} catch (error) {
 		logger.error("Error in generateNewsletterData:", { error });
 		throw error;
-	} finally {
-		await browser.close();
 	}
 }
 
