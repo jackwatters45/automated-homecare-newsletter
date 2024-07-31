@@ -63,6 +63,9 @@ app.engine("hbs", engine({ extname: "hbs", defaultLayout: false }));
 app.set("view engine", "hbs");
 app.set("views", path.join(BASE_PATH, "public", "views"));
 
+// Trust proxy
+app.set("trust proxy", 1);
+
 // Rate limiting
 const limiter = rateLimit({
 	windowMs: 60 * 1000, // 1 minute
