@@ -71,7 +71,6 @@ export async function sendNewsletterReviewEmail() {
 			throw new Error("Newsletter ID not found");
 		}
 
-		// TODO: send email to <user>
 		const { data, error } = await resend.emails.send({
 			from: "Yats Support <support@yatusabes.co>",
 			to: REVIEWER_EMAIL,
@@ -113,9 +112,13 @@ export async function sendNewsletter(id: number) {
 			throw new Error("Incomplete newsletter template");
 		}
 
+		const { recipients } = await getNewsletter(id);
+
+		const recipientEmails = recipients.map((recipient) => recipient.email);
+
 		const { data, error } = await resend.emails.send({
 			from: "Yats Support <support@yatusabes.co>",
-			to: ["jack.watters@me.com", "jackwattersdev@gmail.com"],
+			to: recipientEmails,
 			subject: `TrollyCare Newsletter - ${new Date().toLocaleDateString()}`,
 			html,
 		});
@@ -127,7 +130,13 @@ export async function sendNewsletter(id: number) {
 				.where(eq(newsletters.id, id))
 				.returning();
 
-			return logger.error("Error in sendNewsletter:", { error });
+			logger.error("Error in sendNewsletter:", { error });
+
+			return {
+				message: "Error sending email",
+				error,
+				newsletter: updatedNewsletter,
+			};
 		}
 
 		const updatedNewsletter = await db
