@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
 import type { Config } from "drizzle-kit";
 import logger from "./src/lib/logger";
+import { getEnv } from "./src/lib/utils";
 
 dotenv.config();
 
@@ -26,5 +27,5 @@ export default {
 	schema: schemaPath,
 	dialect: "postgresql",
 	dbCredentials: { url: getDbUrl() },
-	tablesFilter: ["automated-homecare-newsletter"],
+	tablesFilter: [getEnv("APP_NAME")],
 } satisfies Config;

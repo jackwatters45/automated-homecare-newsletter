@@ -1,5 +1,6 @@
 import { Resend } from "resend";
 import logger from "./logger.js";
+import { getEnv } from "./utils.js";
 
 export const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -13,8 +14,7 @@ export async function sendEmail(html: string, to: string[]) {
 	});
 
 	const { data, error } = await resend.emails.send({
-		// TODO: fix details
-		from: "Yats Support <support@yatusabes.co>",
+		from: getEnv("RESEND_FROM_EMAIL"),
 		to,
 		subject: `TrollyCare Newsletter - ${formattedDate}`,
 		html,
@@ -28,7 +28,7 @@ export async function sendEmail(html: string, to: string[]) {
 }
 
 export async function sendTestEmail(html: string) {
-	const to = ["jack.watters@me.com", "jackwattersdev@gmail.com"];
+	const to = [getEnv("REVIEWER_EMAIL")];
 
 	return await sendEmail(html, to);
 }

@@ -262,3 +262,11 @@ export const extractDate = (
 	$(element).find(selector).length
 		? new Date($(element).find(selector).text().trim())
 		: undefined;
+
+export const getEnv = (name: string) => {
+	const value = process.env[name];
+	if (!value) {
+		throw new Error(`Missing environment variable: ${name}`);
+	}
+	return value;
+};

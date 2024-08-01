@@ -12,7 +12,7 @@ import {
 } from "drizzle-orm/pg-core";
 
 export const createTable = pgTableCreator(
-	(name) => `automated-homecare-newsletter_${name}`,
+	(name) => `${process.env.APP_NAME}_${name}`,
 );
 
 export const statusEnum = pgEnum("status", ["SENT", "FAILED", "DRAFT"]);
