@@ -3,12 +3,17 @@ import {
 	integer,
 	pgEnum,
 	pgTable,
+	pgTableCreator,
 	primaryKey,
 	serial,
 	text,
 	timestamp,
 	uniqueIndex,
 } from "drizzle-orm/pg-core";
+
+export const createTable = pgTableCreator(
+	(name) => `automated-homecare-newsletter_${name}`,
+);
 
 export const statusEnum = pgEnum("status", ["SENT", "FAILED", "DRAFT"]);
 

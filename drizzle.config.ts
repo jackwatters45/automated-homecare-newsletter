@@ -26,4 +26,5 @@ export default {
 	schema: schemaPath,
 	dialect: "postgresql",
 	dbCredentials: { url: getDbUrl() },
+	tablesFilter: ["automated-homecare-newsletter"],
 } satisfies Config;
