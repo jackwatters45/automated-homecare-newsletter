@@ -17,7 +17,7 @@ export const createTable = pgTableCreator(
 
 export const statusEnum = pgEnum("status", ["SENT", "FAILED", "DRAFT"]);
 
-export const newsletters = pgTable("newsletters", {
+export const newsletters = createTable("newsletters", {
 	id: serial("id").primaryKey(),
 	summary: text("summary"),
 	sendAt: timestamp("send_at").defaultNow(),
@@ -26,14 +26,14 @@ export const newsletters = pgTable("newsletters", {
 	updatedAt: timestamp("updated_at").defaultNow(),
 });
 
-export const categories = pgTable(
+export const categories = createTable(
 	"categories",
 	{
 		id: serial("id").primaryKey(),
 		name: text("name").notNull(),
 		newsletterId: integer("newsletter_id")
 			.notNull()
-			.references(() => newsletters.id),
+			.references(() => newsletters.id, { onDelete: "cascade" }),
 		createdAt: timestamp("created_at").defaultNow(),
 		updatedAt: timestamp("updated_at").defaultNow(),
 	},
@@ -47,34 +47,34 @@ export const categories = pgTable(
 	},
 );
 
-export const articles = pgTable("articles", {
+export const articles = createTable("articles", {
 	id: serial("id").primaryKey(),
 	title: text("title").notNull(),
 	link: text("link").notNull(),
 	description: text("description").notNull(),
 	categoryId: integer("category_id")
 		.notNull()
-		.references(() => categories.id),
+		.references(() => categories.id, { onDelete: "cascade" }),
 	createdAt: timestamp("created_at").defaultNow(),
 	updatedAt: timestamp("updated_at").defaultNow(),
 });
 
-export const recipients = pgTable("recipients", {
+export const recipients = createTable("recipients", {
 	id: serial("id").primaryKey(),
 	email: text("email").notNull(),
 	createdAt: timestamp("created_at").defaultNow(),
 	updatedAt: timestamp("updated_at").defaultNow(),
 });
 
-export const newsletterRecipients = pgTable(
+export const newsletterRecipients = createTable(
 	"newsletter_recipients",
 	{
 		newsletterId: integer("newsletter_id")
 			.notNull()
-			.references(() => newsletters.id),
+			.references(() => newsletters.id, { onDelete: "cascade" }),
 		recipientId: integer("recipient_id")
 			.notNull()
-			.references(() => recipients.id),
+			.references(() => recipients.id, { onDelete: "cascade" }),
 		createdAt: timestamp("created_at").defaultNow(),
 	},
 	(table) => ({
@@ -97,7 +97,6 @@ export const articlesRelations = relations(articles, ({ one }) => ({
 	}),
 }));
 
-// New relations for newsletters and recipients
 export const newslettersRelations = relations(newsletters, ({ many }) => ({
 	categories: many(categories),
 	recipients: many(newsletterRecipients),
@@ -122,7 +121,7 @@ export const newsletterRecipientsRelations = relations(
 );
 
 export const cronStatusEnum = pgEnum("cron_status", ["SUCCESS", "FAILURE"]);
-export const cronLogs = pgTable("cron_logs", {
+export const cronLogs = createTable("cron_logs", {
 	id: serial("id").primaryKey(),
 	jobName: text("job_name").notNull(),
 	executionTime: timestamp("execution_time").notNull(),

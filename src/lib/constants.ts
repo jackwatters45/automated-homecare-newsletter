@@ -55,14 +55,6 @@ export const SPECIFIC_PAGES: PageToScrape[] = [
 		dateSelector: ".css-3be604",
 	},
 	{
-		url: "https://nahc.org/nahc-newsroom/",
-		articleContainerSelector: ".news-info",
-		linkSelector: ".read-more",
-		titleSelector: ".h4",
-		descriptionSelector: undefined,
-		dateSelector: ".date",
-	},
-	{
 		url: "https://dailycaring.com/",
 		articleContainerSelector: "article",
 		linkSelector: "a",

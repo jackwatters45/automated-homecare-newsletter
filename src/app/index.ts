@@ -12,6 +12,7 @@ import { db } from "../db/index.js";
 import { newsletters } from "../db/schema.js";
 import logger from "../lib/logger.js";
 import { renderTemplate } from "../lib/template.js";
+import { getEnv } from "../lib/utils.js";
 import type { PopulatedNewNewsletter } from "../types/index.js";
 import { getArticleData } from "./data-fetching.js";
 import { filterAndRankArticles } from "./data-filtering.js";
@@ -34,6 +35,8 @@ export async function generateNewsletterData(): Promise<
 		const results = await getArticleData();
 
 		const articles = await filterAndRankArticles(results);
+
+		log("articles filtered and ranked", articles);
 
 		const articlesData = await enrichArticlesData(articles);
 
@@ -67,7 +70,7 @@ export async function sendNewsletterReviewEmail() {
 		}
 
 		const { data, error } = await resend.emails.send({
-			from: "Yats Support <support@yatusabes.co>",
+			from: getEnv("RESEND_FROM_EMAIL"),
 			to: REVIEWER_EMAIL,
 			subject: "Review TrollyCare Newsletter",
 			text: `Please review the newsletter and approve it before it is sent. link to newsletter: ${CLIENT_URL}/newsletter/${id}`,
@@ -112,7 +115,7 @@ export async function sendNewsletter(id: number) {
 		const recipientEmails = recipients.map((recipient) => recipient.email);
 
 		const { data, error } = await resend.emails.send({
-			from: "Yats Support <support@yatusabes.co>",
+			from: getEnv("RESEND_FROM_EMAIL"),
 			to: recipientEmails,
 			subject: `TrollyCare Newsletter - ${new Date().toLocaleDateString()}`,
 			html,

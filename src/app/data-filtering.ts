@@ -53,7 +53,7 @@ export async function filterArticlesByPage(
 		);
 
 		log(
-			`${page.url}: Filtered ${articles.length} articles to ${filteredArticles.length} usimg non-AI filtering`,
+			`${page.url}: Filtered ${articles.length} articles to ${filteredArticles.length} using non-AI filtering`,
 		);
 
 		return filteredArticles;

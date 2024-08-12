@@ -28,16 +28,23 @@ const app = express();
 app.use(helmet());
 app.use(compression());
 
-const allowedOrigins = [
-	"https://trollycare-newsletter.vercel.app",
-	"http://localhost:5173",
-];
-const corsOptions = {
+const allowedOrigins = ["https://trollycare-newsletter.vercel.app"];
+
+const isDevelopment = process.env.NODE_ENV === "development";
+
+const corsOptions: cors.CorsOptions = {
 	origin: (
 		origin: string | undefined,
 		callback: (err: Error | null, allow?: boolean) => void,
 	) => {
-		if (!origin || allowedOrigins.includes(origin)) {
+		if (!origin) {
+			// Allow requests with no origin (like mobile apps or curl requests)
+			callback(null, true);
+		} else if (isDevelopment && origin.startsWith("http://localhost")) {
+			// Allow any localhost origin in development mode
+			callback(null, true);
+		} else if (allowedOrigins.includes(origin)) {
+			// Allow specific origins
 			callback(null, true);
 		} else {
 			callback(new Error("Not allowed by CORS"));

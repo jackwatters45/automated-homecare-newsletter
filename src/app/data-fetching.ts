@@ -4,31 +4,29 @@ import debug from "debug";
 import { SPECIFIC_PAGES } from "../lib/constants.js";
 import { searchNews } from "../lib/google-search.js";
 import logger from "../lib/logger.js";
+import { rateLimiter } from "../lib/rate-limit.js";
 import {
 	checkRobotsTxtPermission,
 	constructFullUrl,
 	extractDate,
 	extractTextContent,
 	fetchPageContent,
+	generateJSONResponseFromModel,
 	retry,
 } from "../lib/utils.js";
-import type {
-	ArticleData,
-	PageToScrape,
-	ValidArticleData,
-} from "../types/index.js";
+import type { PageToScrape, ValidArticleData } from "../types/index.js";
 import { filterArticlesByPage } from "./data-filtering.js";
+import { createDescriptionPrompt } from "./format-articles.js";
 
-const log = debug(`${process.env.APP_NAME}:web-scraper.ts`);
+const log = debug(`${process.env.APP_NAME}:data-fetching.ts`);
 
 export async function getArticleData() {
 	const results: ValidArticleData[] = [];
 
 	// google search
 	const googleSearchResults = await searchNews([
-		"homecare news medical",
-		"home health news medical",
-		"home care news medical",
+		"homecare news",
+		"home health news",
 	]);
 
 	results.push(...googleSearchResults);
@@ -68,9 +66,11 @@ export async function scrapeArticles(targetPage: PageToScrape) {
 
 		const $ = cheerio.load(pageContent);
 
-		return $(targetPage.articleContainerSelector)
+		const articlePromises = $(targetPage.articleContainerSelector)
 			.map((_, element) => extractArticleData({ targetPage, $, element }))
-			.get() as ArticleData[];
+			.get();
+
+		return await Promise.all(articlePromises);
 	} catch (error) {
 		logger.error("Error in scrapeArticles:", {
 			error,
@@ -86,12 +86,28 @@ interface ArticleExtractionParams {
 	element: cheerio.AnyNode;
 }
 
-export function extractArticleData({
+export async function extractArticleData({
 	targetPage,
 	$,
 	element,
 }: ArticleExtractionParams) {
 	const rawHref = $(element).find(targetPage.linkSelector).attr("href");
+
+	let description = extractTextContent(
+		$,
+		element,
+		targetPage.descriptionSelector,
+	);
+
+	if (!description) {
+		const descriptionPrompt = createDescriptionPrompt($.html());
+
+		const generatedDescription = await rateLimiter.schedule(() =>
+			retry<string>(() => generateJSONResponseFromModel(descriptionPrompt)),
+		);
+
+		description = generatedDescription?.trim();
+	}
 
 	return {
 		url: targetPage.url,

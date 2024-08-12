@@ -23,9 +23,14 @@ const getDbUrl = () => {
 	return dbUrl;
 };
 
+const appName = process.env.APP_NAME;
+if (!appName) {
+	throw new Error("APP_NAME is not set");
+}
+
 export default {
 	schema: schemaPath,
 	dialect: "postgresql",
 	dbCredentials: { url: getDbUrl() },
-	tablesFilter: [getEnv("APP_NAME")],
+	tablesFilter: [appName],
 } satisfies Config;

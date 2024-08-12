@@ -1,6 +1,5 @@
 import { promises as fs } from "node:fs";
 import path from "node:path";
-import Bottleneck from "bottleneck";
 import * as cheerio from "cheerio";
 import debug from "debug";
 
@@ -10,6 +9,7 @@ import {
 	DESCRIPTION_MAX_LENGTH,
 } from "../lib/constants.js";
 import logger from "../lib/logger.js";
+import { rateLimiter } from "../lib/rate-limit.js";
 import {
 	fetchPageContent,
 	generateJSONResponseFromModel,
@@ -23,11 +23,6 @@ import type {
 } from "../types/index.js";
 
 const log = debug(`${process.env.APP_NAME}:format-articles.ts`);
-
-const rateLimiter = new Bottleneck({
-	maxConcurrent: 15,
-	minTime: 2000,
-});
 
 export const enrichArticleData = async (
 	articleData: ValidArticleData,
@@ -59,8 +54,8 @@ export const enrichArticleData = async (
 
 		const descriptionPrompt = createDescriptionPrompt(fullArticleText);
 
-		const generatedDescription = await retry(() =>
-			generateJSONResponseFromModel(descriptionPrompt),
+		const generatedDescription = await rateLimiter.schedule(() =>
+			retry<string>(() => generateJSONResponseFromModel(descriptionPrompt)),
 		);
 
 		const description = generatedDescription?.trim();
@@ -160,8 +155,8 @@ export async function generateSummary(
 	
 	Your summary should provide a quick, informative overview that gives readers a clear sense of the valuable content available, without revealing all the details.`;
 
-	const generatedDescription = await retry<string>(() =>
-		generateJSONResponseFromModel(prompt),
+	const generatedDescription = await rateLimiter.schedule(() =>
+		retry<string>(() => generateJSONResponseFromModel(prompt)),
 	);
 
 	const formattedDescription = generatedDescription?.trim();
@@ -199,6 +194,7 @@ export async function generateCategories(
 	Please follow these guidelines:
 	1. Assign each article to at least one of the predefined categories. An article can belong to multiple categories if appropriate.
 	2. If any articles don't fit well into the main categories, do not include them in the results and remove them from the articles list.
+	3. Ensure that the source of the articles are not repeated in the categories. if you do include multiple articles from the same source, ensure that they are not one after the other.
 	
 	Format your response as a JSON object with the following structure:
 	[
