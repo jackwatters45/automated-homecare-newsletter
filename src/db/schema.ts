@@ -2,13 +2,11 @@ import { relations } from "drizzle-orm";
 import {
 	integer,
 	pgEnum,
-	pgTable,
 	pgTableCreator,
 	primaryKey,
 	serial,
 	text,
 	timestamp,
-	uniqueIndex,
 } from "drizzle-orm/pg-core";
 
 export const createTable = pgTableCreator(
@@ -26,35 +24,15 @@ export const newsletters = createTable("newsletters", {
 	updatedAt: timestamp("updated_at").defaultNow(),
 });
 
-export const categories = createTable(
-	"categories",
-	{
-		id: serial("id").primaryKey(),
-		name: text("name").notNull(),
-		newsletterId: integer("newsletter_id")
-			.notNull()
-			.references(() => newsletters.id, { onDelete: "cascade" }),
-		createdAt: timestamp("created_at").defaultNow(),
-		updatedAt: timestamp("updated_at").defaultNow(),
-	},
-	(table) => {
-		return {
-			nameNewsletterIdx: uniqueIndex("name_newsletter_idx").on(
-				table.name,
-				table.newsletterId,
-			),
-		};
-	},
-);
-
 export const articles = createTable("articles", {
 	id: serial("id").primaryKey(),
 	title: text("title").notNull(),
 	link: text("link").notNull(),
 	description: text("description").notNull(),
-	categoryId: integer("category_id")
+	category: text("category").notNull(),
+	newsletterId: integer("newsletter_id")
 		.notNull()
-		.references(() => categories.id, { onDelete: "cascade" }),
+		.references(() => newsletters.id, { onDelete: "cascade" }),
 	createdAt: timestamp("created_at").defaultNow(),
 	updatedAt: timestamp("updated_at").defaultNow(),
 });
@@ -82,23 +60,15 @@ export const newsletterRecipients = createTable(
 	}),
 );
 
-export const categoriesRelations = relations(categories, ({ one, many }) => ({
-	newsletter: one(newsletters, {
-		fields: [categories.newsletterId],
-		references: [newsletters.id],
-	}),
-	articles: many(articles),
-}));
-
 export const articlesRelations = relations(articles, ({ one }) => ({
-	category: one(categories, {
-		fields: [articles.categoryId],
-		references: [categories.id],
+	newsletter: one(newsletters, {
+		fields: [articles.newsletterId],
+		references: [newsletters.id],
 	}),
 }));
 
 export const newslettersRelations = relations(newsletters, ({ many }) => ({
-	categories: many(categories),
+	articles: many(articles),
 	recipients: many(newsletterRecipients),
 }));
 
@@ -121,6 +91,7 @@ export const newsletterRecipientsRelations = relations(
 );
 
 export const cronStatusEnum = pgEnum("cron_status", ["SUCCESS", "FAILURE"]);
+
 export const cronLogs = createTable("cron_logs", {
 	id: serial("id").primaryKey(),
 	jobName: text("job_name").notNull(),

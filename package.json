@@ -13,6 +13,8 @@
 		"start": "node --import ./instrument.mjs ./dist/index.js",
 		"db:push": "drizzle-kit push",
 		"db:studio": "drizzle-kit studio",
+		"db:generate": "drizzle-kit generate",
+		"db:migrate": "tsx src/db/migrate.ts",
 		"lint": "npx biome check --write --no-errors-on-unmatched --files-ignore-unknown=true"
 	},
 	"keywords": [],

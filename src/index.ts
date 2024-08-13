@@ -16,6 +16,7 @@ import apiRouter from "./api/router.js";
 import { API_URL, BASE_PATH, PORT } from "./lib/constants.js";
 import { setupCronJobs } from "./lib/cron.js";
 
+import { is } from "drizzle-orm";
 import { authMiddleware } from "./lib/auth-middleware.js";
 import { handleErrors } from "./lib/errors.js";
 import { healthCheck } from "./lib/health.js";
@@ -24,11 +25,26 @@ const log = debug(`${process.env.APP_NAME}:index.ts`);
 
 const app = express();
 
-// Middleware
-app.use(helmet());
-app.use(compression());
-
 const allowedOrigins = ["https://trollycare-newsletter.vercel.app"];
+
+// Middleware
+app.use(
+	helmet({
+		contentSecurityPolicy: {
+			directives: {
+				defaultSrc: ["'self'"],
+				scriptSrc: ["'self'", "'unsafe-inline'"],
+				styleSrc: ["'self'", "'unsafe-inline'"],
+				imgSrc: ["'self'", "data:", "https:"],
+				connectSrc: ["'self'", ...allowedOrigins],
+			},
+		},
+		referrerPolicy: {
+			policy: "strict-origin-when-cross-origin",
+		},
+	}),
+);
+app.use(compression());
 
 const isDevelopment = process.env.NODE_ENV === "development";
 
@@ -47,11 +63,21 @@ const corsOptions: cors.CorsOptions = {
 			// Allow specific origins
 			callback(null, true);
 		} else {
+			log(isDevelopment);
+			log(origin.startsWith("http://localhost"));
+
+			log(`CORS error: Origin ${origin} not allowed`);
 			callback(new Error("Not allowed by CORS"));
 		}
 	},
+	methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+	allowedHeaders: ["Content-Type", "Authorization", "baggage", "sentry-trace"],
+	credentials: true,
+	optionsSuccessStatus: 204,
+	maxAge: 3600,
 };
 app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

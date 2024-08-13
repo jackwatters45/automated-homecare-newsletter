@@ -15,14 +15,7 @@ CREATE TABLE IF NOT EXISTS "automated-homecare-newsletter_articles" (
 	"title" text NOT NULL,
 	"link" text NOT NULL,
 	"description" text NOT NULL,
-	"category_id" integer NOT NULL,
-	"created_at" timestamp DEFAULT now(),
-	"updated_at" timestamp DEFAULT now()
-);
---> statement-breakpoint
-CREATE TABLE IF NOT EXISTS "automated-homecare-newsletter_categories" (
-	"id" serial PRIMARY KEY NOT NULL,
-	"name" text NOT NULL,
+	"category" text NOT NULL,
 	"newsletter_id" integer NOT NULL,
 	"created_at" timestamp DEFAULT now(),
 	"updated_at" timestamp DEFAULT now()
@@ -61,13 +54,7 @@ CREATE TABLE IF NOT EXISTS "automated-homecare-newsletter_recipients" (
 );
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "automated-homecare-newsletter_articles" ADD CONSTRAINT "automated-homecare-newsletter_articles_category_id_automated-homecare-newsletter_categories_id_fk" FOREIGN KEY ("category_id") REFERENCES "public"."automated-homecare-newsletter_categories"("id") ON DELETE cascade ON UPDATE no action;
-EXCEPTION
- WHEN duplicate_object THEN null;
-END $$;
---> statement-breakpoint
-DO $$ BEGIN
- ALTER TABLE "automated-homecare-newsletter_categories" ADD CONSTRAINT "automated-homecare-newsletter_categories_newsletter_id_automated-homecare-newsletter_newsletters_id_fk" FOREIGN KEY ("newsletter_id") REFERENCES "public"."automated-homecare-newsletter_newsletters"("id") ON DELETE cascade ON UPDATE no action;
+ ALTER TABLE "automated-homecare-newsletter_articles" ADD CONSTRAINT "automated-homecare-newsletter_articles_newsletter_id_automated-homecare-newsletter_newsletters_id_fk" FOREIGN KEY ("newsletter_id") REFERENCES "public"."automated-homecare-newsletter_newsletters"("id") ON DELETE no action ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
@@ -83,5 +70,3 @@ DO $$ BEGIN
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
---> statement-breakpoint
-CREATE UNIQUE INDEX IF NOT EXISTS "name_newsletter_idx" ON "automated-homecare-newsletter_categories" USING btree ("name","newsletter_id");

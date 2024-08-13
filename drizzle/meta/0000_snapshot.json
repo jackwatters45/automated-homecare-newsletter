@@ -1,5 +1,5 @@
 {
-	"id": "fbd31176-ec9d-4e6e-89e1-b29bc4a5ed6f",
+	"id": "8971a8b2-c4a2-4f74-9a8e-eaf978fa5288",
 	"prevId": "00000000-0000-0000-0000-000000000000",
 	"version": "7",
 	"dialect": "postgresql",
@@ -32,54 +32,8 @@
 					"primaryKey": false,
 					"notNull": true
 				},
-				"category_id": {
-					"name": "category_id",
-					"type": "integer",
-					"primaryKey": false,
-					"notNull": true
-				},
-				"created_at": {
-					"name": "created_at",
-					"type": "timestamp",
-					"primaryKey": false,
-					"notNull": false,
-					"default": "now()"
-				},
-				"updated_at": {
-					"name": "updated_at",
-					"type": "timestamp",
-					"primaryKey": false,
-					"notNull": false,
-					"default": "now()"
-				}
-			},
-			"indexes": {},
-			"foreignKeys": {
-				"automated-homecare-newsletter_articles_category_id_automated-homecare-newsletter_categories_id_fk": {
-					"name": "automated-homecare-newsletter_articles_category_id_automated-homecare-newsletter_categories_id_fk",
-					"tableFrom": "automated-homecare-newsletter_articles",
-					"tableTo": "automated-homecare-newsletter_categories",
-					"columnsFrom": ["category_id"],
-					"columnsTo": ["id"],
-					"onDelete": "cascade",
-					"onUpdate": "no action"
-				}
-			},
-			"compositePrimaryKeys": {},
-			"uniqueConstraints": {}
-		},
-		"public.automated-homecare-newsletter_categories": {
-			"name": "automated-homecare-newsletter_categories",
-			"schema": "",
-			"columns": {
-				"id": {
-					"name": "id",
-					"type": "serial",
-					"primaryKey": true,
-					"notNull": true
-				},
-				"name": {
-					"name": "name",
+				"category": {
+					"name": "category",
 					"type": "text",
 					"primaryKey": false,
 					"notNull": true
@@ -105,37 +59,15 @@
 					"default": "now()"
 				}
 			},
-			"indexes": {
-				"name_newsletter_idx": {
-					"name": "name_newsletter_idx",
-					"columns": [
-						{
-							"expression": "name",
-							"isExpression": false,
-							"asc": true,
-							"nulls": "last"
-						},
-						{
-							"expression": "newsletter_id",
-							"isExpression": false,
-							"asc": true,
-							"nulls": "last"
-						}
-					],
-					"isUnique": true,
-					"concurrently": false,
-					"method": "btree",
-					"with": {}
-				}
-			},
+			"indexes": {},
 			"foreignKeys": {
-				"automated-homecare-newsletter_categories_newsletter_id_automated-homecare-newsletter_newsletters_id_fk": {
-					"name": "automated-homecare-newsletter_categories_newsletter_id_automated-homecare-newsletter_newsletters_id_fk",
-					"tableFrom": "automated-homecare-newsletter_categories",
+				"automated-homecare-newsletter_articles_newsletter_id_automated-homecare-newsletter_newsletters_id_fk": {
+					"name": "automated-homecare-newsletter_articles_newsletter_id_automated-homecare-newsletter_newsletters_id_fk",
+					"tableFrom": "automated-homecare-newsletter_articles",
 					"tableTo": "automated-homecare-newsletter_newsletters",
 					"columnsFrom": ["newsletter_id"],
 					"columnsTo": ["id"],
-					"onDelete": "cascade",
+					"onDelete": "no action",
 					"onUpdate": "no action"
 				}
 			},

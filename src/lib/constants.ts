@@ -106,5 +106,3 @@ export const CATEGORIES = [
 	"Patient Care & Caregiving Best Practices",
 	"Other",
 ] as const;
-
-export type Category = (typeof CATEGORIES)[number];

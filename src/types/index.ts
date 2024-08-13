@@ -1,9 +1,5 @@
-import type {
-	articles,
-	categories,
-	newsletters,
-	recipients,
-} from "../db/schema.js";
+import type { articles, newsletters, recipients } from "../db/schema.js";
+import type { CATEGORIES } from "../lib/constants.js";
 
 // Data collection + formatting types
 export interface PageToScrape {
@@ -41,11 +37,17 @@ export interface ValidArticleDataWithCount extends ValidArticleData {
 	count: number;
 }
 
+export type Category = (typeof CATEGORIES)[number];
+
 // Input types (pre-database)
 export interface ArticleInput {
 	title: string;
 	link: string;
 	description: string;
+}
+
+export interface ArticleInputWithCategory extends ArticleInput {
+	category: Category;
 }
 
 export interface CategoryInput {
@@ -62,9 +64,6 @@ export interface NewsletterInput {
 export type Newsletter = typeof newsletters.$inferSelect;
 export type NewNewsletter = typeof newsletters.$inferInsert;
 
-export type Category = typeof categories.$inferSelect;
-export type NewCategory = typeof categories.$inferInsert;
-
 export type Article = typeof articles.$inferSelect;
 export type NewArticle = typeof articles.$inferInsert;
 
@@ -72,12 +71,12 @@ export type Recipients = typeof recipients.$inferSelect;
 export type NewRecipient = typeof recipients.$inferInsert;
 
 // Populated types (post-database retrieval)
-export type PopulatedNewCategory = NewCategory & {
-	articles: NewArticle[];
-};
 
-export type PopulatedNewNewsletter = NewNewsletter & {
-	categories: PopulatedNewCategory[];
+// TODO:
+export type PopulatedNewNewsletter = NewNewsletter & {};
+
+export type ArticleWithCategory = Article & {
+	category: string;
 };
 
 export type PopulatedCategory = Category & {

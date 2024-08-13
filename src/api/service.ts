@@ -2,17 +2,14 @@ import { eq, inArray, not } from "drizzle-orm/expressions";
 import { db } from "../db/index.js";
 import {
 	articles,
-	categories,
-	categories as categoriesTable,
 	newsletterRecipients,
 	newsletters,
 	recipients,
 } from "../db/schema.js";
 import { DatabaseError } from "../lib/errors.js";
 import type {
-	ArticleInput,
-	NewsletterInput,
-	PopulatedNewCategory,
+	Article,
+	ArticleInputWithCategory,
 	PopulatedNewNewsletter,
 } from "../types/index.js";
 
@@ -26,11 +23,6 @@ export async function getAllNewslettersWithRecipients() {
 		return await db.query.newsletters
 			.findMany({
 				with: {
-					categories: {
-						with: {
-							articles: true,
-						},
-					},
 					recipients: {
 						columns: {},
 						with: {
@@ -57,15 +49,7 @@ export async function getAllNewslettersWithRecipients() {
 
 export async function getAllNewsletters() {
 	try {
-		return await db.query.newsletters.findMany({
-			with: {
-				categories: {
-					with: {
-						articles: true,
-					},
-				},
-			},
-		});
+		return await db.query.newsletters.findMany({});
 	} catch (error) {
 		logger.error("Failed to retrieve newsletters", { error });
 		throw new DatabaseError("Failed to retrieve newsletters");
@@ -77,17 +61,13 @@ export async function getNewsletter(id: number) {
 		const newsletter = await db.query.newsletters.findFirst({
 			where: (newsletters, { eq }) => eq(newsletters.id, id),
 			with: {
-				categories: {
-					with: {
-						articles: true,
-					},
-				},
 				recipients: {
 					columns: {},
 					with: {
 						recipient: true,
 					},
 				},
+				articles: true,
 			},
 		});
 
@@ -96,9 +76,30 @@ export async function getNewsletter(id: number) {
 			throw new DatabaseError("Newsletter not found");
 		}
 
+		// Group articles by category
+		const categorizedArticles = newsletter.articles.reduce(
+			(acc, article) => {
+				if (!acc[article.category]) {
+					acc[article.category] = [];
+				}
+				acc[article.category].push(article);
+				return acc;
+			},
+			{} as Record<string, Article[]>,
+		);
+
+		// Transform to categories array
+		const categories = Object.entries(categorizedArticles).map(
+			([name, articles]) => ({
+				name,
+				articles,
+			}),
+		);
+
 		return {
 			...newsletter,
 			recipients: newsletter.recipients.map((nr) => nr.recipient),
+			categories,
 		};
 	} catch (error) {
 		if (error instanceof DatabaseError) {
@@ -112,8 +113,11 @@ export async function getNewsletter(id: number) {
 
 export async function createNewsletter({
 	summary,
-	categories,
-}: NewsletterInput): Promise<PopulatedNewNewsletter> {
+	articles: articleInputs,
+}: {
+	summary: string;
+	articles: ArticleInputWithCategory[];
+}): Promise<PopulatedNewNewsletter> {
 	try {
 		log("Creating newsletter");
 		const allRecipients = await getAllRecipients();
@@ -125,36 +129,15 @@ export async function createNewsletter({
 				.values({ summary, status: "DRAFT" })
 				.returning();
 
-			// Create categories and articles
-			const categoriesArr: PopulatedNewCategory[] = [];
-			for (const categoryData of categories) {
-				const [category] = await tx
-					.insert(categoriesTable)
-					.values({
-						name: categoryData.name,
+			const articlesArr = await tx
+				.insert(articles)
+				.values(
+					articleInputs.map((article) => ({
+						...article,
 						newsletterId: newsletter.id,
-					})
-					.returning({
-						id: categoriesTable.id,
-						name: categoriesTable.name,
-					});
-
-				const articlesArr = await tx
-					.insert(articles)
-					.values(
-						categoryData.articles.map((article: ArticleInput) => ({
-							...article,
-							categoryId: category.id,
-						})),
-					)
-					.returning();
-
-				categoriesArr.push({
-					name: category.name,
-					newsletterId: newsletter.id,
-					articles: articlesArr,
-				});
-			}
+					})),
+				)
+				.returning();
 
 			await tx.insert(newsletterRecipients).values(
 				allRecipients.map((recipient) => {
@@ -169,7 +152,7 @@ export async function createNewsletter({
 				}),
 			);
 
-			return { ...newsletter, categories: categoriesArr };
+			return { ...newsletter, articles: articlesArr };
 		});
 	} catch (error) {
 		logger.error("Failed to create newsletter", { error });
@@ -202,24 +185,8 @@ export async function updateNewsletterSummary(id: number, summary: string) {
 export async function deleteNewsletter(id: number) {
 	try {
 		return await db.transaction(async (tx) => {
-			// First, get all category IDs associated with this newsletter
-			const categoryIds = await tx
-				.select({ id: categories.id })
-				.from(categories)
-				.where(eq(categories.newsletterId, id));
-
-			if (categoryIds.length > 0) {
-				// Delete all articles associated with these categories
-				await tx.delete(articles).where(
-					inArray(
-						articles.categoryId,
-						categoryIds.map((cat) => cat.id),
-					),
-				);
-
-				// Now delete the categories
-				await tx.delete(categories).where(eq(categories.newsletterId, id));
-			}
+			// Delete all articles associated with this newsletter
+			await tx.delete(articles).where(eq(articles.newsletterId, id));
 
 			// Delete related newsletter recipients
 			await tx

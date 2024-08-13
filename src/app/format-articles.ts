@@ -18,6 +18,7 @@ import {
 } from "../lib/utils.js";
 import type {
 	ArticleInput,
+	ArticleInputWithCategory,
 	CategoryInput,
 	ValidArticleData,
 } from "../types/index.js";
@@ -183,64 +184,40 @@ async function writeSummaryToFile() {
 
 export async function generateCategories(
 	articles: ValidArticleData[],
-): Promise<CategoryInput[]> {
+): Promise<ArticleInputWithCategory[]> {
 	const prompt = `Analyze the following articles and categorize them according to the predefined categories:
 
-	${JSON.stringify(articles, null, 2)}
-	
-	CATEGORIES:
-	${CATEGORIES.join("\n")}
-	
-	Please follow these guidelines:
-	1. Assign each article to at least one of the predefined categories. An article can belong to multiple categories if appropriate.
-	2. If any articles don't fit well into the main categories, do not include them in the results and remove them from the articles list.
-	3. Ensure that the source of the articles are not repeated in the categories. if you do include multiple articles from the same source, ensure that they are not one after the other.
-	
-	Format your response as a JSON object with the following structure:
-	[
-			{
-				"name": "Category Name",
-				"articles": [
-					{
-						"title": "Article Title",
-						"link": "Article Link",
-						"description": "Article Description"
-					},
-					...
-				]
-			},
-			{
-				"name": "Category Name 2",
-				"articles": [
-					{
-						"title": "Article Title",
-						"link": "Article Link",
-						"description": "Article Description"
-					},
-					...
-				]
-			},
-			...
-		]
+  ${JSON.stringify(articles, null, 2)}
+  
+  CATEGORIES:
+  ${CATEGORIES.join("\n")}
+  
+  Please follow these guidelines:
+  1. Assign each article to one of the predefined categories.
+  2. If an article doesn't fit well into any category, assign it to "Other".
+  
+  Format your response as a JSON array with the following structure:
+  [
+    {
+      "title": "Article Title",
+      "link": "Article Link",
+      "description": "Article Description",
+      "category": "Category Name"
+    },
+    ...
+  ]
 
-	
-	Ensure your response is valid JSON that can be parsed programmatically.`;
+  Ensure your response is valid JSON that can be parsed programmatically.`;
 
-	const generatedCategories = await retry<CategoryInput[]>(() =>
+	const generatedArticles = await retry<ArticleInputWithCategory[]>(() =>
 		generateJSONResponseFromModel(prompt),
 	);
 
-	if (!generatedCategories || generatedCategories.length === 0) {
-		logger.error("Error generating categories", { articles });
-		throw new Error("Error generating categories");
+	if (!generatedArticles || generatedArticles.length === 0) {
+		throw new Error("Error generating categorized articles");
 	}
 
-	const processedCategories = processCategories(generatedCategories);
-
-	// writeTestData("display-data-full.json", processedCategories);
-	log("categories generated", processedCategories);
-
-	return processedCategories;
+	return generatedArticles;
 }
 
 function deduplicateArticles(articles: ArticleInput[]): ArticleInput[] {

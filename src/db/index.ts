@@ -7,7 +7,7 @@ import * as schema from "./schema.js";
 
 const log = debug(`${process.env.APP_NAME}:db:index.ts`);
 
-const pool = new pg.Pool({
+export const pool = new pg.Pool({
 	connectionString: process.env.DATABASE_URL,
 });
 

@@ -42,9 +42,12 @@ export async function generateNewsletterData(): Promise<
 
 		const summary = await generateSummary(articlesData);
 
-		const categories = await generateCategories(articlesData);
+		const articlesWithCategories = await generateCategories(articlesData);
 
-		const newsletter = await createNewsletter({ summary, categories });
+		const newsletter = await createNewsletter({
+			summary,
+			articles: articlesWithCategories,
+		});
 
 		log("newsletter data generated", newsletter);
 		return newsletter;
