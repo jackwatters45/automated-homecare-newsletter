@@ -10,7 +10,7 @@ import {
 	DESCRIPTION_MAX_LENGTH,
 	RECURRING_FREQUENCY,
 } from "../lib/constants.js";
-import type { PageToScrape } from "../types/index.js";
+import type { NewArticleInput, PageToScrape } from "../types/index.js";
 import { getBrowser } from "./browser.js";
 import logger from "./logger.js";
 
@@ -270,3 +270,22 @@ export const getEnv = (name: string) => {
 	}
 	return value;
 };
+
+export function validateCategory(
+	category: string,
+): NewArticleInput["category"] {
+	const validCategories = [
+		"Industry Trends & Policy",
+		"Clinical Research & Care Innovations",
+		"Business Operations & Technology",
+		"Caregiver Support & Resources",
+		"Patient Care & Caregiving Best Practices",
+		"Other",
+	] as const;
+
+	// biome-ignore lint/suspicious/noExplicitAny: <>
+	if (validCategories.includes(category as any)) {
+		return category as NewArticleInput["category"];
+	}
+	throw new Error("Invalid category");
+}

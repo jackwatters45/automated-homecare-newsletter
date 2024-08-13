@@ -2,6 +2,7 @@ import express from "express";
 import type { Request, Response } from "express";
 
 import path from "node:path";
+import { z } from "zod";
 import {
 	generateNewsletterData,
 	sendNewsletter,
@@ -11,7 +12,9 @@ import { BASE_PATH } from "../lib/constants.js";
 import { DatabaseError } from "../lib/errors.js";
 import logger from "../lib/logger.js";
 import { renderTemplate } from "../lib/template.js";
+import { validateCategory } from "../lib/utils.js";
 import {
+	addArticle,
 	addRecipient,
 	createNewsletter,
 	deleteArticle,
@@ -168,6 +171,16 @@ export const newsletterController = {
 	},
 };
 
+const articleSchema = z.object({
+	newsletterId: z.coerce.number(),
+	title: z.string().min(5).max(100),
+	link: z.string().url(),
+	category: z.string(),
+	description: z
+		.union([z.string().min(50).max(250), z.string().max(0)])
+		.optional(),
+});
+
 // Article Controllers
 export const articleController = {
 	// Update an article's description
@@ -189,6 +202,25 @@ export const articleController = {
 					res.status(500).json({ error: error.message });
 				}
 			} else {
+				res.status(500).json({ error: "An unexpected error occurred" });
+			}
+		}
+	},
+	create: async (req: Request, res: Response) => {
+		try {
+			const validatedData = articleSchema.parse(req.body);
+			const newArticle = await addArticle({
+				...validatedData,
+				category: validateCategory(validatedData.category),
+			});
+			res.status(201).json(newArticle);
+		} catch (error) {
+			if (error instanceof z.ZodError) {
+				res.status(400).json({ error: error.errors });
+			} else if (error instanceof DatabaseError) {
+				res.status(400).json({ error: error.message });
+			} else {
+				logger.error("Error adding article:", error);
 				res.status(500).json({ error: "An unexpected error occurred" });
 			}
 		}

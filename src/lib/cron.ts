@@ -87,6 +87,25 @@ export function setupCronJobs(): void {
 			timezone: "America/Halifax",
 		}),
 		healthCheck: schedule("0 0 * * *", runHealthCheckTask, { timezone: "UTC" }),
+
+		// TODO: remove
+		generateData: schedule(
+			"*/5 * * * *",
+			async () => {
+				const res = await fetch("api/newsletters/generate", {
+					method: "POST",
+				});
+
+				if (res.status === 200) {
+					logger.info("Successfully generated newsletter data");
+				} else {
+					logger.error("Failed to generate newsletter data");
+				}
+			},
+			{
+				timezone: "UTC",
+			},
+		),
 	};
 
 	process.on("SIGINT", () => {

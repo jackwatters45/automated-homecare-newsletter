@@ -9,12 +9,24 @@ import {
 import { DatabaseError } from "../lib/errors.js";
 import type {
 	Article,
+	ArticleInput,
 	ArticleInputWithCategory,
+	Category,
+	NewArticleInput,
 	PopulatedNewNewsletter,
 } from "../types/index.js";
 
+import * as cheerio from "cheerio";
 import debug from "debug";
+import { createDescriptionPrompt } from "../app/format-articles.js";
 import logger from "../lib/logger.js";
+import { rateLimiter } from "../lib/rate-limit.js";
+import {
+	extractTextContent,
+	fetchPageContent,
+	generateJSONResponseFromModel,
+	retry,
+} from "../lib/utils.js";
 
 const log = debug(`${process.env.APP_NAME}:routes/api/service.ts`);
 
@@ -247,6 +259,58 @@ export async function updateArticleDescription(
 			description,
 		});
 		throw new DatabaseError(`Failed to update article description: ${error}`);
+	}
+}
+
+const getDescription = async (
+	articleData: NewArticleInput,
+): Promise<string> => {
+	if (articleData.description) return articleData.description;
+
+	const pageContent = await retry(() => fetchPageContent(articleData.link));
+
+	if (!pageContent) throw new Error("Error getting page content");
+
+	const $ = cheerio.load(pageContent);
+
+	const descriptionPrompt = createDescriptionPrompt($.html());
+
+	const description = await generateJSONResponseFromModel(descriptionPrompt);
+
+	if (!description) throw new Error("Error generating description");
+
+	return description?.trim();
+};
+
+export async function addArticle(articleData: NewArticleInput) {
+	const description = await getDescription(articleData);
+
+	try {
+		return await db.transaction(async (tx) => {
+			// Check if the newsletter exists and is not sent
+			const newsletter = await tx.query.newsletters.findFirst({
+				where: eq(newsletters.id, articleData.newsletterId),
+			});
+
+			if (!newsletter) {
+				throw new DatabaseError("Newsletter not found");
+			}
+
+			if (newsletter.status === "SENT") {
+				throw new DatabaseError("Cannot add articles to a sent newsletter");
+			}
+
+			// Insert the new article
+			const [newArticle] = await tx
+				.insert(articles)
+				.values({ ...articleData, description })
+				.returning();
+
+			return newArticle;
+		});
+	} catch (error) {
+		logger.error("Failed to add article", { error, articleData });
+		throw new DatabaseError(`Failed to add article: ${error}`);
 	}
 }
 

@@ -24,6 +24,7 @@ router.post("/newsletters/:id/send", newsletterController.send);
 
 // Article Routes
 router.patch("/articles/:id/description", articleController.updateDescription);
+router.post("/articles", articleController.create);
 router.delete("/articles/:id", articleController.delete);
 
 // Recipient Routes

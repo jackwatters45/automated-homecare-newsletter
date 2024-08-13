@@ -46,6 +46,12 @@ export interface ArticleInput {
 	description: string;
 }
 
+export interface NewArticleInput extends Omit<ArticleInput, "description"> {
+	description?: string;
+	newsletterId: number;
+	category: Category;
+}
+
 export interface ArticleInputWithCategory extends ArticleInput {
 	category: Category;
 }
