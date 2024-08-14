@@ -25,10 +25,6 @@ export async function filterArticlesByPage(
 ) {
 	try {
 		if (!articles.length) {
-			logger.error(
-				"No articles found. Please check the scraping process and try again.",
-				{ page, articles },
-			);
 			throw new Error(
 				"No articles found. Please check the scraping process and try again.",
 			);
