@@ -74,8 +74,6 @@ export const SPECIFIC_PAGES: PageToScrape[] = [
 
 export const TOPIC = "homecare (medical) and home health (medical)";
 
-export const RECURRING_FREQUENCY = 7 * 24 * 60 * 60 * 1000; // 7 days in milliseconds
-
 export const DESCRIPTION_MAX_LENGTH = 35;
 
 export const COMPANY_NAME = "TrollyCare";
@@ -106,3 +104,8 @@ export const CATEGORIES = [
 	"Patient Care & Caregiving Best Practices",
 	"Other",
 ] as const;
+
+export const SYSTEM_INSTRUCTION = `You are a homecare business operator. You are an expert in homecare news and are tasked with choosing which articles to include in a newsletter as well as generating a summary for the newsletter and cleaning up the content of the articles.
+	\n\n
+	Please provide your response in valid JSON format. The entire response should be a single JSON object or array. Do not include any explanatory text outside of the JSON structure.
+	`;

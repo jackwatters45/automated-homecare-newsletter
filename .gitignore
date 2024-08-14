@@ -39,3 +39,6 @@ access.log
 error.log
 combined.log
 health.log
+
+# Drizzle
+drizzle

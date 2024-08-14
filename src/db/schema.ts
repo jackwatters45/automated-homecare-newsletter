@@ -102,3 +102,11 @@ export const cronLogs = createTable("cron_logs", {
 });
 
 export const cronLogsRelations = relations(cronLogs, ({ many }) => ({}));
+
+export const settings = createTable("settings", {
+	id: serial("id").primaryKey(),
+	key: text("key").notNull().unique(),
+	value: text("value").notNull(),
+	createdAt: timestamp("created_at").defaultNow(),
+	updatedAt: timestamp("updated_at").defaultNow(),
+});

@@ -1,16 +1,18 @@
 import { promises as fs } from "node:fs";
 import path from "node:path";
-import type * as cheerio from "cheerio";
+import * as cheerio from "cheerio";
 import debug from "debug";
 
 import robotsParser from "robots-parser";
-import { model } from "../app/index.js";
+import { getNewsletterFrequency } from "../api/service.js";
+import { createDescriptionPrompt } from "../app/format-articles.js";
 import {
 	BASE_PATH,
+	CATEGORIES,
 	DESCRIPTION_MAX_LENGTH,
-	RECURRING_FREQUENCY,
 } from "../lib/constants.js";
 import type { NewArticleInput, PageToScrape } from "../types/index.js";
+import { initializeGenAI } from "./ai.js";
 import { getBrowser } from "./browser.js";
 import logger from "./logger.js";
 
@@ -22,26 +24,65 @@ export function logAiCall(prompt: string) {
 	log(`AI model called ${aiCallCount} times. Prompt: ${prompt.slice(0, 55)}...`);
 }
 
+const model = initializeGenAI();
+
 export async function generateJSONResponseFromModel(prompt: string) {
-	const result = await model.generateContent(prompt);
-	logAiCall(prompt);
-	const response = await result.response;
+	try {
+		logAiCall(prompt);
 
-	const text = response.text();
+		const result = await model.generateContent(prompt);
 
+		const response = await result.response;
+
+		const text = response.text();
+
+		return parseJSONResponse(text);
+	} catch (error) {
+		log(`Unexpected error: ${error}`);
+		throw new Error(`Unexpected error when generating response: ${error}`);
+	}
+}
+
+function parseJSONResponse(text: string) {
+	log;
 	const cleanedString = text
 		.replace(/^```json\n/, "")
 		.replace(/\n```$/, "")
 		.trim();
 
+	log(`Parsing response: ${cleanedString.slice(0, 100)}...`);
+
 	try {
-		return JSON.parse(cleanedString);
-	} catch (error) {
+		const jsonResponse = JSON.parse(cleanedString);
+
+		console.log(jsonResponse);
+		if (jsonResponse.type === "text") {
+			return jsonResponse.text;
+		}
+
+		return jsonResponse;
+	} catch (parseError) {
+		log(`Error parsing JSON response: ${parseError}`);
+
+		const jsonMatch = cleanedString.match(/\{[\s\S]*\}|\[[\s\S]*\]/);
+		if (jsonMatch) {
+			try {
+				return JSON.parse(jsonMatch[0]);
+			} catch (innerError) {
+				log(`Failed to parse extracted JSON: ${innerError}`);
+			}
+		}
+
 		// If parsing fails, check if it's a simple string
-		if (cleanedString.startsWith('"') && cleanedString.endsWith('"')) {
+		if (
+			typeof cleanedString === "string" &&
+			cleanedString.startsWith('"') &&
+			cleanedString.endsWith('"')
+		) {
 			return cleanedString.slice(1, -1);
 		}
 
+		// If it's not a valid JSON or a quoted string, return the raw text
 		return cleanedString;
 	}
 }
@@ -158,30 +199,52 @@ export async function fetchPageContent(url: string): Promise<string> {
 	}
 }
 
-export function getPastWeekDate(): {
+export async function getPastPeriodDate(): Promise<{
 	start: string;
 	end: string;
 	year: number;
-} {
-	const pastWeek = new Date().getTime() - RECURRING_FREQUENCY;
-	const formattedPastWeek = new Date(pastWeek).toLocaleDateString("en-US", {
-		year: "numeric",
-		month: "long",
-		day: "numeric",
-	});
+}> {
+	try {
+		const frequencyWeeks = await getNewsletterFrequency();
+		const frequency = getRecurringFrequency(frequencyWeeks);
 
-	const today = new Date();
-	const formattedToday = new Date(today).toLocaleDateString("en-US", {
-		year: "numeric",
-		month: "long",
-		day: "numeric",
-	});
+		const pastPeriod = new Date().getTime() - frequency;
+		const formattedPastPeriod = new Date(pastPeriod).toLocaleDateString("en-US", {
+			year: "numeric",
+			month: "long",
+			day: "numeric",
+		});
 
-	return {
-		start: formattedPastWeek,
-		end: formattedToday,
-		year: today.getFullYear(),
-	};
+		const today = new Date();
+		const formattedToday = today.toLocaleDateString("en-US", {
+			year: "numeric",
+			month: "long",
+			day: "numeric",
+		});
+
+		return {
+			start: formattedPastPeriod,
+			end: formattedToday,
+			year: today.getFullYear(),
+		};
+	} catch (error) {
+		console.error("Error fetching newsletter frequency:", error);
+		// Fallback to default 1 week if there's an error
+		const oneWeekAgo = new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000);
+		return {
+			start: oneWeekAgo.toLocaleDateString("en-US", {
+				year: "numeric",
+				month: "long",
+				day: "numeric",
+			}),
+			end: new Date().toLocaleDateString("en-US", {
+				year: "numeric",
+				month: "long",
+				day: "numeric",
+			}),
+			year: new Date().getFullYear(),
+		};
+	}
 }
 
 export function shuffleArray<T>(array: T[]): T[] {
@@ -274,18 +337,33 @@ export const getEnv = (name: string) => {
 export function validateCategory(
 	category: string,
 ): NewArticleInput["category"] {
-	const validCategories = [
-		"Industry Trends & Policy",
-		"Clinical Research & Care Innovations",
-		"Business Operations & Technology",
-		"Caregiver Support & Resources",
-		"Patient Care & Caregiving Best Practices",
-		"Other",
-	] as const;
-
 	// biome-ignore lint/suspicious/noExplicitAny: <>
-	if (validCategories.includes(category as any)) {
+	if (CATEGORIES.includes(category as any)) {
 		return category as NewArticleInput["category"];
 	}
 	throw new Error("Invalid category");
 }
+
+export function getRecurringFrequency(weeks: number): number {
+	return weeks * 7 * 24 * 60 * 60 * 1000; // Convert weeks to milliseconds
+}
+
+export const getDescription = async (
+	articleData: NewArticleInput,
+): Promise<string> => {
+	if (articleData.description) return articleData.description;
+
+	const pageContent = await retry(() => fetchPageContent(articleData.link));
+
+	if (!pageContent) throw new Error("Error getting page content");
+
+	const $ = cheerio.load(pageContent);
+
+	const descriptionPrompt = createDescriptionPrompt($.html());
+
+	const description = await generateJSONResponseFromModel(descriptionPrompt);
+
+	if (!description) throw new Error("Error generating description");
+
+	return description?.trim();
+};

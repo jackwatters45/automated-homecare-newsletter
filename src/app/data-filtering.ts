@@ -1,9 +1,11 @@
 import debug from "debug";
 
-import { CATEGORIES, RECURRING_FREQUENCY, TOPIC } from "../lib/constants.js";
+import { getNewsletterFrequency } from "../api/service.js";
+import { CATEGORIES, TOPIC } from "../lib/constants.js";
 import logger from "../lib/logger.js";
 import {
 	generateJSONResponseFromModel,
+	getRecurringFrequency,
 	retry,
 	shuffleArray,
 } from "../lib/utils.js";
@@ -32,12 +34,15 @@ export async function filterArticlesByPage(
 			);
 		}
 
+		const frequencyWeeks = await getNewsletterFrequency();
+		const frequency = getRecurringFrequency(frequencyWeeks);
+		const cutoffDate = Date.now() - frequency;
+
 		const filteredArticles = articles?.filter(
 			(article): article is ValidArticleData => {
 				try {
-					const weekAgo = new Date().getTime() - RECURRING_FREQUENCY;
 					const isValidDate =
-						!article.date || new Date(article.date).getTime() > weekAgo;
+						!article.date || new Date(article.date).getTime() > cutoffDate;
 
 					const hasRequiredFields = !!article.link && !!article.title;
 

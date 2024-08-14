@@ -85,10 +85,15 @@ export type ArticleWithCategory = Article & {
 	category: string;
 };
 
-export type PopulatedCategory = Category & {
+// export type PopulatedCategory = Category & {
+// 	articles: Article[];
+// };
+export type PopulatedCategory = {
+	name: Category;
 	articles: Article[];
 };
 
 export type PopulatedNewsletter = Newsletter & {
 	categories: PopulatedCategory[];
+	recipients: Recipients[];
 };

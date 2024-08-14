@@ -1,28 +1,47 @@
 import debug from "debug";
 import { google } from "googleapis";
 import type { Browser, Page } from "puppeteer";
+import { getNewsletterFrequency } from "../api/service.js";
 import { createDescriptionPrompt } from "../app/format-articles.js";
 import type { ArticleData, ValidArticleData } from "../types/index.js";
 import { getBrowser } from "./browser.js";
-import { RECURRING_FREQUENCY } from "./constants.js";
 import { rateLimiter } from "./rate-limit.js";
-import { generateJSONResponseFromModel, retry } from "./utils.js";
+import {
+	generateJSONResponseFromModel,
+	getRecurringFrequency,
+	retry,
+} from "./utils.js";
 
 const log = debug(`${process.env.APP_NAME}:google-search.ts`);
 const customsearch = google.customsearch("v1");
 const BLACKLISTED_DOMAINS = ["https://nahc.com", "https://www.nejm.org"];
 
-export function getLastDateQuery(
+export async function getLastDateQuery(
 	q: string,
-	beforeMs = RECURRING_FREQUENCY,
-): string {
+	customFrequency?: number,
+): Promise<string> {
 	try {
+		let beforeMs: number;
+
+		if (customFrequency !== undefined) {
+			beforeMs = customFrequency;
+		} else {
+			const frequencyWeeks = await getNewsletterFrequency();
+			beforeMs = getRecurringFrequency(frequencyWeeks);
+		}
+
 		const pastDate = new Date().getTime() - beforeMs;
 		const formattedPastDate = new Date(pastDate).toISOString().split("T")[0];
+
 		return `${q} after:${formattedPastDate}`;
 	} catch (error) {
 		log(`Error in getLastDateQuery: ${error}`);
-		return q;
+
+		// Fallback to a default of 1 week if there's an error
+		const oneWeekAgo = new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000);
+		const formattedOneWeekAgo = oneWeekAgo.toISOString().split("T")[0];
+
+		return `${q} after:${formattedOneWeekAgo}`;
 	}
 }
 
@@ -64,11 +83,12 @@ export async function searchNews(qs: string[]): Promise<ValidArticleData[]> {
 			for (let i = 0; i < 3; i++) {
 				const startIndex = i * 10 + 1;
 				try {
+					const query = await getLastDateQuery(q);
 					const res = await retry(() => {
 						return customsearch.cse.list({
 							cx: process.env.CUSTOM_ENGINE_ID,
 							auth: process.env.CUSTOM_SEARCH_API_KEY,
-							q: getLastDateQuery(q),
+							q: query,
 							start: startIndex,
 						});
 					});

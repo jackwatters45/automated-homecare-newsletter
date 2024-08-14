@@ -2,7 +2,6 @@ import "dotenv/config";
 
 import debug from "debug";
 
-import { initializeGenAI } from "../lib/ai.js";
 import { CLIENT_URL, REVIEWER_EMAIL } from "../lib/constants.js";
 import { resend } from "../lib/email.js";
 
@@ -23,8 +22,6 @@ import {
 } from "./format-articles.js";
 
 const log = debug(`${process.env.APP_NAME}:app:index.ts`);
-
-export const model = initializeGenAI();
 
 export async function generateNewsletterData(): Promise<
 	PopulatedNewNewsletter | undefined

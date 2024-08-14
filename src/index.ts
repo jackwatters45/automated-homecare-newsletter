@@ -13,11 +13,9 @@ import morgan from "morgan";
 
 import { engine } from "express-handlebars";
 import apiRouter from "./api/router.js";
+import { authMiddleware } from "./lib/auth-middleware.js";
 import { API_URL, BASE_PATH, PORT } from "./lib/constants.js";
 import { setupCronJobs } from "./lib/cron.js";
-
-import { is } from "drizzle-orm";
-import { authMiddleware } from "./lib/auth-middleware.js";
 import { handleErrors } from "./lib/errors.js";
 import { healthCheck } from "./lib/health.js";
 

@@ -83,29 +83,11 @@ async function runHealthCheckTask(): Promise<void> {
 
 export function setupCronJobs(): void {
 	const tasks: { [key: string]: ScheduledTask } = {
+		// TODO: update to be dynamic
 		newsletter: schedule("0 9 * * 1", runNewsletterTask, {
 			timezone: "America/Halifax",
 		}),
 		healthCheck: schedule("0 0 * * *", runHealthCheckTask, { timezone: "UTC" }),
-
-		// TODO: remove
-		generateData: schedule(
-			"*/5 * * * *",
-			async () => {
-				const res = await fetch("api/newsletters/generate", {
-					method: "POST",
-				});
-
-				if (res.status === 200) {
-					logger.info("Successfully generated newsletter data");
-				} else {
-					logger.error("Failed to generate newsletter data");
-				}
-			},
-			{
-				timezone: "UTC",
-			},
-		),
 	};
 
 	process.on("SIGINT", () => {
