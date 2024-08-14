@@ -1,34 +1,41 @@
-import { eq, inArray, not } from "drizzle-orm/expressions";
+import debug from "debug";
+import { eq, not } from "drizzle-orm/expressions";
+import { z } from "zod";
+
 import { db } from "../db/index.js";
 import {
 	articles,
 	newsletterRecipients,
 	newsletters,
 	recipients,
+	settings,
 } from "../db/schema.js";
 import { DatabaseError } from "../lib/errors.js";
 import type {
 	Article,
-	ArticleInput,
 	ArticleInputWithCategory,
-	Category,
 	NewArticleInput,
 	PopulatedNewNewsletter,
+	PopulatedNewsletter,
 } from "../types/index.js";
 
-import * as cheerio from "cheerio";
-import debug from "debug";
-import { createDescriptionPrompt } from "../app/format-articles.js";
 import logger from "../lib/logger.js";
-import { rateLimiter } from "../lib/rate-limit.js";
-import {
-	extractTextContent,
-	fetchPageContent,
-	generateJSONResponseFromModel,
-	retry,
-} from "../lib/utils.js";
+import { getDescription, validateCategory } from "../lib/utils.js";
 
 const log = debug(`${process.env.APP_NAME}:routes/api/service.ts`);
+
+export async function getAllNewsletters() {
+	try {
+		return await db.query.newsletters.findMany({});
+	} catch (error) {
+		if (error instanceof DatabaseError) throw error;
+		throw new DatabaseError("Failed to retrieve newsletters", {
+			operation: "findMany",
+			table: "newsletters",
+			error: error instanceof Error ? error.message : String(error),
+		});
+	}
+}
 
 export async function getAllNewslettersWithRecipients() {
 	try {
@@ -50,25 +57,16 @@ export async function getAllNewslettersWithRecipients() {
 				})),
 			);
 	} catch (error) {
-		logger.error("Failed to retrieve newsletters with recipients", {
-			error,
+		if (error instanceof DatabaseError) throw error;
+		throw new DatabaseError("Failed to retrieve newsletters with recipients", {
+			operation: "findMany with recipients",
+			table: "newsletters",
+			error: error instanceof Error ? error.message : String(error),
 		});
-		throw new DatabaseError(
-			`Failed to retrieve newsletters with recipients: ${error}`,
-		);
 	}
 }
 
-export async function getAllNewsletters() {
-	try {
-		return await db.query.newsletters.findMany({});
-	} catch (error) {
-		logger.error("Failed to retrieve newsletters", { error });
-		throw new DatabaseError("Failed to retrieve newsletters");
-	}
-}
-
-export async function getNewsletter(id: number) {
+export async function getNewsletter(id: number): Promise<PopulatedNewsletter> {
 	try {
 		const newsletter = await db.query.newsletters.findFirst({
 			where: (newsletters, { eq }) => eq(newsletters.id, id),
@@ -84,8 +82,7 @@ export async function getNewsletter(id: number) {
 		});
 
 		if (!newsletter) {
-			logger.error("Newsletter not found", { id });
-			throw new DatabaseError("Newsletter not found");
+			throw new DatabaseError("Newsletter not found", { id });
 		}
 
 		// Group articles by category
@@ -103,7 +100,7 @@ export async function getNewsletter(id: number) {
 		// Transform to categories array
 		const categories = Object.entries(categorizedArticles).map(
 			([name, articles]) => ({
-				name,
+				name: validateCategory(name),
 				articles,
 			}),
 		);
@@ -114,12 +111,13 @@ export async function getNewsletter(id: number) {
 			categories,
 		};
 	} catch (error) {
-		if (error instanceof DatabaseError) {
-			logger.error("Failed to retrieve newsletter", { error, id });
-			throw error;
-		}
-		logger.error("Failed to retrieve newsletter", { error, id });
-		throw new DatabaseError(`Failed to retrieve newsletter: ${error}`);
+		if (error instanceof DatabaseError) throw error;
+		throw new DatabaseError("Failed to retrieve newsletter", {
+			operation: "findFirst",
+			table: "newsletters",
+			id,
+			error: error instanceof Error ? error.message : String(error),
+		});
 	}
 }
 
@@ -167,8 +165,14 @@ export async function createNewsletter({
 			return { ...newsletter, articles: articlesArr };
 		});
 	} catch (error) {
-		logger.error("Failed to create newsletter", { error });
-		throw new DatabaseError(`Failed to create newsletter: ${error}`);
+		if (error instanceof DatabaseError) throw error;
+		throw new DatabaseError("Failed to create newsletter", {
+			operation: "transaction",
+			tables: ["newsletters", "articles", "newsletter_recipients"],
+			error: error instanceof Error ? error.message : String(error),
+			summary,
+			articleCount: articleInputs.length,
+		});
 	}
 }
 
@@ -185,12 +189,13 @@ export async function updateNewsletterSummary(id: number, summary: string) {
 		}
 		return updatedNewsletter;
 	} catch (error) {
-		if (error instanceof DatabaseError) {
-			logger.error("Failed to update newsletter summary", { error, id });
-			throw error;
-		}
-		logger.error("Failed to update newsletter summary", { error, id });
-		throw new DatabaseError(`Failed to update newsletter summary: ${error}`);
+		if (error instanceof DatabaseError) throw error;
+		throw new DatabaseError("Failed to update newsletter summary", {
+			operation: "update",
+			table: "newsletters",
+			id,
+			error: error instanceof Error ? error.message : String(error),
+		});
 	}
 }
 
@@ -212,19 +217,43 @@ export async function deleteNewsletter(id: number) {
 				.returning();
 
 			if (!deletedNewsletter) {
-				logger.error("Newsletter not found", { id });
-				throw new DatabaseError("Newsletter not found");
+				throw new DatabaseError("Newsletter not found", { id });
 			}
 
 			return deletedNewsletter;
 		});
 	} catch (error) {
-		if (error instanceof DatabaseError) {
-			logger.error("Failed to delete newsletter", { error, id });
-			throw error;
+		if (error instanceof DatabaseError) throw error;
+		throw new DatabaseError("Failed to delete newsletter", {
+			operation: "transaction",
+			tables: ["newsletters", "articles", "newsletter_recipients"],
+			id,
+			error: error instanceof Error ? error.message : String(error),
+		});
+	}
+}
+
+export async function getNewsletterFrequency(): Promise<number> {
+	try {
+		const result = await getSetting("newsletterFrequency");
+
+		const frequency = Number.parseInt(result, 10);
+
+		if (Number.isNaN(frequency) || frequency < 1) {
+			throw new DatabaseError("Invalid newsletter frequency value in database", {
+				actualValue: result,
+			});
 		}
-		logger.error("Failed to delete newsletter", { error, id });
-		throw new DatabaseError(`Failed to delete newsletter: ${error}`);
+
+		return frequency;
+	} catch (error) {
+		if (error instanceof DatabaseError) throw error;
+		throw new DatabaseError("Failed to retrieve newsletter frequency", {
+			operation: "select",
+			table: "settings",
+			key: "newsletterFrequency",
+			error: error instanceof Error ? error.message : String(error),
+		});
 	}
 }
 
@@ -239,53 +268,28 @@ export async function updateArticleDescription(
 			.set({ description, updatedAt: new Date() })
 			.where(eq(articles.id, id))
 			.returning();
+
 		if (!updatedArticle) {
-			logger.error("Article not found", { id, description });
-			throw new DatabaseError("Article not found");
+			throw new DatabaseError("Article not found", { id });
 		}
+
 		return updatedArticle;
 	} catch (error) {
-		if (error instanceof DatabaseError) {
-			logger.error("Failed to update article description", {
-				error,
-				id,
-				description,
-			});
-			throw error;
-		}
-		logger.error("Failed to update article description", {
-			error,
+		if (error instanceof DatabaseError) throw error;
+		throw new DatabaseError("Failed to update article description", {
+			operation: "update",
+			table: "articles",
 			id,
-			description,
+			descriptionLength: description.length,
+			error: error instanceof Error ? error.message : String(error),
 		});
-		throw new DatabaseError(`Failed to update article description: ${error}`);
 	}
 }
 
-const getDescription = async (
-	articleData: NewArticleInput,
-): Promise<string> => {
-	if (articleData.description) return articleData.description;
-
-	const pageContent = await retry(() => fetchPageContent(articleData.link));
-
-	if (!pageContent) throw new Error("Error getting page content");
-
-	const $ = cheerio.load(pageContent);
-
-	const descriptionPrompt = createDescriptionPrompt($.html());
-
-	const description = await generateJSONResponseFromModel(descriptionPrompt);
-
-	if (!description) throw new Error("Error generating description");
-
-	return description?.trim();
-};
-
 export async function addArticle(articleData: NewArticleInput) {
-	const description = await getDescription(articleData);
-
 	try {
+		const description = await getDescription(articleData);
+
 		return await db.transaction(async (tx) => {
 			// Check if the newsletter exists and is not sent
 			const newsletter = await tx.query.newsletters.findFirst({
@@ -293,11 +297,15 @@ export async function addArticle(articleData: NewArticleInput) {
 			});
 
 			if (!newsletter) {
-				throw new DatabaseError("Newsletter not found");
+				throw new DatabaseError("Newsletter not found", {
+					newsletterId: articleData.newsletterId,
+				});
 			}
 
 			if (newsletter.status === "SENT") {
-				throw new DatabaseError("Cannot add articles to a sent newsletter");
+				throw new DatabaseError("Cannot add articles to a sent newsletter", {
+					newsletterId: articleData.newsletterId,
+				});
 			}
 
 			// Insert the new article
@@ -309,51 +317,109 @@ export async function addArticle(articleData: NewArticleInput) {
 			return newArticle;
 		});
 	} catch (error) {
-		logger.error("Failed to add article", { error, articleData });
-		throw new DatabaseError(`Failed to add article: ${error}`);
+		if (error instanceof DatabaseError) throw error;
+		throw new DatabaseError("Failed to add article", {
+			operation: "insert",
+			table: "articles",
+			newsletterId: articleData.newsletterId,
+			articleTitle: articleData.title,
+			error: error instanceof Error ? error.message : String(error),
+		});
 	}
 }
 
 export async function deleteArticle(id: number) {
 	try {
 		return await db.transaction(async (tx) => {
+			// First, check if the article exists and get its newsletter ID
+			const article = await tx.query.articles.findFirst({
+				where: eq(articles.id, id),
+				columns: { id: true, newsletterId: true },
+			});
+
+			if (!article) {
+				throw new DatabaseError("Article not found", { articleId: id });
+			}
+
+			// Check if the associated newsletter is not sent
+			const newsletter = await tx.query.newsletters.findFirst({
+				where: eq(newsletters.id, article.newsletterId),
+				columns: { status: true },
+			});
+
+			if (newsletter?.status === "SENT") {
+				throw new DatabaseError("Cannot delete article from a sent newsletter", {
+					articleId: id,
+					newsletterId: article.newsletterId,
+				});
+			}
+
+			// Delete the article
 			const [deletedArticle] = await tx
 				.delete(articles)
 				.where(eq(articles.id, id))
 				.returning();
 
-			if (!deletedArticle) {
-				logger.error("Article not found", { id });
-				throw new DatabaseError("Article not found");
-			}
-
 			return deletedArticle;
 		});
 	} catch (error) {
-		if (error instanceof DatabaseError) {
-			logger.error("Failed to delete article", { error, id });
-			throw error;
-		}
-		logger.error("Failed to delete article", { error, id });
-		throw new DatabaseError(`Failed to delete article: ${error}`);
+		if (error instanceof DatabaseError) throw error;
+		throw new DatabaseError("Failed to delete article", {
+			operation: "delete",
+			table: "articles",
+			articleId: id,
+			error: error instanceof Error ? error.message : String(error),
+		});
 	}
 }
 
 // Recipient Functions
 export async function getAllRecipients() {
 	try {
-		return await db.query.recipients.findMany();
+		const recipients = await db.query.recipients.findMany();
+
+		if (recipients.length === 0) {
+			throw new DatabaseError("No recipients found", {
+				type: "EMPTY_RESULT",
+			});
+		}
+
+		return recipients;
 	} catch (error) {
-		logger.error("Failed to retrieve recipients", { error });
-		throw new DatabaseError(`Failed to retrieve recipients: ${error}`);
+		if (error instanceof DatabaseError) throw error;
+		throw new DatabaseError("Failed to retrieve recipients", {
+			operation: "findMany",
+			table: "recipients",
+			error: error instanceof Error ? error.message : String(error),
+		});
 	}
 }
 
+const emailSchema = z.string().email();
+
 export async function addRecipient(rawEmail: string) {
-	const email = decodeURIComponent(rawEmail);
+	let email = "";
+	try {
+		email = decodeURIComponent(rawEmail);
+		emailSchema.parse(email); // Validate email format
+	} catch (error) {
+		if (error instanceof z.ZodError) {
+			throw new DatabaseError("Invalid email format", { rawEmail, email });
+		}
+		throw new DatabaseError("Failed to decode email", { rawEmail });
+	}
 
 	try {
 		return await db.transaction(async (tx) => {
+			// Check if recipient already exists
+			const existingRecipient = await tx.query.recipients.findFirst({
+				where: eq(recipients.email, email),
+			});
+
+			if (existingRecipient) {
+				throw new DatabaseError("Recipient already exists", { email });
+			}
+
 			const [recipient] = await tx
 				.insert(recipients)
 				.values({ email })
@@ -378,51 +444,120 @@ export async function addRecipient(rawEmail: string) {
 			return recipient;
 		});
 	} catch (error) {
-		logger.error("Failed to add recipient", { error, email, rawEmail });
-		throw new DatabaseError(`Failed to add recipient: ${error}`);
+		if (error instanceof DatabaseError) throw error;
+		throw new DatabaseError("Failed to add recipient", {
+			operation: "insert",
+			table: "recipients",
+			email,
+			error: error instanceof Error ? error.message : String(error),
+		});
 	}
 }
 
 export async function deleteRecipient(rawEmail: string) {
-	const email = decodeURIComponent(rawEmail);
-
-	if (!email) {
-		logger.error("Email is missing or invalid", { email, rawEmail });
-		throw new Error("Email is missing or invalid");
+	let email = "";
+	try {
+		email = decodeURIComponent(rawEmail);
+		emailSchema.parse(email); // Validate email format
+	} catch (error) {
+		if (error instanceof z.ZodError) {
+			throw new DatabaseError("Invalid email format", { rawEmail, email });
+		}
+		throw new DatabaseError("Failed to decode email", { rawEmail });
 	}
 
 	try {
 		return await db.transaction(async (tx) => {
-			// find the recipient
-			const [recipient] = await tx
-				.select()
-				.from(recipients)
-				.where(eq(recipients.email, email));
+			// Find the recipient
+			const recipient = await tx.query.recipients.findFirst({
+				where: eq(recipients.email, email),
+			});
 
 			if (!recipient) {
-				logger.error("Recipient not found", { email, rawEmail });
-				throw new DatabaseError("Recipient not found");
+				throw new DatabaseError("Recipient not found", { email });
 			}
 
 			// Delete all newsletter_recipients entries for this recipient
-			await tx
+			const { rowCount: deletedAssociations } = await tx
 				.delete(newsletterRecipients)
 				.where(eq(newsletterRecipients.recipientId, recipient.id));
 
-			// delete the recipient
+			// Delete the recipient
 			const [deletedRecipient] = await tx
 				.delete(recipients)
 				.where(eq(recipients.id, recipient.id))
 				.returning();
 
-			return deletedRecipient;
+			return { deletedRecipient, deletedAssociations };
 		});
 	} catch (error) {
-		if (error instanceof DatabaseError) {
-			logger.error("Failed to delete recipient", { error, email, rawEmail });
-			throw error;
+		if (error instanceof DatabaseError) throw error;
+		throw new DatabaseError("Failed to delete recipient", {
+			operation: "delete",
+			table: "recipients",
+			email,
+			error: error instanceof Error ? error.message : String(error),
+		});
+	}
+}
+
+// Settings Functions
+export async function getSetting(key: string) {
+	if (!key || typeof key !== "string") {
+		throw new DatabaseError("Invalid setting key", { key });
+	}
+
+	try {
+		const result = await db
+			.select({ value: settings.value })
+			.from(settings)
+			.where(eq(settings.key, key))
+			.limit(1);
+
+		if (result.length === 0) {
+			throw new DatabaseError("Setting not found", { key });
 		}
-		logger.error("Failed to delete recipient", { error, email, rawEmail });
-		throw new DatabaseError(`Failed to delete recipient: ${error}`);
+
+		return result[0].value;
+	} catch (error) {
+		if (error instanceof DatabaseError) throw error;
+		throw new DatabaseError("Failed to retrieve setting", {
+			operation: "select",
+			table: "settings",
+			key,
+			error: error instanceof Error ? error.message : String(error),
+		});
+	}
+}
+
+export async function updateSetting(key: string, value: string) {
+	if (!key || typeof key !== "string") {
+		throw new DatabaseError("Invalid setting key", { key });
+	}
+
+	if (typeof value !== "string") {
+		throw new DatabaseError("Invalid setting value", { key, value });
+	}
+
+	try {
+		const [updatedSetting] = await db
+			.update(settings)
+			.set({ value, updatedAt: new Date() })
+			.where(eq(settings.key, key))
+			.returning();
+
+		if (!updatedSetting) {
+			throw new DatabaseError("Setting not found", { key });
+		}
+
+		return updatedSetting.value;
+	} catch (error) {
+		if (error instanceof DatabaseError) throw error;
+		throw new DatabaseError("Failed to update setting", {
+			operation: "update",
+			table: "settings",
+			key,
+			error: error instanceof Error ? error.message : String(error),
+		});
 	}
 }

@@ -1,5 +1,5 @@
 import express from "express";
-import type { Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 
 import path from "node:path";
 import { z } from "zod";
@@ -10,7 +10,6 @@ import {
 } from "../app/index.js";
 import { BASE_PATH } from "../lib/constants.js";
 import { DatabaseError } from "../lib/errors.js";
-import logger from "../lib/logger.js";
 import { renderTemplate } from "../lib/template.js";
 import { validateCategory } from "../lib/utils.js";
 import {
@@ -24,149 +23,165 @@ import {
 	getAllNewslettersWithRecipients,
 	getAllRecipients,
 	getNewsletter,
+	getNewsletterFrequency,
 	updateArticleDescription,
 	updateNewsletterSummary,
+	updateSetting,
 } from "./service.js";
 
 const router = express.Router();
 
+const updateSummarySchema = z.object({
+	summary: z.string().min(1).max(500), // adjust max length as needed
+});
+
+const updateFrequencySchema = z.object({
+	weeks: z.number().int().min(1).max(4),
+});
+
 // Newsletter Controllers
 export const newsletterController = {
 	// Get all newsletters
-	getAll: async (req: Request, res: Response) => {
+	getAll: async (req: Request, res: Response, next: NextFunction) => {
 		try {
 			const allNewsletters = await getAllNewsletters();
 			res.json(allNewsletters);
 		} catch (error) {
-			logger.error("Error in getAllNewsletters:", { error });
-			if (error instanceof DatabaseError) {
-				res.status(500).json({ error: error.message });
-			} else {
-				res.status(500).json({ error: "An unexpected error occurred" });
-			}
+			next(error);
 		}
 	},
 
-	getAllWithRecipients: async (req: Request, res: Response) => {
+	getAllWithRecipients: async (
+		req: Request,
+		res: Response,
+		next: NextFunction,
+	) => {
 		try {
 			const allNewsletters = await getAllNewslettersWithRecipients();
 			res.json(allNewsletters);
 		} catch (error) {
-			logger.error("Error in getAllNewslettersWithRecipients:", { error });
-			if (error instanceof DatabaseError) {
-				res.status(500).json({ error: error.message });
-			} else {
-				res.status(500).json({ error: "An unexpected error occurred" });
-			}
+			next(error);
 		}
 	},
 
 	// Get a specific newsletter
-	getOne: async (req: Request, res: Response) => {
+	getOne: async (req: Request, res: Response, next: NextFunction) => {
 		const { id } = req.params;
 		try {
 			const newsletter = await getNewsletter(Number(id));
 			res.json(newsletter);
 		} catch (error) {
-			logger.error("Error in getNewsletter:", { error });
-			if (error instanceof DatabaseError) {
-				if (error.message === "Newsletter not found") {
-					res.status(404).json({ error: error.message });
-				} else {
-					res.status(500).json({ error: error.message });
-				}
-			} else {
-				res.status(500).json({ error: "An unexpected error occurred" });
-			}
+			next(error);
 		}
 	},
 
 	// Create a new newsletter
-	create: async (req: Request, res: Response) => {
+	create: async (req: Request, res: Response, next: NextFunction) => {
 		try {
 			const newNewsletter = await createNewsletter(req.body);
 			res.status(201).json(newNewsletter);
 		} catch (error) {
-			logger.error("Error in createNewsletter:", { error });
-			if (error instanceof DatabaseError) {
-				res.status(500).json({ error: error.message });
-			} else {
-				res.status(500).json({ error: "An unexpected error occurred" });
-			}
+			next(error);
 		}
 	},
 
 	// Update a newsletter's summary
-	updateSummary: async (req: Request, res: Response) => {
+	updateSummary: async (req: Request, res: Response, next: NextFunction) => {
 		const { id } = req.params;
-		const { summary } = req.body;
 		try {
+			const { summary } = updateSummarySchema.parse(req.body);
 			const updatedNewsletter = await updateNewsletterSummary(Number(id), summary);
 			res.json(updatedNewsletter);
 		} catch (error) {
-			logger.error("Error in updateNewsletterSummary:", { error });
-			if (error instanceof DatabaseError) {
-				if (error.message === "Newsletter not found") {
-					res.status(404).json({ error: error.message });
-				} else {
-					res.status(500).json({ error: error.message });
-				}
+			if (error instanceof z.ZodError) {
+				res.status(400).json({ error: "Invalid input", details: error.errors });
 			} else {
-				res.status(500).json({ error: "An unexpected error occurred" });
+				next(error);
 			}
 		}
 	},
 
 	// Delete a newsletter
-	delete: async (req: Request, res: Response) => {
+	delete: async (req: Request, res: Response, next: NextFunction) => {
 		const { id } = req.params;
 		try {
 			await deleteNewsletter(Number(id));
 			res.json({ message: "Newsletter deleted successfully" });
 		} catch (error) {
-			logger.error("Error in deleteNewsletter:", { error });
-			if (error instanceof DatabaseError) {
-				if (error.message === "Newsletter not found") {
-					res.status(404).json({ error: error.message });
-				} else {
-					res.status(500).json({ error: error.message });
-				}
-			} else {
-				res.status(500).json({ error: "An unexpected error occurred" });
-			}
+			next(error);
 		}
 	},
 
 	// generate a new newsletter
-	generate: async (req: Request, res: Response) => {
+	generate: async (req: Request, res: Response, next: NextFunction) => {
 		try {
 			const result = await generateNewsletterData();
 			res.json({ result, id: result?.id });
 		} catch (error) {
-			logger.error("Error in generateNewsletterData:", { error });
-			res.status(500).json({ error });
+			next(error);
 		}
 	},
 
-	review: async (req: Request, res: Response) => {
+	review: async (req: Request, res: Response, next: NextFunction) => {
 		try {
 			const result = await sendNewsletterReviewEmail();
 			res.json({ result });
 		} catch (error) {
-			logger.error("Error in sendNewsletterReviewEmail:", { error });
-			res.status(500).json({ error });
+			next(error);
 		}
 	},
 
 	// Send a newsletter
-	send: async (req: Request, res: Response) => {
+	send: async (req: Request, res: Response, next: NextFunction) => {
 		try {
 			const { id } = req.params;
 			const result = await sendNewsletter(Number(id));
 			res.json(result);
 		} catch (error) {
-			logger.error("Error in sendNewsletter:", { error });
-			res.status(500).json({ error });
+			next(error);
+		}
+	},
+
+	// Get newsletter frequency
+	getFrequency: async (req: Request, res: Response, next: NextFunction) => {
+		try {
+			const weeks = await getNewsletterFrequency();
+			res.json({ weeks });
+		} catch (error) {
+			if (
+				error instanceof DatabaseError &&
+				error.message === "Setting not found"
+			) {
+				res.status(404).json({ error: `Setting 'newsletterFrequency' not found` });
+			} else {
+				next(error);
+			}
+		}
+	},
+
+	// Update newsletter frequency
+	updateFrequency: async (req: Request, res: Response, next: NextFunction) => {
+		const { weeks } = updateFrequencySchema.parse(req.body);
+
+		try {
+			const updatedWeeks = await updateSetting(
+				"newsletterFrequency",
+				weeks.toString(),
+			);
+
+			res.json({ weeks: updatedWeeks });
+		} catch (error) {
+			if (error instanceof DatabaseError) {
+				if (error.message === "Setting not found") {
+					res.status(404).json({ error: `Setting 'newsletterFrequency' not found` });
+				} else if (error.message.includes("Invalid setting")) {
+					res.status(400).json({ error: error.message });
+				} else {
+					next(error);
+				}
+			} else {
+				next(error);
+			}
 		}
 	},
 };
@@ -181,32 +196,32 @@ const articleSchema = z.object({
 		.optional(),
 });
 
+const updateDescriptionSchema = z.object({
+	description: z.string().min(1).max(1000),
+});
+
 // Article Controllers
 export const articleController = {
 	// Update an article's description
-	updateDescription: async (req: Request, res: Response) => {
+	updateDescription: async (req: Request, res: Response, next: NextFunction) => {
 		const { id } = req.params;
-		const { description } = req.body;
 		try {
+			const { description } = updateDescriptionSchema.parse(req.body);
 			const updatedArticle = await updateArticleDescription(
 				Number(id),
 				description,
 			);
 			res.json(updatedArticle);
 		} catch (error) {
-			logger.error("Error in updateArticleDescription:", { error });
-			if (error instanceof DatabaseError) {
-				if (error.message === "Article not found") {
-					res.status(404).json({ error: error.message });
-				} else {
-					res.status(500).json({ error: error.message });
-				}
+			if (error instanceof z.ZodError) {
+				res.status(400).json({ error: "Invalid input", details: error.errors });
 			} else {
-				res.status(500).json({ error: "An unexpected error occurred" });
+				next(error);
 			}
 		}
 	},
-	create: async (req: Request, res: Response) => {
+	// Create an article
+	create: async (req: Request, res: Response, next: NextFunction) => {
 		try {
 			const validatedData = articleSchema.parse(req.body);
 			const newArticle = await addArticle({
@@ -216,16 +231,14 @@ export const articleController = {
 			res.status(201).json(newArticle);
 		} catch (error) {
 			if (error instanceof z.ZodError) {
-				res.status(400).json({ error: error.errors });
-			} else if (error instanceof DatabaseError) {
-				res.status(400).json({ error: error.message });
+				res.status(400).json({ error: "Invalid input", details: error.errors });
 			} else {
-				logger.error("Error adding article:", error);
-				res.status(500).json({ error: "An unexpected error occurred" });
+				next(error);
 			}
 		}
 	},
-	delete: async (req: Request, res: Response) => {
+	// Delete an article
+	delete: async (req: Request, res: Response, next: NextFunction) => {
 		const { id } = req.params;
 		try {
 			const deletedArticle = await deleteArticle(Number(id));
@@ -234,65 +247,61 @@ export const articleController = {
 				message: "Article deleted successfully",
 			});
 		} catch (error) {
-			logger.error("Error in deleteArticle:", { error });
-			if (error instanceof DatabaseError) {
-				if (error.message === "Article not found") {
-					res.status(404).json({ error: error.message });
-				} else {
-					res.status(500).json({ error: error.message });
-				}
-			} else {
-				res.status(500).json({ error: "An unexpected error occurred" });
-			}
+			next(error);
 		}
 	},
 };
 
 // Recipient Controllers
 export const recipientController = {
-	getAll: async (req: Request, res: Response) => {
+	// Get all recipients
+	getAll: async (req: Request, res: Response, next: NextFunction) => {
 		try {
 			const recipients = await getAllRecipients();
 			res.json(recipients);
 		} catch (error) {
-			logger.error("Error in getAllRecipients:", { error });
-			if (error instanceof DatabaseError) {
-				res.status(500).json({ error: error.message });
+			if (
+				error instanceof DatabaseError &&
+				error.details?.type === "EMPTY_RESULT"
+			) {
+				res.json([]);
 			} else {
-				res.status(500).json({ error: "An unexpected error occurred" });
+				next(error);
 			}
 		}
 	},
-	addRecipient: async (req: Request, res: Response) => {
+	// Add a recipient
+	addRecipient: async (req: Request, res: Response, next: NextFunction) => {
 		const { id: email } = req.params;
 
 		try {
 			const recipient = await addRecipient(email);
 			res.json(recipient);
 		} catch (error) {
-			logger.error("Error in addRecipient:", { error });
-			if (error instanceof DatabaseError) {
-				res.status(500).json({ error: error.message });
+			if (
+				error instanceof DatabaseError &&
+				error.message === "Recipient already exists"
+			) {
+				res.status(409).json({ error: "Recipient already exists" });
 			} else {
-				res.status(500).json({ error: "An unexpected error occurred" });
+				next(error);
 			}
 		}
 	},
-	deleteRecipient: async (req: Request, res: Response) => {
+	// Delete a recipient
+	deleteRecipient: async (req: Request, res: Response, next: NextFunction) => {
 		const { id: email } = req.params;
 		try {
 			await deleteRecipient(email);
 			res.json({ message: "Recipient deleted successfully" });
 		} catch (error) {
-			logger.error("Error in deleteRecipient:", { error });
-			if (error instanceof DatabaseError) {
-				if (error.message === "Recipient not found") {
-					res.status(404).json({ error: error.message });
-				} else {
-					res.status(500).json({ error: error.message });
-				}
+			if (
+				error instanceof DatabaseError &&
+				error.message === "Recipient not found"
+			) {
+				res.status(404).json({ error: "Recipient not found" });
 			} else {
-				res.status(500).json({ error: "An unexpected error occurred" });
+				next(error);
 			}
 		}
 	},
@@ -301,18 +310,25 @@ export const recipientController = {
 // Pages Controllers
 export const pagesController = {
 	// Update an article's description
-	renderGenerateButton: async (req: Request, res: Response) => {
+	renderGenerateButton: async (
+		req: Request,
+		res: Response,
+		next: NextFunction,
+	) => {
 		try {
 			res.sendFile(
 				path.join(BASE_PATH, "public", "views", "generate-button.html"),
 			);
 		} catch (error) {
-			logger.error("Error in renderGenerateButton:", { error });
-			res.status(500).json({ error: "An unexpected error occurred" });
+			next(error);
 		}
 	},
 	// Render newsletter preview
-	renderNewsletterPreview: async (req: Request, res: Response) => {
+	renderNewsletterPreview: async (
+		req: Request,
+		res: Response,
+		next: NextFunction,
+	) => {
 		const { id } = req.params;
 
 		try {
@@ -322,8 +338,7 @@ export const pagesController = {
 
 			res.send(template);
 		} catch (error) {
-			logger.error("Error in renderNewsletterPreview:", { error });
-			res.status(500).send("Error rendering newsletter");
+			next(error);
 		}
 	},
 };

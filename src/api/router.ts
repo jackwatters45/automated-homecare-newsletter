@@ -14,12 +14,14 @@ router.get(
 	"/newsletters/with-recipients",
 	newsletterController.getAllWithRecipients,
 );
-router.get("/newsletters/:id", newsletterController.getOne);
 router.post("/newsletters", newsletterController.create);
-router.patch("/newsletters/:id/summary", newsletterController.updateSummary);
-router.delete("/newsletters/:id", newsletterController.delete);
 router.post("/newsletters/generate", newsletterController.generate);
 router.post("/newsletters/review", newsletterController.review);
+router.get("/newsletters/frequency", newsletterController.getFrequency);
+router.put("/newsletters/frequency", newsletterController.updateFrequency);
+router.get("/newsletters/:id", newsletterController.getOne);
+router.patch("/newsletters/:id/summary", newsletterController.updateSummary);
+router.delete("/newsletters/:id", newsletterController.delete);
 router.post("/newsletters/:id/send", newsletterController.send);
 
 // Article Routes
