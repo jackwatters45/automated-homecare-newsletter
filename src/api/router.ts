@@ -31,8 +31,10 @@ router.delete("/articles/:id", articleController.delete);
 
 // Recipient Routes
 router.get("/recipients", recipientController.getAll);
-router.post("/recipients/:id", recipientController.addRecipient);
+router.delete("/recipients/all", recipientController.removeAll);
 router.delete("/recipients/:id", recipientController.deleteRecipient);
+router.post("/recipients/bulk", recipientController.addBulk);
+router.post("/recipients/:id", recipientController.addRecipient);
 
 // Page Routes
 router.get("/page/generate", pagesController.renderGenerateButton);

@@ -14,6 +14,7 @@ import { renderTemplate } from "../lib/template.js";
 import { validateCategory } from "../lib/utils.js";
 import {
 	addArticle,
+	addBulkRecipients,
 	addRecipient,
 	createNewsletter,
 	deleteArticle,
@@ -24,6 +25,7 @@ import {
 	getAllRecipients,
 	getNewsletter,
 	getNewsletterFrequency,
+	removeAllRecipients,
 	updateArticleDescription,
 	updateNewsletterSummary,
 	updateSetting,
@@ -303,6 +305,30 @@ export const recipientController = {
 			} else {
 				next(error);
 			}
+		}
+	},
+	// Add bulk recipients
+	addBulk: async (req: Request, res: Response, next: NextFunction) => {
+		try {
+			const { emails } = req.body;
+			if (!Array.isArray(emails)) {
+				return res
+					.status(400)
+					.json({ error: "Invalid input: emails should be an array" });
+			}
+			const addedEmails = await addBulkRecipients(emails);
+			res.status(200).json(addedEmails);
+		} catch (error) {
+			next(error);
+		}
+	},
+	// Remove all recipients
+	removeAll: async (req: Request, res: Response, next: NextFunction) => {
+		try {
+			await removeAllRecipients();
+			res.status(200).json({ message: "All recipients removed successfully" });
+		} catch (error) {
+			next(error);
 		}
 	},
 };

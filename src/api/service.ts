@@ -20,7 +20,11 @@ import type {
 } from "../types/index.js";
 
 import logger from "../lib/logger.js";
-import { getDescription, validateCategory } from "../lib/utils.js";
+import {
+	getDescription,
+	isValidEmail,
+	validateCategory,
+} from "../lib/utils.js";
 
 const log = debug(`${process.env.APP_NAME}:routes/api/service.ts`);
 
@@ -496,6 +500,47 @@ export async function deleteRecipient(rawEmail: string) {
 			operation: "delete",
 			table: "recipients",
 			email,
+			error: error instanceof Error ? error.message : String(error),
+		});
+	}
+}
+
+export async function addBulkRecipients(emails: string[]): Promise<string[]> {
+	try {
+		const uniqueEmails = [...new Set(emails)];
+		const validEmails = uniqueEmails.filter((email) => isValidEmail(email));
+
+		if (validEmails.length === 0) return [];
+
+		const result = await db.transaction(async (tx) => {
+			const insertedEmails = await tx
+				.insert(recipients)
+				.values(validEmails.map((email) => ({ email })))
+				.onConflictDoNothing()
+				.returning({ email: recipients.email });
+
+			return insertedEmails.map((row) => row.email);
+		});
+
+		return result;
+	} catch (error) {
+		throw new DatabaseError("Failed to add recipients", {
+			operation: "insert",
+			table: "recipients",
+			error: error instanceof Error ? error.message : String(error),
+		});
+	}
+}
+
+export async function removeAllRecipients(): Promise<void> {
+	try {
+		const res = await db.delete(recipients).returning();
+
+		logger.info("Removed all recipients", res);
+	} catch (error) {
+		throw new DatabaseError("Failed to remove all recipients", {
+			operation: "delete",
+			table: "recipients",
 			error: error instanceof Error ? error.message : String(error),
 		});
 	}

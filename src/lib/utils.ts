@@ -367,3 +367,9 @@ export const getDescription = async (
 
 	return description?.trim();
 };
+
+export function isValidEmail(email: string): boolean {
+	// Basic email validation regex
+	const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+	return emailRegex.test(email);
+}
