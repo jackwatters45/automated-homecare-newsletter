@@ -5,8 +5,6 @@ document.getElementById("generateBtn").addEventListener("click", async () => {
 	try {
 		const response = await fetch("/test/generate");
 
-		console.log(response);
-
 		const data = await response.json();
 
 		if (data.success) {

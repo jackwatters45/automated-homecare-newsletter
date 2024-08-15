@@ -2,7 +2,7 @@ import debug from "debug";
 import { schedule } from "node-cron";
 import type { ScheduledTask } from "node-cron";
 
-import { eq } from "drizzle-orm";
+import { eq } from "drizzle-orm/expressions";
 import { sendNewsletterReviewEmail } from "../app/index.js";
 import { db } from "../db/index.js";
 import { cronLogs, settings } from "../db/schema.js";
@@ -89,8 +89,24 @@ async function getNewsletterFrequency(): Promise<number> {
 	return frequency;
 }
 
+// TODO: Confirm valid
 function createNewsletterCronExpression(weekInterval: number): string {
-	return `0 9 * * 1/${weekInterval}`;
+	switch (weekInterval) {
+		case 1:
+			// Every Monday at 9 AM
+			return "0 9 * * 1";
+		case 2:
+			// Every other Monday at 9 AM
+			return "0 9 1-7,15-21 * 1";
+		case 3:
+			// Every third Monday at 9 AM
+			return "0 9 1-7,22-28 * 1";
+		case 4:
+			// Every fourth Monday at 9 AM
+			return "0 9 1-7 * 1";
+		default:
+			throw new Error("Week interval must be 1, 2, 3, or 4");
+	}
 }
 
 let newsletterTask: ScheduledTask | null = null;

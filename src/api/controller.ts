@@ -215,7 +215,9 @@ export const newsletterController = {
 
 			res.json({ weeks: updatedWeeks });
 		} catch (error) {
-			if (error instanceof DatabaseError) {
+			if (error instanceof z.ZodError) {
+				res.status(400).json({ error: "Invalid input", details: error.errors });
+			} else if (error instanceof DatabaseError) {
 				if (error.message === "Setting not found") {
 					res.status(404).json({ error: `Setting 'newsletterFrequency' not found` });
 				} else if (error.message.includes("Invalid setting")) {
