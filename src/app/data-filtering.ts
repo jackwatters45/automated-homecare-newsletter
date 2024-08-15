@@ -125,9 +125,10 @@ export async function rankArticles(
 	
 	Ranking criteria:
 	1. Impact: Prioritize articles that discuss significant industry changes, policy updates, or innovations in homecare and home health.
-	2. Diversity of Content: Ensure a mix of articles covering different aspects of homecare and home health (e.g., technology, policy, patient care, business developments). Try to evenly distribute the articles across the categories. Ideally, each category (except other) should have an even number of articles. Do not include more than 6 articles in a single category.
+	2. Diversity of Content: Ensure a mix of articles covering different aspects of homecare and home health (e.g., technology, policy, patient care, business developments). Try to evenly distribute the articles across the categories. Ideally, each category (except other) should have an even number of articles. Do not include more than 8 articles in a single category.
 	3. Source Variety: Use a diverse range of sources. Limit articles from any single source to a maximum of 3.
-	4. Relevance: Prioritize articles that are directly related to ${TOPIC} and that will fit in one of the following categories: ${CATEGORIES.join(", ")}. Try to include a similar number of articles from each category.
+	4. Relevance: Prioritize articles that are directly related to ${TOPIC} and that will fit in one of the following categories: ${CATEGORIES.join(", ")}. Try to include a similar number of articles from each category. Do not include articles that are related to taking care of homes, this is not the homecare i am interested in, it is about homecare (medical) and home health (medical).
+	5. Priority: Prioritize articles that are directly related to the first two categories. These articles should be at the top of the list. 
 	
 	Additional Instructions:
 	- Consider the potential impact of the news on homecare providers, patients, or the industry as a whole when ranking articles.

@@ -153,7 +153,7 @@ export async function createNewsletter({
 }: {
 	summary: string;
 	articles: ArticleInputWithCategory[];
-}): Promise<NewNewsletter> {
+}): Promise<NewNewsletter & { articles: Article[] }> {
 	try {
 		log("Creating newsletter");
 		const allRecipients = await getAllRecipients();

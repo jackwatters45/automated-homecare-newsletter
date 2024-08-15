@@ -2,7 +2,12 @@ import "dotenv/config";
 
 import debug from "debug";
 
-import { CLIENT_URL, REVIEWER_EMAIL } from "../lib/constants.js";
+import {
+	CLIENT_URL,
+	DESIRED_ARTICLE_COUNT,
+	MAX_RETRIES,
+	REVIEWER_EMAIL,
+} from "../lib/constants.js";
 import { resend } from "../lib/email.js";
 
 import { eq } from "drizzle-orm/expressions";
@@ -34,9 +39,17 @@ export async function generateNewsletterData(): Promise<
 	log("generating newsletter data");
 
 	try {
-		const results = await getArticleData();
+		const fetchArticles = async () => {
+			const results = await getArticleData();
+			return filterAndRankArticles(results, DESIRED_ARTICLE_COUNT);
+		};
 
-		const articles = await filterAndRankArticles(results);
+		const articles = await retry(fetchArticles, MAX_RETRIES);
+
+		if (!articles) {
+			logger.error("No articles found");
+			throw new Error("No articles found");
+		}
 
 		log("articles filtered and ranked", articles);
 
@@ -51,7 +64,7 @@ export async function generateNewsletterData(): Promise<
 			articles: articlesWithCategories,
 		});
 
-		log("newsletter data generated", newsletter);
+		log("newsletter data generated", newsletter, newsletter.articles.length);
 		return newsletter;
 	} catch (error) {
 		logger.error("Error in generateNewsletterData:", { error });

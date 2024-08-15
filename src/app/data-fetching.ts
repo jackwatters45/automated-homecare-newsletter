@@ -1,7 +1,7 @@
 import * as cheerio from "cheerio";
 import debug from "debug";
 
-import { SPECIFIC_PAGES } from "../lib/constants.js";
+import { INITIAL_FETCH_COUNT, SPECIFIC_PAGES } from "../lib/constants.js";
 import { searchNews } from "../lib/google-search.js";
 import logger from "../lib/logger.js";
 import { rateLimiter } from "../lib/rate-limit.js";
@@ -25,8 +25,8 @@ export async function getArticleData() {
 
 	// google search
 	const googleSearchResults = await searchNews([
-		"homecare news",
-		"home health care news",
+		"homecare (medical) news",
+		"home health care (medical) news",
 	]);
 
 	results.push(...googleSearchResults);
@@ -38,6 +38,16 @@ export async function getArticleData() {
 		results.push(...relevantArticles);
 	}
 
+	if (results.length < INITIAL_FETCH_COUNT) {
+		const additionalResults = await fetchFromAdditionalSources();
+		results.push(...additionalResults);
+	}
+
+	if (results.length === 0) {
+		logger.error("No valid articles found");
+		throw new Error("No valid articles found");
+	}
+
 	if (results.length === 0) {
 		logger.error("No valid articles found");
 		throw new Error("No valid articles found");
@@ -47,6 +57,16 @@ export async function getArticleData() {
 	log("raw articles generated", results.length);
 
 	return results;
+}
+
+async function fetchFromAdditionalSources(): Promise<ValidArticleData[]> {
+	const additionalResults = await searchNews([
+		"home health industry news",
+		"homecare technology updates",
+		"home health policy changes",
+	]);
+
+	return additionalResults;
 }
 
 export async function scrapeArticles(targetPage: PageToScrape) {

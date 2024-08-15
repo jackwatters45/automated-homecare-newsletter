@@ -100,8 +100,7 @@ export const CATEGORIES = [
 	"Industry Trends & Policy",
 	"Clinical Research & Care Innovations",
 	"Business Operations & Technology",
-	"Caregiver Support & Resources",
-	"Patient Care & Caregiving Best Practices",
+	"Caregiving Excellence: Support & Best Practices",
 	"Other",
 ] as const;
 
@@ -109,3 +108,7 @@ export const SYSTEM_INSTRUCTION = `You are a homecare business operator. You are
 	\n\n
 	Please provide your response in valid JSON format. The entire response should be a single JSON object or array. Do not include any explanatory text outside of the JSON structure.
 	`;
+
+export const INITIAL_FETCH_COUNT = 40;
+export const DESIRED_ARTICLE_COUNT = 30;
+export const MAX_RETRIES = 3;
