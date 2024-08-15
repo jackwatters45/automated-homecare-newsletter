@@ -41,9 +41,15 @@ export const articles = createTable("articles", {
 	updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+export const recipientStatusEnum = pgEnum("recipient_status", [
+	"ACTIVE",
+	"INACTIVE",
+]);
+
 export const recipients = createTable("recipients", {
 	id: serial("id").primaryKey(),
 	email: text("email").notNull(),
+	status: recipientStatusEnum("status").default("ACTIVE"),
 	createdAt: timestamp("created_at").defaultNow(),
 	updatedAt: timestamp("updated_at").defaultNow(),
 });

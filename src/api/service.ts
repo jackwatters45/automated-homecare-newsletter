@@ -21,7 +21,9 @@ import type {
 	PopulatedNewsletter,
 } from "../types/index.js";
 
-import { sql } from "drizzle-orm";
+import { type ExtractTablesWithRelations, sql } from "drizzle-orm";
+import type { NodePgQueryResultHKT } from "drizzle-orm/node-postgres";
+import type { PgTransaction } from "drizzle-orm/pg-core";
 import { CATEGORIES } from "../lib/constants.js";
 import logger from "../lib/logger.js";
 import {
@@ -547,15 +549,17 @@ export async function deleteArticle(id: number) {
 // Recipient Functions
 export async function getAllRecipients() {
 	try {
-		const recipients = await db.query.recipients.findMany();
+		const queriedRecipients = await db.query.recipients.findMany({
+			where: eq(recipients.status, "ACTIVE"),
+		});
 
-		if (recipients.length === 0) {
+		if (queriedRecipients.length === 0) {
 			throw new DatabaseError("No recipients found", {
 				type: "EMPTY_RESULT",
 			});
 		}
 
-		return recipients;
+		return queriedRecipients;
 	} catch (error) {
 		if (error instanceof DatabaseError) throw error;
 		throw new DatabaseError(
@@ -575,7 +579,7 @@ export async function addRecipient(rawEmail: string) {
 	let email = "";
 	try {
 		email = decodeURIComponent(rawEmail);
-		emailSchema.parse(email); // Validate email format
+		emailSchema.parse(email);
 	} catch (error) {
 		if (error instanceof z.ZodError) {
 			throw new DatabaseError("Invalid email format", { rawEmail, email });
@@ -591,31 +595,32 @@ export async function addRecipient(rawEmail: string) {
 			});
 
 			if (existingRecipient) {
-				throw new DatabaseError("Recipient already exists", { email });
+				if (existingRecipient.status === "INACTIVE") {
+					// Reactivate the recipient
+					const [reactivatedRecipient] = await tx
+						.update(recipients)
+						.set({ status: "ACTIVE", updatedAt: new Date() })
+						.where(eq(recipients.id, existingRecipient.id))
+						.returning();
+
+					// Add to unsent newsletters
+					await addToUnsentNewsletters(tx, reactivatedRecipient.id);
+
+					return reactivatedRecipient;
+				}
+				throw new DatabaseError("Recipient already exists and is active", {
+					email,
+				});
 			}
 
-			const [recipient] = await tx
+			const [newRecipient] = await tx
 				.insert(recipients)
 				.values({ email })
 				.returning();
 
-			// Get all unsent newsletters
-			const unsentNewsletters = await tx
-				.select({ id: newsletters.id })
-				.from(newsletters)
-				.where(not(eq(newsletters.status, "SENT")));
+			await addToUnsentNewsletters(tx, newRecipient.id);
 
-			// Add the new recipient to all unsent newsletters
-			if (unsentNewsletters.length > 0) {
-				await tx.insert(newsletterRecipients).values(
-					unsentNewsletters.map((newsletter) => ({
-						newsletterId: newsletter.id,
-						recipientId: recipient.id,
-					})),
-				);
-			}
-
-			return recipient;
+			return newRecipient;
 		});
 	} catch (error) {
 		if (error instanceof DatabaseError) throw error;
@@ -632,7 +637,7 @@ export async function deleteRecipient(rawEmail: string) {
 	let email = "";
 	try {
 		email = decodeURIComponent(rawEmail);
-		emailSchema.parse(email); // Validate email format
+		emailSchema.parse(email);
 	} catch (error) {
 		if (error instanceof z.ZodError) {
 			throw new DatabaseError("Invalid email format", { rawEmail, email });
@@ -644,25 +649,39 @@ export async function deleteRecipient(rawEmail: string) {
 		return await db.transaction(async (tx) => {
 			// Find the recipient
 			const recipient = await tx.query.recipients.findFirst({
-				where: eq(recipients.email, email),
+				where: and(eq(recipients.email, email), eq(recipients.status, "ACTIVE")),
 			});
 
 			if (!recipient) {
-				throw new DatabaseError("Recipient not found", { email });
+				throw new DatabaseError("Active recipient not found", { email });
 			}
 
-			// Delete all newsletter_recipients entries for this recipient
-			const { rowCount: deletedAssociations } = await tx
-				.delete(newsletterRecipients)
-				.where(eq(newsletterRecipients.recipientId, recipient.id));
-
-			// Delete the recipient
-			const [deletedRecipient] = await tx
-				.delete(recipients)
+			// Soft delete: update status to INACTIVE
+			const [updatedRecipient] = await tx
+				.update(recipients)
+				.set({ status: "INACTIVE", updatedAt: new Date() })
 				.where(eq(recipients.id, recipient.id))
 				.returning();
 
-			return { deletedRecipient, deletedAssociations };
+			// Remove from unsent newsletters only
+			const unsentNewsletters = await tx
+				.select({ id: newsletters.id })
+				.from(newsletters)
+				.where(not(eq(newsletters.status, "SENT")));
+
+			const { rowCount: deletedAssociations } = await tx
+				.delete(newsletterRecipients)
+				.where(
+					and(
+						eq(newsletterRecipients.recipientId, recipient.id),
+						inArray(
+							newsletterRecipients.newsletterId,
+							unsentNewsletters.map((n) => n.id),
+						),
+					),
+				);
+
+			return { updatedRecipient, deletedAssociations };
 		});
 	} catch (error) {
 		if (error instanceof DatabaseError) throw error;
@@ -682,17 +701,40 @@ export async function addBulkRecipients(emails: string[]): Promise<string[]> {
 
 		if (validEmails.length === 0) return [];
 
-		const result = await db.transaction(async (tx) => {
-			const insertedEmails = await tx
-				.insert(recipients)
-				.values(validEmails.map((email) => ({ email })))
-				.onConflictDoNothing()
-				.returning({ email: recipients.email });
+		return await db.transaction(async (tx) => {
+			const insertedOrUpdatedRecipients = await Promise.all(
+				validEmails.map(async (email) => {
+					const existingRecipient = await tx.query.recipients.findFirst({
+						where: eq(recipients.email, email),
+					});
 
-			return insertedEmails.map((row) => row.email);
+					if (existingRecipient && existingRecipient.status === "INACTIVE") {
+						if (existingRecipient.status === "INACTIVE") {
+							const [reactivated] = await tx
+								.update(recipients)
+								.set({ status: "ACTIVE", updatedAt: new Date() })
+								.where(eq(recipients.id, existingRecipient.id))
+								.returning();
+							return reactivated;
+						}
+						return existingRecipient;
+					}
+
+					const [newRecipient] = await tx
+						.insert(recipients)
+						.values({ email, status: "ACTIVE" })
+						.returning();
+					return newRecipient;
+				}),
+			);
+
+			await addToUnsentNewsletters(
+				tx,
+				insertedOrUpdatedRecipients.map((r) => r.id),
+			);
+
+			return insertedOrUpdatedRecipients.map((r) => r.email);
 		});
-
-		return result;
 	} catch (error) {
 		throw new DatabaseError("Failed to add recipients", {
 			operation: "insert",
@@ -704,15 +746,64 @@ export async function addBulkRecipients(emails: string[]): Promise<string[]> {
 
 export async function removeAllRecipients(): Promise<void> {
 	try {
-		const res = await db.delete(recipients).returning();
+		await db.transaction(async (tx) => {
+			// Get all unsent newsletters
+			const unsentNewsletters = await tx
+				.select({ id: newsletters.id })
+				.from(newsletters)
+				.where(not(eq(newsletters.status, "SENT")));
 
-		logger.info("Removed all recipients", res);
+			// Remove all recipients from unsent newsletters
+			await tx.delete(newsletterRecipients).where(
+				inArray(
+					newsletterRecipients.newsletterId,
+					unsentNewsletters.map((n) => n.id),
+				),
+			);
+
+			// Set all active recipients to inactive
+			const res = await tx
+				.update(recipients)
+				.set({ status: "INACTIVE", updatedAt: new Date() })
+				.where(eq(recipients.status, "ACTIVE"))
+				.returning();
+
+			logger.info(
+				"Deactivated all recipients and removed from unsent newsletters",
+				res,
+			);
+		});
 	} catch (error) {
 		throw new DatabaseError("Failed to remove all recipients", {
 			operation: "delete",
 			table: "recipients",
 			error: error instanceof Error ? error.message : String(error),
 		});
+	}
+}
+
+type TX = PgTransaction<
+	NodePgQueryResultHKT,
+	typeof import("../db/schema.js"),
+	ExtractTablesWithRelations<typeof import("../db/schema.js")>
+>;
+
+async function addToUnsentNewsletters(tx: TX, recipientId: number | number[]) {
+	const unsentNewsletters = await tx
+		.select({ id: newsletters.id })
+		.from(newsletters)
+		.where(not(eq(newsletters.status, "SENT")));
+
+	if (unsentNewsletters.length > 0) {
+		const recipientIds = Array.isArray(recipientId) ? recipientId : [recipientId];
+		await tx.insert(newsletterRecipients).values(
+			unsentNewsletters.flatMap((newsletter) =>
+				recipientIds.map((id) => ({
+					newsletterId: newsletter.id,
+					recipientId: id,
+				})),
+			),
+		);
 	}
 }
 
