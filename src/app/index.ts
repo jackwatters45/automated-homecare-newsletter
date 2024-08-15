@@ -98,7 +98,42 @@ export async function sendNewsletterReviewEmail() {
 			return logger.error("Error in sendNewsletterReviewEmail:", { error });
 		}
 
-		return data;
+		return {
+			newsletter: newsletterData,
+			data,
+			message: "Email sent successfully",
+		};
+	} catch (error) {
+		logger.error("Error in sendNewsletterReviewEmail:", { error });
+		return { message: "Error sending email", error };
+	}
+}
+
+export async function sendNewsletterReviewEmailById(id: number) {
+	try {
+		const newsletterData = await getNewsletter(id);
+
+		if (!newsletterData) {
+			logger.error("Newsletter data not found");
+			throw new Error("Newsletter data not found");
+		}
+
+		const { data, error } = await resend.emails.send({
+			from: getEnv("RESEND_FROM_EMAIL"),
+			to: REVIEWER_EMAIL,
+			subject: "Review TrollyCare Newsletter",
+			text: `Please review the newsletter and approve it before it is sent. link to newsletter: ${CLIENT_URL}/newsletter/${id}`,
+		});
+
+		if (error) {
+			return logger.error("Error in sendNewsletterReviewEmail:", { error });
+		}
+
+		return {
+			newsletter: newsletterData,
+			data,
+			message: "Email sent successfully",
+		};
 	} catch (error) {
 		logger.error("Error in sendNewsletterReviewEmail:", { error });
 		return { message: "Error sending email", error };

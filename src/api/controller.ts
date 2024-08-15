@@ -7,6 +7,7 @@ import {
 	generateNewsletterData,
 	sendNewsletter,
 	sendNewsletterReviewEmail,
+	sendNewsletterReviewEmailById,
 } from "../app/index.js";
 import { BASE_PATH } from "../lib/constants.js";
 import { updateNewsletterFrequency } from "../lib/cron.js";
@@ -167,6 +168,15 @@ export const newsletterController = {
 	review: async (req: Request, res: Response, next: NextFunction) => {
 		try {
 			const result = await sendNewsletterReviewEmail();
+			res.json({ result });
+		} catch (error) {
+			next(error);
+		}
+	},
+
+	reviewById: async (req: Request, res: Response, next: NextFunction) => {
+		try {
+			const result = await sendNewsletterReviewEmailById(Number(req.params.id));
 			res.json({ result });
 		} catch (error) {
 			next(error);

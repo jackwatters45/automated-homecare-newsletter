@@ -19,6 +19,7 @@ router.get("/newsletters", newsletterController.getAll);
 
 router.post("/newsletters/generate", newsletterController.generate);
 router.post("/newsletters/review", newsletterController.review);
+router.post("/newsletters/:id/review", newsletterController.reviewById);
 router.post("/newsletters/:id/send", newsletterController.send);
 router.post("/newsletters", newsletterController.create);
 
