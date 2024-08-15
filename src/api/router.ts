@@ -9,20 +9,32 @@ import {
 const router = express.Router();
 
 // Newsletter Routes
-router.get("/newsletters", newsletterController.getAll);
+router.get("/newsletters/frequency", newsletterController.getFrequency);
 router.get(
 	"/newsletters/with-recipients",
 	newsletterController.getAllWithRecipients,
 );
-router.post("/newsletters", newsletterController.create);
+router.get("/newsletters/:id", newsletterController.getOne);
+router.get("/newsletters", newsletterController.getAll);
+
 router.post("/newsletters/generate", newsletterController.generate);
 router.post("/newsletters/review", newsletterController.review);
-router.get("/newsletters/frequency", newsletterController.getFrequency);
-router.put("/newsletters/frequency", newsletterController.updateFrequency);
-router.get("/newsletters/:id", newsletterController.getOne);
-router.patch("/newsletters/:id/summary", newsletterController.updateSummary);
-router.delete("/newsletters/:id", newsletterController.delete);
 router.post("/newsletters/:id/send", newsletterController.send);
+router.post("/newsletters", newsletterController.create);
+
+router.patch(
+	"/newsletters/:id/update-order",
+	newsletterController.updateArticleOrder,
+);
+router.patch(
+	"/newsletters/:id/update-category/:articleId",
+	newsletterController.updateArticleCategory,
+);
+router.patch("/newsletters/:id/summary", newsletterController.updateSummary);
+
+router.put("/newsletters/frequency", newsletterController.updateFrequency);
+
+router.delete("/newsletters/:id", newsletterController.delete);
 
 // Article Routes
 router.patch("/articles/:id/description", articleController.updateDescription);

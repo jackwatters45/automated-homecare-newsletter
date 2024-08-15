@@ -29,10 +29,14 @@ export const articles = createTable("articles", {
 	title: text("title").notNull(),
 	link: text("link").notNull(),
 	description: text("description").notNull(),
+	order: integer("order").notNull().default(0),
 	category: text("category").notNull(),
 	newsletterId: integer("newsletter_id")
 		.notNull()
-		.references(() => newsletters.id, { onDelete: "cascade" }),
+		.references(() => newsletters.id, {
+			onDelete: "cascade",
+			onUpdate: "cascade",
+		}),
 	createdAt: timestamp("created_at").defaultNow(),
 	updatedAt: timestamp("updated_at").defaultNow(),
 });
@@ -49,10 +53,16 @@ export const newsletterRecipients = createTable(
 	{
 		newsletterId: integer("newsletter_id")
 			.notNull()
-			.references(() => newsletters.id, { onDelete: "cascade" }),
+			.references(() => newsletters.id, {
+				onDelete: "cascade",
+				onUpdate: "cascade",
+			}),
 		recipientId: integer("recipient_id")
 			.notNull()
-			.references(() => recipients.id, { onDelete: "cascade" }),
+			.references(() => recipients.id, {
+				onDelete: "cascade",
+				onUpdate: "cascade",
+			}),
 		createdAt: timestamp("created_at").defaultNow(),
 	},
 	(table) => ({
@@ -100,8 +110,6 @@ export const cronLogs = createTable("cron_logs", {
 	message: text("message"),
 	createdAt: timestamp("created_at").defaultNow(),
 });
-
-export const cronLogsRelations = relations(cronLogs, ({ many }) => ({}));
 
 export const settings = createTable("settings", {
 	id: serial("id").primaryKey(),

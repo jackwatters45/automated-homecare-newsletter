@@ -26,7 +26,7 @@ export async function getArticleData() {
 	// google search
 	const googleSearchResults = await searchNews([
 		"homecare news",
-		"home health news",
+		"home health care news",
 	]);
 
 	results.push(...googleSearchResults);

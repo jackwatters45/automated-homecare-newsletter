@@ -1,5 +1,5 @@
 import debug from "debug";
-import { eq, not } from "drizzle-orm/expressions";
+import { and, desc, eq, gt, inArray, not } from "drizzle-orm/expressions";
 import { z } from "zod";
 
 import { db } from "../db/index.js";
@@ -14,14 +14,19 @@ import { DatabaseError } from "../lib/errors.js";
 import type {
 	Article,
 	ArticleInputWithCategory,
+	Category,
 	NewArticleInput,
-	PopulatedNewNewsletter,
+	NewNewsletter,
+	PopulatedCategory,
 	PopulatedNewsletter,
 } from "../types/index.js";
 
+import { sql } from "drizzle-orm";
+import { CATEGORIES } from "../lib/constants.js";
 import logger from "../lib/logger.js";
 import {
 	getDescription,
+	groupBy,
 	isValidEmail,
 	validateCategory,
 } from "../lib/utils.js";
@@ -70,6 +75,41 @@ export async function getAllNewslettersWithRecipients() {
 	}
 }
 
+export function sortAndPopulateCategories(
+	articles: Article[],
+): PopulatedCategory[] {
+	const categoryOrder = new Map(
+		CATEGORIES.map((category, index) => [category, index]),
+	);
+
+	// Group articles by category
+	const categorizedArticles = articles.reduce(
+		(acc, article) => {
+			const category = validateCategory(article.category);
+			if (!acc[category]) {
+				acc[category] = [];
+			}
+			acc[category].push(article);
+			return acc;
+		},
+		{} as Record<Category, Article[]>,
+	);
+
+	// Transform to categories array and sort
+	const categories = Object.entries(categorizedArticles)
+		.map(([name, articles]) => ({
+			name: name as Category,
+			articles,
+		}))
+		.sort((a, b) => {
+			const orderA = categoryOrder.get(a.name) ?? Number.MAX_SAFE_INTEGER;
+			const orderB = categoryOrder.get(b.name) ?? Number.MAX_SAFE_INTEGER;
+			return orderA - orderB;
+		});
+
+	return categories;
+}
+
 export async function getNewsletter(id: number): Promise<PopulatedNewsletter> {
 	try {
 		const newsletter = await db.query.newsletters.findFirst({
@@ -89,30 +129,12 @@ export async function getNewsletter(id: number): Promise<PopulatedNewsletter> {
 			throw new DatabaseError("Newsletter not found", { id });
 		}
 
-		// Group articles by category
-		const categorizedArticles = newsletter.articles.reduce(
-			(acc, article) => {
-				if (!acc[article.category]) {
-					acc[article.category] = [];
-				}
-				acc[article.category].push(article);
-				return acc;
-			},
-			{} as Record<string, Article[]>,
-		);
-
-		// Transform to categories array
-		const categories = Object.entries(categorizedArticles).map(
-			([name, articles]) => ({
-				name: validateCategory(name),
-				articles,
-			}),
-		);
+		const categorizedArticles = sortAndPopulateCategories(newsletter.articles);
 
 		return {
 			...newsletter,
 			recipients: newsletter.recipients.map((nr) => nr.recipient),
-			categories,
+			categories: categorizedArticles,
 		};
 	} catch (error) {
 		if (error instanceof DatabaseError) throw error;
@@ -131,7 +153,7 @@ export async function createNewsletter({
 }: {
 	summary: string;
 	articles: ArticleInputWithCategory[];
-}): Promise<PopulatedNewNewsletter> {
+}): Promise<NewNewsletter> {
 	try {
 		log("Creating newsletter");
 		const allRecipients = await getAllRecipients();
@@ -146,8 +168,9 @@ export async function createNewsletter({
 			const articlesArr = await tx
 				.insert(articles)
 				.values(
-					articleInputs.map((article) => ({
+					articleInputs.map((article, index) => ({
 						...article,
+						order: index,
 						newsletterId: newsletter.id,
 					})),
 				)
@@ -176,6 +199,136 @@ export async function createNewsletter({
 			error: error instanceof Error ? error.message : String(error),
 			summary,
 			articleCount: articleInputs.length,
+		});
+	}
+}
+
+export async function updateArticleOrder(
+	newsletterId: string,
+	articleIds: number[],
+) {
+	try {
+		return await db.transaction(async (tx) => {
+			// Fetch all articles to be updated
+			const articlesToUpdate = await tx
+				.select()
+				.from(articles)
+				.where(
+					and(
+						inArray(
+							articles.id,
+							articleIds.map((id) => id),
+						),
+						eq(articles.newsletterId, Number.parseInt(newsletterId)),
+					),
+				);
+
+			// Group articles by category
+			const articlesByCategory = groupBy<Article>(articlesToUpdate, "category");
+
+			// Update order for each category
+			for (const [category, categoryArticles] of Object.entries(
+				articlesByCategory,
+			)) {
+				const categoryArticleIds = articleIds.filter((id) =>
+					categoryArticles.some((article) => article.id === id),
+				);
+
+				for (let i = 0; i < categoryArticleIds.length; i++) {
+					await tx
+						.update(articles)
+						.set({ order: i })
+						.where(
+							and(
+								eq(articles.id, categoryArticleIds[i]),
+								eq(articles.category, category),
+								eq(articles.newsletterId, Number.parseInt(newsletterId)),
+							),
+						);
+				}
+			}
+
+			return getNewsletter(Number.parseInt(newsletterId, 10));
+		});
+	} catch (error) {
+		throw new DatabaseError("Failed to update article order", {
+			operation: "transaction",
+			tables: ["newsletters", "articles", "newsletter_recipients"],
+			error: error instanceof Error ? error.message : String(error),
+			newsletterId,
+			articleIds,
+		});
+	}
+}
+
+export async function updateArticleCategory(
+	newsletterId: string,
+	articleId: string,
+	toCategory: string,
+) {
+	try {
+		return await db.transaction(async (tx) => {
+			// Get the current article
+			const [currentArticle] = await tx
+				.select()
+				.from(articles)
+				.where(
+					and(
+						eq(articles.id, Number.parseInt(articleId)),
+						eq(articles.newsletterId, Number.parseInt(newsletterId)),
+					),
+				);
+
+			if (!currentArticle) {
+				throw new DatabaseError("Article not found");
+			}
+
+			// Get the highest order in the new category
+			const [highestOrderArticle] = await tx
+				.select({ order: articles.order })
+				.from(articles)
+				.where(
+					and(
+						eq(articles.category, toCategory),
+						eq(articles.newsletterId, Number.parseInt(newsletterId)),
+					),
+				)
+				.orderBy(desc(articles.order))
+				.limit(1);
+
+			const newOrder = highestOrderArticle ? highestOrderArticle.order + 1 : 0;
+
+			// Update the article
+			await tx
+				.update(articles)
+				.set({
+					category: toCategory,
+					order: newOrder,
+				})
+				.where(eq(articles.id, Number.parseInt(articleId)));
+
+			// Reorder articles in the old category
+			await tx
+				.update(articles)
+				.set({
+					order: sql`${articles.order} - 1`,
+				})
+				.where(
+					and(
+						eq(articles.category, currentArticle.category),
+						eq(articles.newsletterId, Number.parseInt(newsletterId)),
+						gt(articles.order, currentArticle.order),
+					),
+				);
+
+			return getNewsletter(Number.parseInt(newsletterId, 10));
+		});
+	} catch (error) {
+		throw new DatabaseError("Failed to update article category", {
+			operation: "update",
+			table: "articles",
+			newsletterId,
+			articleId,
 		});
 	}
 }
@@ -312,10 +465,24 @@ export async function addArticle(articleData: NewArticleInput) {
 				});
 			}
 
+			// Find the highest order in the category
+			const [highestOrderArticle] = await tx
+				.select({ order: articles.order })
+				.from(articles)
+				.where(eq(articles.category, articleData.category))
+				.orderBy(desc(articles.order))
+				.limit(1);
+
+			const newOrder = highestOrderArticle ? highestOrderArticle.order + 1 : 0;
+
 			// Insert the new article
 			const [newArticle] = await tx
 				.insert(articles)
-				.values({ ...articleData, description })
+				.values({
+					...articleData,
+					description,
+					order: newOrder,
+				})
 				.returning();
 
 			return newArticle;
@@ -391,11 +558,14 @@ export async function getAllRecipients() {
 		return recipients;
 	} catch (error) {
 		if (error instanceof DatabaseError) throw error;
-		throw new DatabaseError("Failed to retrieve recipients", {
-			operation: "findMany",
-			table: "recipients",
-			error: error instanceof Error ? error.message : String(error),
-		});
+		throw new DatabaseError(
+			"Failed to retrieve recipients: No recipients found",
+			{
+				operation: "findMany",
+				table: "recipients",
+				error: error instanceof Error ? error.message : String(error),
+			},
+		);
 	}
 }
 

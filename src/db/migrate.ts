@@ -5,7 +5,7 @@ import { db, pool } from "./index.js";
 async function runMigration() {
 	try {
 		// This will run migrations on the database, skipping the ones already applied
-		await migrate(db, { migrationsFolder: "./drizzle" });
+		await migrate(db, { migrationsFolder: "drizzle" });
 		console.log("Migration completed successfully");
 	} catch (error) {
 		console.error("Migration failed:", error);

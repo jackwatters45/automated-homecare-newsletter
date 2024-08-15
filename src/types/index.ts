@@ -77,17 +77,10 @@ export type Recipients = typeof recipients.$inferSelect;
 export type NewRecipient = typeof recipients.$inferInsert;
 
 // Populated types (post-database retrieval)
-
-// TODO:
-export type PopulatedNewNewsletter = NewNewsletter & {};
-
 export type ArticleWithCategory = Article & {
 	category: string;
 };
 
-// export type PopulatedCategory = Category & {
-// 	articles: Article[];
-// };
 export type PopulatedCategory = {
 	name: Category;
 	articles: Article[];

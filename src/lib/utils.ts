@@ -11,7 +11,12 @@ import {
 	CATEGORIES,
 	DESCRIPTION_MAX_LENGTH,
 } from "../lib/constants.js";
-import type { NewArticleInput, PageToScrape } from "../types/index.js";
+import type {
+	Category,
+	NewArticleInput,
+	PageToScrape,
+	PopulatedCategory,
+} from "../types/index.js";
 import { initializeGenAI } from "./ai.js";
 import { getBrowser } from "./browser.js";
 import logger from "./logger.js";
@@ -53,37 +58,35 @@ function parseJSONResponse(text: string) {
 	log(`Parsing response: ${cleanedString.slice(0, 100)}...`);
 
 	try {
-		const jsonResponse = JSON.parse(cleanedString);
+		try {
+			const jsonResponse = JSON.parse(cleanedString);
 
-		console.log(jsonResponse);
-		if (jsonResponse.type === "text") {
-			return jsonResponse.text;
-		}
-
-		return jsonResponse;
-	} catch (parseError) {
-		log(`Error parsing JSON response: ${parseError}`);
-
-		const jsonMatch = cleanedString.match(/\{[\s\S]*\}|\[[\s\S]*\]/);
-		if (jsonMatch) {
-			try {
-				return JSON.parse(jsonMatch[0]);
-			} catch (innerError) {
-				log(`Failed to parse extracted JSON: ${innerError}`);
+			if (jsonResponse.type === "text") {
+				return jsonResponse.text;
 			}
-		}
 
-		// If parsing fails, check if it's a simple string
-		if (
-			typeof cleanedString === "string" &&
-			cleanedString.startsWith('"') &&
-			cleanedString.endsWith('"')
-		) {
-			return cleanedString.slice(1, -1);
-		}
+			return jsonResponse;
+		} catch (parseError) {
+			const jsonMatch = cleanedString.match(/\{[\s\S]*\}|\[[\s\S]*\]/);
+			if (jsonMatch) {
+				return JSON.parse(jsonMatch[0]);
+			}
 
-		// If it's not a valid JSON or a quoted string, return the raw text
-		return cleanedString;
+			// If parsing fails, check if it's a simple string
+			if (
+				typeof cleanedString === "string" &&
+				cleanedString.startsWith('"') &&
+				cleanedString.endsWith('"')
+			) {
+				return cleanedString.slice(1, -1);
+			}
+
+			// If it's not a valid JSON or a quoted string, return the raw text
+			return cleanedString;
+		}
+	} catch (error) {
+		log(`Error parsing JSON response: ${error}`);
+		throw error;
 	}
 }
 
@@ -337,11 +340,10 @@ export const getEnv = (name: string) => {
 export function validateCategory(
 	category: string,
 ): NewArticleInput["category"] {
-	// biome-ignore lint/suspicious/noExplicitAny: <>
-	if (CATEGORIES.includes(category as any)) {
+	if (CATEGORIES.includes(category as Category)) {
 		return category as NewArticleInput["category"];
 	}
-	throw new Error("Invalid category");
+	return "Other" as NewArticleInput["category"];
 }
 
 export function getRecurringFrequency(weeks: number): number {
@@ -372,4 +374,28 @@ export function isValidEmail(email: string): boolean {
 	// Basic email validation regex
 	const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 	return emailRegex.test(email);
+}
+
+// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+export function groupBy<T>(array: any[], key: string): Record<string, T[]> {
+	return array.reduce((result, currentValue) => {
+		result[currentValue[key]] = result[currentValue[key]] || [];
+
+		result[currentValue[key]].push(currentValue);
+		return result;
+	}, {});
+}
+
+export function sortCategoriesByName(
+	categories: PopulatedCategory[],
+): PopulatedCategory[] {
+	const categoryOrder = new Map(
+		CATEGORIES.map((category, index) => [category, index]),
+	);
+
+	return categories.sort((a, b) => {
+		const orderA = categoryOrder.get(a.name) ?? Number.MAX_SAFE_INTEGER;
+		const orderB = categoryOrder.get(b.name) ?? Number.MAX_SAFE_INTEGER;
+		return orderA - orderB;
+	});
 }

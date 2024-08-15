@@ -6,13 +6,18 @@ import { CLIENT_URL, REVIEWER_EMAIL } from "../lib/constants.js";
 import { resend } from "../lib/email.js";
 
 import { eq } from "drizzle-orm/expressions";
+import type { Page } from "puppeteer";
 import { createNewsletter, getNewsletter } from "../api/service.js";
 import { db } from "../db/index.js";
 import { newsletters } from "../db/schema.js";
 import logger from "../lib/logger.js";
 import { renderTemplate } from "../lib/template.js";
-import { getEnv } from "../lib/utils.js";
-import type { PopulatedNewNewsletter } from "../types/index.js";
+import { getEnv, retry } from "../lib/utils.js";
+import type {
+	NewNewsletter,
+	PopulatedNewsletter,
+	ValidArticleDataWithCount,
+} from "../types/index.js";
 import { getArticleData } from "./data-fetching.js";
 import { filterAndRankArticles } from "./data-filtering.js";
 import {
@@ -24,7 +29,7 @@ import {
 const log = debug(`${process.env.APP_NAME}:app:index.ts`);
 
 export async function generateNewsletterData(): Promise<
-	PopulatedNewNewsletter | undefined
+	NewNewsletter | undefined
 > {
 	log("generating newsletter data");
 
@@ -87,32 +92,20 @@ export async function sendNewsletterReviewEmail() {
 	}
 }
 
-export async function generateNewsletterTemplate(id: number) {
+export async function sendNewsletter(id: number) {
 	try {
 		const newsletterData = await getNewsletter(id);
 
-		log(newsletterData);
-
-		const template = await renderTemplate(newsletterData);
-
-		return template;
-	} catch (error) {
-		logger.error("Error in generateNewsletterTemplate:", { error });
-	}
-}
-
-export async function sendNewsletter(id: number) {
-	try {
-		const html = await generateNewsletterTemplate(id);
+		const html = await renderTemplate(newsletterData);
 
 		if (!html) {
 			logger.error("Incomplete newsletter template");
 			throw new Error("Incomplete newsletter template");
 		}
 
-		const { recipients } = await getNewsletter(id);
-
-		const recipientEmails = recipients.map((recipient) => recipient.email);
+		const recipientEmails = newsletterData.recipients.map(
+			(recipient) => recipient.email,
+		);
 
 		const { data, error } = await resend.emails.send({
 			from: getEnv("RESEND_FROM_EMAIL"),

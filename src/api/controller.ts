@@ -9,6 +9,7 @@ import {
 	sendNewsletterReviewEmail,
 } from "../app/index.js";
 import { BASE_PATH } from "../lib/constants.js";
+import { updateNewsletterFrequency } from "../lib/cron.js";
 import { DatabaseError } from "../lib/errors.js";
 import { renderTemplate } from "../lib/template.js";
 import { validateCategory } from "../lib/utils.js";
@@ -26,7 +27,9 @@ import {
 	getNewsletter,
 	getNewsletterFrequency,
 	removeAllRecipients,
+	updateArticleCategory,
 	updateArticleDescription,
+	updateArticleOrder,
 	updateNewsletterSummary,
 	updateSetting,
 } from "./service.js";
@@ -39,6 +42,14 @@ const updateSummarySchema = z.object({
 
 const updateFrequencySchema = z.object({
 	weeks: z.number().int().min(1).max(4),
+});
+
+const updateArticleOrderSchema = z.object({
+	articleIds: z.array(z.number()).min(1),
+});
+
+const updateArticleCategorySchema = z.object({
+	toCategoryId: z.string(),
 });
 
 // Newsletter Controllers
@@ -82,6 +93,35 @@ export const newsletterController = {
 		try {
 			const newNewsletter = await createNewsletter(req.body);
 			res.status(201).json(newNewsletter);
+		} catch (error) {
+			next(error);
+		}
+	},
+
+	// Update a newsletter's article order
+	async updateArticleOrder(req: Request, res: Response, next: NextFunction) {
+		try {
+			const { articleIds } = updateArticleOrderSchema.parse(req.body);
+			const updatedNewsletter = await updateArticleOrder(
+				req.params.id,
+				articleIds,
+			);
+			res.json(updatedNewsletter);
+		} catch (error) {
+			next(error);
+		}
+	},
+
+	// Update a newsletter's article category
+	async updateArticleCategory(req: Request, res: Response, next: NextFunction) {
+		try {
+			const { toCategoryId } = updateArticleCategorySchema.parse(req.body);
+			const updatedNewsletter = await updateArticleCategory(
+				req.params.id,
+				req.params.articleId,
+				toCategoryId,
+			);
+			res.json(updatedNewsletter);
 		} catch (error) {
 			next(error);
 		}
@@ -170,6 +210,8 @@ export const newsletterController = {
 				"newsletterFrequency",
 				weeks.toString(),
 			);
+
+			await updateNewsletterFrequency(Number.parseInt(updatedWeeks, 10));
 
 			res.json({ weeks: updatedWeeks });
 		} catch (error) {

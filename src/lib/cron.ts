@@ -2,27 +2,15 @@ import debug from "debug";
 import { schedule } from "node-cron";
 import type { ScheduledTask } from "node-cron";
 
+import { eq } from "drizzle-orm";
 import { sendNewsletterReviewEmail } from "../app/index.js";
 import { db } from "../db/index.js";
-import { cronLogs } from "../db/schema.js";
+import { cronLogs, settings } from "../db/schema.js";
 import { pingServer } from "./health.js";
 import logger from "./logger.js";
 import { retry } from "./utils.js";
 
 const log = debug(`${process.env.APP_NAME}:cron.ts`);
-
-// Function to check if it's an alternate Monday
-export function isAlternateMonday(date: Date) {
-	const firstMondayOfYear = new Date(
-		date.getFullYear(),
-		0,
-		1 + ((1 - new Date(date.getFullYear(), 0, 1).getDay() + 7) % 7),
-	);
-	const weeksSinceFirstMonday = Math.floor(
-		(date.getTime() - firstMondayOfYear.getTime()) / (7 * 24 * 60 * 60 * 1000),
-	);
-	return weeksSinceFirstMonday % 2 === 0;
-}
 
 async function logCronExecution(
 	jobName: string,
@@ -50,14 +38,12 @@ async function logCronExecution(
 async function runNewsletterTask(): Promise<void> {
 	const jobName = "sendNewsletterReviewEmail";
 	try {
-		if (isAlternateMonday(new Date())) {
-			await retry(sendNewsletterReviewEmail);
-			await logCronExecution(
-				jobName,
-				"success",
-				"Newsletter review email sent successfully",
-			);
-		}
+		await retry(sendNewsletterReviewEmail);
+		await logCronExecution(
+			jobName,
+			"success",
+			"Newsletter review email sent successfully",
+		);
 	} catch (error) {
 		await logCronExecution(
 			jobName,
@@ -81,22 +67,92 @@ async function runHealthCheckTask(): Promise<void> {
 	}
 }
 
-export function setupCronJobs(): void {
+async function getNewsletterFrequency(): Promise<number> {
+	const [frequencySetting] = await db
+		.select()
+		.from(settings)
+		.where(eq(settings.key, "newsletterFrequency"));
+
+	if (!frequencySetting) {
+		logger.warn("Newsletter frequency setting not found, defaulting to 1 week");
+		return 1;
+	}
+
+	const frequency = Number.parseInt(frequencySetting.value, 10);
+	if (Number.isNaN(frequency) || frequency < 1 || frequency > 4) {
+		logger.warn(
+			`Invalid newsletter frequency: ${frequencySetting.value}, defaulting to 1 week`,
+		);
+		return 1;
+	}
+
+	return frequency;
+}
+
+function createNewsletterCronExpression(weekInterval: number): string {
+	return `0 9 * * 1/${weekInterval}`;
+}
+
+let newsletterTask: ScheduledTask | null = null;
+
+export async function setupCronJobs(): Promise<void> {
+	const frequency = await getNewsletterFrequency();
+	const newsletterCronExpression = createNewsletterCronExpression(frequency);
+
 	const tasks: { [key: string]: ScheduledTask } = {
-		// TODO: update to be dynamic
-		newsletter: schedule("0 9 * * 1", runNewsletterTask, {
-			timezone: "America/Halifax",
-		}),
 		healthCheck: schedule("0 0 * * *", runHealthCheckTask, { timezone: "UTC" }),
 	};
+
+	newsletterTask = schedule(newsletterCronExpression, runNewsletterTask, {
+		timezone: "America/Halifax",
+	});
 
 	process.on("SIGINT", () => {
 		log("Stopping cron jobs...");
 		for (const task of Object.values(tasks)) {
 			task.stop();
 		}
+		if (newsletterTask) {
+			newsletterTask.stop();
+		}
 		process.exit(0);
 	});
 
-	log("Cron jobs set up successfully");
+	log(
+		`Cron jobs set up successfully. Newsletter scheduled to run every ${frequency} week(s) on Monday at 9 AM AST`,
+	);
+}
+
+export async function updateNewsletterSchedule(): Promise<void> {
+	const frequency = await getNewsletterFrequency();
+	const newsletterCronExpression = createNewsletterCronExpression(frequency);
+
+	if (newsletterTask) {
+		newsletterTask.stop();
+	}
+
+	newsletterTask = schedule(newsletterCronExpression, runNewsletterTask, {
+		timezone: "America/Halifax",
+	});
+
+	log(
+		`Newsletter schedule updated to run every ${frequency} week(s) on Monday at 9 AM AST`,
+	);
+}
+
+// Function to update the newsletter frequency
+export async function updateNewsletterFrequency(
+	newFrequency: number,
+): Promise<void> {
+	if (newFrequency < 1 || newFrequency > 4) {
+		throw new Error("Newsletter frequency must be 1, 2, 3, or 4 weeks");
+	}
+
+	await db
+		.update(settings)
+		.set({ value: newFrequency.toString() })
+		.where(eq(settings.key, "newsletterFrequency"));
+
+	await updateNewsletterSchedule();
+	logger.info(`Newsletter frequency updated to every ${newFrequency} week(s)`);
 }

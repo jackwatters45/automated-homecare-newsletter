@@ -14,6 +14,7 @@ import {
 	fetchPageContent,
 	generateJSONResponseFromModel,
 	retry,
+	sortCategoriesByName,
 	truncateDescription,
 } from "../lib/utils.js";
 import type {
@@ -81,7 +82,8 @@ export const enrichArticleData = async (
 };
 
 export function createDescriptionPrompt(articleText: string): string {
-	return `Generate a subtitle description for the following article:
+	return `
+	Generate a subtitle description for the following article:
 
     ${articleText}
     
@@ -93,6 +95,7 @@ export function createDescriptionPrompt(articleText: string): string {
     - Assume the reader has basic familiarity with the topic
     - Do not use colons or semicolons
 		- If you cannot generate a description, return an empty string.
+		- If the article is not relevant to the newsletter, return an empty string.
 
 		Content Guidelines:
 		- Do not include any article titles, links, or direct references to specific articles.
@@ -189,12 +192,13 @@ export async function generateCategories(
 
   ${JSON.stringify(articles, null, 2)}
   
-  CATEGORIES:
+  CATEGORIES (maintain the order):
   ${CATEGORIES.join("\n")}
   
   Please follow these guidelines:
-  1. Assign each article to one of the predefined categories.
+  1. Assign each article to one of the predefined categories.	
   2. If an article doesn't fit well into any category, assign it to "Other".
+	3. Try to evenly distribute the articles across the categories. Ideally, each category (except other) should have an even number of articles.  
   
   Format your response as a JSON array with the following structure:
   [
