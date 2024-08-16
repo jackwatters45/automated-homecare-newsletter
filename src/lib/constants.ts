@@ -84,15 +84,15 @@ export const PORT = process.env.PORT || 8080;
 
 export const CLIENT_PORT = process.env.CLIENT_PORT || 5173;
 
-export const API_URL =
-	process.env.NODE_ENV === "production"
-		? "automated-homecare-newsletter-production.up.railway.app"
-		: `http://localhost:${PORT}`;
+export const IS_DEVELOPMENT = process.env.NODE_ENV === "development";
 
-export const CLIENT_URL =
-	process.env.NODE_ENV === "production"
-		? "https://trollycare-newsletter.vercel.app"
-		: `http://localhost:${CLIENT_PORT}`;
+export const API_URL = IS_DEVELOPMENT
+	? `http://localhost:${PORT}`
+	: "automated-homecare-newsletter-production.up.railway.app";
+
+export const CLIENT_URL = IS_DEVELOPMENT
+	? `http://localhost:${CLIENT_PORT}`
+	: "https://trollycare-newsletter.vercel.app";
 
 export const BASE_PATH = path.resolve();
 

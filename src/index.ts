@@ -14,7 +14,7 @@ import morgan from "morgan";
 import { engine } from "express-handlebars";
 import apiRouter from "./api/router.js";
 import { authMiddleware } from "./lib/auth-middleware.js";
-import { API_URL, BASE_PATH, PORT } from "./lib/constants.js";
+import { API_URL, BASE_PATH, IS_DEVELOPMENT, PORT } from "./lib/constants.js";
 import { setupCronJobs } from "./lib/cron.js";
 import { handleErrors } from "./lib/errors.js";
 import { healthCheck } from "./lib/health.js";
@@ -44,8 +44,6 @@ app.use(
 );
 app.use(compression());
 
-const isDevelopment = process.env.NODE_ENV === "development";
-
 const corsOptions: cors.CorsOptions = {
 	origin: (
 		origin: string | undefined,
@@ -54,14 +52,14 @@ const corsOptions: cors.CorsOptions = {
 		if (!origin) {
 			// Allow requests with no origin (like mobile apps or curl requests)
 			callback(null, true);
-		} else if (isDevelopment && origin.startsWith("http://localhost")) {
+		} else if (IS_DEVELOPMENT && origin.startsWith("http://localhost")) {
 			// Allow any localhost origin in development mode
 			callback(null, true);
 		} else if (allowedOrigins.includes(origin)) {
 			// Allow specific origins
 			callback(null, true);
 		} else {
-			log(isDevelopment);
+			log(IS_DEVELOPMENT);
 			log(origin.startsWith("http://localhost"));
 
 			log(`CORS error: Origin ${origin} not allowed`);
