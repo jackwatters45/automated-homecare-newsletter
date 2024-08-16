@@ -8,7 +8,7 @@ document.getElementById("generateBtn").addEventListener("click", async () => {
 		const data = await response.json();
 
 		if (data.success) {
-			result.innerHTML = `Data generated successfully. <a href="/test/newsletter/${data.id}">View Newsletter</a>`;
+			result.innerHTML = `Data generated successfully. <a href="/test/newsletters/${data.id}">View Newsletter</a>`;
 		} else {
 			result.textContent = data.message;
 		}

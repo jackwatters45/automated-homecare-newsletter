@@ -91,7 +91,7 @@ export async function sendNewsletterReviewEmail() {
 			from: getEnv("RESEND_FROM_EMAIL"),
 			to: REVIEWER_EMAIL,
 			subject: "Review TrollyCare Newsletter",
-			text: `Please review the newsletter and approve it before it is sent. link to newsletter: ${CLIENT_URL}/newsletter/${id}`,
+			text: `Please review the newsletter and approve it before it is sent. link to newsletter: ${CLIENT_URL}/newsletters/${id}`,
 		});
 
 		if (error) {
@@ -122,7 +122,7 @@ export async function sendNewsletterReviewEmailById(id: number) {
 			from: getEnv("RESEND_FROM_EMAIL"),
 			to: REVIEWER_EMAIL,
 			subject: "Review TrollyCare Newsletter",
-			text: `Please review the newsletter and approve it before it is sent. link to newsletter: ${CLIENT_URL}/newsletter/${id}`,
+			text: `Please review the newsletter and approve it before it is sent. link to newsletter: ${CLIENT_URL}/newsletters/${id}`,
 		});
 
 		if (error) {
