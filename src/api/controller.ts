@@ -17,17 +17,22 @@ import { validateCategory } from "../lib/utils.js";
 import {
 	addArticle,
 	addBulkRecipients,
+	addBulkReviewers,
 	addRecipient,
+	addReviewer,
 	createNewsletter,
 	deleteArticle,
 	deleteNewsletter,
 	deleteRecipient,
+	deleteReviewer,
 	getAllNewsletters,
 	getAllNewslettersWithRecipients,
 	getAllRecipients,
+	getAllReviewers,
 	getNewsletter,
 	getNewsletterFrequency,
 	removeAllRecipients,
+	removeAllReviewers,
 	updateArticleCategory,
 	updateArticleDescription,
 	updateArticleOrder,
@@ -417,6 +422,77 @@ export const pagesController = {
 			const template = await renderTemplate(newsletterData);
 
 			res.send(template);
+		} catch (error) {
+			next(error);
+		}
+	},
+};
+
+export const reviewerController = {
+	// Get all reviewers
+	getAll: async (req: Request, res: Response, next: NextFunction) => {
+		try {
+			const reviewers = await getAllReviewers();
+			res.json(reviewers);
+		} catch (error) {
+			next(error);
+		}
+	},
+	// Add a reviewer
+	addReviewer: async (req: Request, res: Response, next: NextFunction) => {
+		const { id: email } = req.params;
+
+		try {
+			const reviewer = await addReviewer(email);
+			res.json(reviewer);
+		} catch (error) {
+			if (
+				error instanceof DatabaseError &&
+				error.message === "Reviewer already exists"
+			) {
+				res.status(409).json({ error: "Reviewer already exists" });
+			} else {
+				next(error);
+			}
+		}
+	},
+	// Delete a reviewer
+	deleteReviewer: async (req: Request, res: Response, next: NextFunction) => {
+		const { id: email } = req.params;
+		try {
+			await deleteReviewer(email);
+			res.json({ message: "Reviewer deleted successfully" });
+		} catch (error) {
+			if (
+				error instanceof DatabaseError &&
+				error.message === "Reviewer not found"
+			) {
+				res.status(404).json({ error: "Reviewer not found" });
+			} else {
+				next(error);
+			}
+		}
+	},
+	// Add bulk reviewers
+	addBulk: async (req: Request, res: Response, next: NextFunction) => {
+		try {
+			const { emails } = req.body;
+			if (!Array.isArray(emails)) {
+				return res
+					.status(400)
+					.json({ error: "Invalid input: emails should be an array" });
+			}
+			const addedEmails = await addBulkReviewers(emails);
+			res.status(200).json(addedEmails);
+		} catch (error) {
+			next(error);
+		}
+	},
+	// Remove all reviewers
+	removeAll: async (req: Request, res: Response, next: NextFunction) => {
+		try {
+			await removeAllReviewers();
+			res.status(200).json({ message: "All recipients removed successfully" });
 		} catch (error) {
 			next(error);
 		}

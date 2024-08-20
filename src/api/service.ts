@@ -8,6 +8,7 @@ import {
 	newsletterRecipients,
 	newsletters,
 	recipients,
+	reviewers,
 	settings,
 } from "../db/schema.js";
 import { DatabaseError } from "../lib/errors.js";
@@ -217,10 +218,12 @@ export async function updateArticleOrder(
 				.from(articles)
 				.where(
 					and(
-						inArray(
-							articles.id,
-							articleIds.map((id) => id),
-						),
+						articleIds && articleIds.length > 0
+							? inArray(
+									articles.id,
+									articleIds.map((id) => id),
+								)
+							: sql`1 = 1`, // This condition is always true, effectively ignoring this part of the AND clause
 						eq(articles.newsletterId, Number.parseInt(newsletterId)),
 					),
 				);
@@ -674,10 +677,12 @@ export async function deleteRecipient(rawEmail: string) {
 				.where(
 					and(
 						eq(newsletterRecipients.recipientId, recipient.id),
-						inArray(
-							newsletterRecipients.newsletterId,
-							unsentNewsletters.map((n) => n.id),
-						),
+						unsentNewsletters && unsentNewsletters.length > 0
+							? inArray(
+									newsletterRecipients.newsletterId,
+									unsentNewsletters.map((n) => n.id),
+								)
+							: sql`1 = 0`, // This condition is always false
 					),
 				);
 
@@ -755,10 +760,12 @@ export async function removeAllRecipients(): Promise<void> {
 
 			// Remove all recipients from unsent newsletters
 			await tx.delete(newsletterRecipients).where(
-				inArray(
-					newsletterRecipients.newsletterId,
-					unsentNewsletters.map((n) => n.id),
-				),
+				unsentNewsletters && unsentNewsletters.length > 0
+					? inArray(
+							newsletterRecipients.newsletterId,
+							unsentNewsletters.map((n) => n.id),
+						)
+					: sql`1 = 0`, // This condition is always false
 			);
 
 			// Set all active recipients to inactive
@@ -863,6 +870,145 @@ export async function updateSetting(key: string, value: string) {
 			operation: "update",
 			table: "settings",
 			key,
+			error: error instanceof Error ? error.message : String(error),
+		});
+	}
+}
+
+// Reviewers
+export async function getAllReviewers() {
+	try {
+		return await db.select().from(reviewers);
+	} catch (error) {
+		if (error instanceof DatabaseError) throw error;
+		throw new DatabaseError("Failed to retrieve reviewers", {
+			operation: "select",
+			table: "newsletter_reviewers",
+			error: error instanceof Error ? error.message : String(error),
+		});
+	}
+}
+
+export async function getAllReviewerEmails() {
+	try {
+		const reviewers = await getAllReviewers();
+		return reviewers.map((r) => r.email);
+	} catch (error) {
+		throw new DatabaseError("Failed to retrieve reviewers", {
+			operation: "select",
+			table: "newsletter_reviewers",
+			error: error instanceof Error ? error.message : String(error),
+		});
+	}
+}
+
+export async function addReviewer(rawEmail: string) {
+	let email = "";
+	try {
+		email = decodeURIComponent(rawEmail);
+		emailSchema.parse(email);
+
+		const existingReviewer = await await db
+			.select()
+			.from(reviewers)
+			.where(eq(reviewers.email, email))
+			.limit(1);
+
+		if (existingReviewer.length > 0) {
+			throw new DatabaseError("Reviewer already exists", { email });
+		}
+
+		const [newReviewer] = await db
+			.insert(reviewers)
+			.values({ email })
+			.returning();
+
+		return newReviewer;
+	} catch (error) {
+		if (error instanceof DatabaseError) throw error;
+		if (error instanceof z.ZodError) {
+			throw new DatabaseError("Invalid email format", { rawEmail, email });
+		}
+		throw new DatabaseError("Failed to add reviewer", {
+			operation: "insert",
+			table: "newsletter_reviewers",
+			email,
+			error: error instanceof Error ? error.message : String(error),
+		});
+	}
+}
+
+export async function deleteReviewer(rawEmail: string) {
+	let email = "";
+	try {
+		email = decodeURIComponent(rawEmail);
+		emailSchema.parse(email);
+
+		const [deletedReviewer] = await db
+			.delete(reviewers)
+			.where(eq(reviewers.email, email))
+			.returning();
+
+		if (!deletedReviewer) {
+			throw new DatabaseError("Reviewer not found", { email });
+		}
+
+		return deletedReviewer;
+	} catch (error) {
+		if (error instanceof DatabaseError) throw error;
+		if (error instanceof z.ZodError) {
+			throw new DatabaseError("Invalid email format", { rawEmail, email });
+		}
+		throw new DatabaseError("Failed to delete reviewer", {
+			operation: "delete",
+			table: "newsletter_reviewers",
+			email,
+			error: error instanceof Error ? error.message : String(error),
+		});
+	}
+}
+
+export async function addBulkReviewers(emails: string[]): Promise<string[]> {
+	try {
+		const uniqueEmails = [...new Set(emails)];
+		const validEmails = uniqueEmails.filter((email) => isValidEmail(email));
+
+		if (validEmails.length === 0) return [];
+
+		return await db.transaction(async (tx) => {
+			const insertedReviewers = await Promise.all(
+				validEmails.map(async (email) => {
+					const [newReviewer] = await tx
+						.insert(reviewers)
+						.values({ email })
+						.returning();
+					return newReviewer;
+				}),
+			);
+
+			await addToUnsentNewsletters(
+				tx,
+				insertedReviewers.map((r) => r.id),
+			);
+
+			return insertedReviewers.map((r) => r.email);
+		});
+	} catch (error) {
+		throw new DatabaseError("Failed to add recipients", {
+			operation: "insert",
+			table: "recipients",
+			error: error instanceof Error ? error.message : String(error),
+		});
+	}
+}
+
+export async function removeAllReviewers(): Promise<void> {
+	try {
+		await db.delete(reviewers).returning();
+	} catch (error) {
+		throw new DatabaseError("Failed to remove all recipients", {
+			operation: "delete",
+			table: "recipients",
 			error: error instanceof Error ? error.message : String(error),
 		});
 	}

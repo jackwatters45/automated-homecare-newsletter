@@ -4,6 +4,7 @@ import {
 	newsletterController,
 	pagesController,
 	recipientController,
+	reviewerController,
 } from "./controller.js";
 
 const router = express.Router();
@@ -52,5 +53,12 @@ router.post("/recipients/:id", recipientController.addRecipient);
 // Page Routes
 router.get("/page/generate", pagesController.renderGenerateButton);
 router.get("/page/newsletter/:id", pagesController.renderNewsletterPreview);
+
+// Reviewer Routes
+router.get("/reviewers", reviewerController.getAll);
+router.delete("/reviewers/all", reviewerController.removeAll);
+router.delete("/reviewers/:id", reviewerController.deleteReviewer);
+router.post("/reviewers/bulk", reviewerController.addBulk);
+router.post("/reviewers/:id", reviewerController.addReviewer);
 
 export default router;

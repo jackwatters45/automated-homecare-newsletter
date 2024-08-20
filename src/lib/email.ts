@@ -1,4 +1,5 @@
 import { Resend } from "resend";
+import { getAllReviewerEmails, getAllReviewers } from "../api/service.js";
 import logger from "./logger.js";
 import { getEnv } from "./utils.js";
 
@@ -28,7 +29,7 @@ export async function sendEmail(html: string, to: string[]) {
 }
 
 export async function sendTestEmail(html: string) {
-	const to = [getEnv("REVIEWER_EMAIL")];
+	const to = await getAllReviewerEmails();
 
 	return await sendEmail(html, to);
 }

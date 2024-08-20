@@ -78,8 +78,6 @@ export const DESCRIPTION_MAX_LENGTH = 35;
 
 export const COMPANY_NAME = "TrollyCare";
 
-export const REVIEWER_EMAIL = process.env.REVIEWER_EMAIL || "";
-
 export const PORT = process.env.PORT || 8080;
 
 export const CLIENT_PORT = process.env.CLIENT_PORT || 5173;

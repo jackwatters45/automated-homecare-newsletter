@@ -6,23 +6,21 @@ import {
 	CLIENT_URL,
 	DESIRED_ARTICLE_COUNT,
 	MAX_RETRIES,
-	REVIEWER_EMAIL,
 } from "../lib/constants.js";
 import { resend } from "../lib/email.js";
 
 import { eq } from "drizzle-orm/expressions";
-import type { Page } from "puppeteer";
-import { createNewsletter, getNewsletter } from "../api/service.js";
+import {
+	createNewsletter,
+	getAllReviewerEmails,
+	getNewsletter,
+} from "../api/service.js";
 import { db } from "../db/index.js";
 import { newsletters } from "../db/schema.js";
 import logger from "../lib/logger.js";
 import { renderTemplate } from "../lib/template.js";
 import { getEnv, retry } from "../lib/utils.js";
-import type {
-	NewNewsletter,
-	PopulatedNewsletter,
-	ValidArticleDataWithCount,
-} from "../types/index.js";
+import type { NewNewsletter } from "../types/index.js";
 import { getArticleData } from "./data-fetching.js";
 import { filterAndRankArticles } from "./data-filtering.js";
 import {
@@ -87,9 +85,11 @@ export async function sendNewsletterReviewEmail() {
 			throw new Error("Newsletter ID not found");
 		}
 
+		const reviewers = await getAllReviewerEmails();
+
 		const { data, error } = await resend.emails.send({
 			from: getEnv("RESEND_FROM_EMAIL"),
-			to: REVIEWER_EMAIL,
+			to: reviewers,
 			subject: "Review TrollyCare Newsletter",
 			text: `Please review the newsletter and approve it before it is sent. link to newsletter: ${CLIENT_URL}/newsletters/${id}`,
 		});
@@ -118,9 +118,11 @@ export async function sendNewsletterReviewEmailById(id: number) {
 			throw new Error("Newsletter data not found");
 		}
 
+		const reviewers = await getAllReviewerEmails();
+
 		const { data, error } = await resend.emails.send({
 			from: getEnv("RESEND_FROM_EMAIL"),
-			to: REVIEWER_EMAIL,
+			to: reviewers,
 			subject: "Review TrollyCare Newsletter",
 			text: `Please review the newsletter and approve it before it is sent. link to newsletter: ${CLIENT_URL}/newsletters/${id}`,
 		});

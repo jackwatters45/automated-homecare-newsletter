@@ -106,6 +106,13 @@ export const newsletterRecipientsRelations = relations(
 	}),
 );
 
+export const reviewers = createTable("newsletter_reviewers", {
+	id: serial("id").primaryKey(),
+	email: text("email").notNull(),
+	createdAt: timestamp("created_at").defaultNow(),
+	updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 export const cronStatusEnum = pgEnum("cron_status", ["SUCCESS", "FAILURE"]);
 
 export const cronLogs = createTable("cron_logs", {
