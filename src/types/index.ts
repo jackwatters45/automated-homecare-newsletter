@@ -1,4 +1,10 @@
-import type { articles, newsletters, recipients } from "../db/schema.js";
+import type {
+	ads,
+	articles,
+	newsletters,
+	recipients,
+	reviewers,
+} from "../db/schema.js";
 import type { CATEGORIES } from "../lib/constants.js";
 
 // Data collection + formatting types
@@ -73,8 +79,14 @@ export type NewNewsletter = typeof newsletters.$inferInsert;
 export type Article = typeof articles.$inferSelect;
 export type NewArticle = typeof articles.$inferInsert;
 
-export type Recipients = typeof recipients.$inferSelect;
+export type Recipient = typeof recipients.$inferSelect;
 export type NewRecipient = typeof recipients.$inferInsert;
+
+export type Reviewer = typeof reviewers.$inferSelect;
+export type NewReviewer = typeof reviewers.$inferInsert;
+
+export type Ad = typeof ads.$inferSelect;
+export type NewAd = typeof ads.$inferInsert;
 
 // Populated types (post-database retrieval)
 export type ArticleWithCategory = Article & {
@@ -88,5 +100,6 @@ export type PopulatedCategory = {
 
 export type PopulatedNewsletter = Newsletter & {
 	categories: PopulatedCategory[];
-	recipients: Recipients[];
+	ads: Ad[];
+	recipients: Recipient[];
 };

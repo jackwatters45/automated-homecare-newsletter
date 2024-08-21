@@ -86,6 +86,7 @@ export const articlesRelations = relations(articles, ({ one }) => ({
 export const newslettersRelations = relations(newsletters, ({ many }) => ({
 	articles: many(articles),
 	recipients: many(newsletterRecipients),
+	ads: many(adNewsletterRelations),
 }));
 
 export const recipientsRelations = relations(recipients, ({ many }) => ({
@@ -131,3 +132,51 @@ export const settings = createTable("settings", {
 	createdAt: timestamp("created_at").defaultNow(),
 	updatedAt: timestamp("updated_at").defaultNow(),
 });
+
+export const adTypeEnum = pgEnum("ad_type", ["BANNER", "INLINE"]);
+
+export const ads = createTable("ads", {
+	id: serial("id").primaryKey(),
+	title: text("title"),
+	link: text("link").notNull(),
+	imageUrl: text("imageUrl").notNull(),
+	description: text("description"),
+	order: integer("order").notNull().default(0),
+	company: text("company").notNull(),
+	type: adTypeEnum("type").notNull().default("INLINE"),
+	createdAt: timestamp("created_at").defaultNow(),
+	updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const adNewsletterRelations = createTable("ad_newsletter_relations", {
+	adId: integer("ad_id")
+		.notNull()
+		.references(() => ads.id, {
+			onDelete: "cascade",
+			onUpdate: "cascade",
+		}),
+	newsletterId: integer("newsletter_id")
+		.notNull()
+		.references(() => newsletters.id, {
+			onDelete: "cascade",
+			onUpdate: "cascade",
+		}),
+});
+
+export const adsRelations = relations(ads, ({ many }) => ({
+	newsletters: many(adNewsletterRelations),
+}));
+
+export const adNewsletterRelationsRelations = relations(
+	adNewsletterRelations,
+	({ one }) => ({
+		ad: one(ads, {
+			fields: [adNewsletterRelations.adId],
+			references: [ads.id],
+		}),
+		newsletter: one(newsletters, {
+			fields: [adNewsletterRelations.newsletterId],
+			references: [newsletters.id],
+		}),
+	}),
+);

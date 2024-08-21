@@ -1,5 +1,6 @@
 import express from "express";
 import {
+	adController,
 	articleController,
 	newsletterController,
 	pagesController,
@@ -60,5 +61,20 @@ router.delete("/reviewers/all", reviewerController.removeAll);
 router.delete("/reviewers/:id", reviewerController.deleteReviewer);
 router.post("/reviewers/bulk", reviewerController.addBulk);
 router.post("/reviewers/:id", reviewerController.addReviewer);
+
+// Ad Routes
+router.get("/ads", adController.getAllAds);
+router.get("/ads/:id", adController.getAdById);
+router.post("/ads", adController.createAd);
+router.put("/ads/:id", adController.updateAd);
+router.delete("/ads/:id", adController.deleteAd);
+router.post(
+	"/ads/:adId/newsletters/:newsletterId",
+	adController.addAdToNewsletter,
+);
+router.delete(
+	"/ads/:adId/newsletters/:newsletterId",
+	adController.removeAdFromNewsletter,
+);
 
 export default router;

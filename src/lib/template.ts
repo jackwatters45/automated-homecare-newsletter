@@ -52,6 +52,7 @@ export async function renderTemplate(
 		},
 		categories: data?.categories,
 		summary: data?.summary,
+		ads: data?.ads,
 	});
 
 	const inlinedHtml = juice.inlineContent(htmlContent, postcssResult.css);

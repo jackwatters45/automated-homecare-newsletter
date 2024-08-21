@@ -4,6 +4,8 @@ import { z } from "zod";
 
 import { db } from "../db/index.js";
 import {
+	adNewsletterRelations,
+	ads,
 	articles,
 	newsletterRecipients,
 	newsletters,
@@ -16,6 +18,7 @@ import type {
 	Article,
 	ArticleInputWithCategory,
 	Category,
+	NewAd,
 	NewArticleInput,
 	NewNewsletter,
 	PopulatedCategory,
@@ -120,9 +123,11 @@ export async function getNewsletter(id: number): Promise<PopulatedNewsletter> {
 			with: {
 				recipients: {
 					columns: {},
-					with: {
-						recipient: true,
-					},
+					with: { recipient: true },
+				},
+				ads: {
+					columns: {},
+					with: { ad: true },
 				},
 				articles: true,
 			},
@@ -137,6 +142,7 @@ export async function getNewsletter(id: number): Promise<PopulatedNewsletter> {
 		return {
 			...newsletter,
 			recipients: newsletter.recipients.map((nr) => nr.recipient),
+			ads: newsletter.ads.map((na) => na.ad),
 			categories: categorizedArticles,
 		};
 	} catch (error) {
@@ -1011,5 +1017,115 @@ export async function removeAllReviewers(): Promise<void> {
 			table: "recipients",
 			error: error instanceof Error ? error.message : String(error),
 		});
+	}
+}
+
+// Ads
+
+export async function getAllAds() {
+	try {
+		return await db.query.ads.findMany({
+			with: {
+				newsletters: {
+					columns: {},
+					with: {
+						newsletter: true,
+					},
+				},
+			},
+		});
+	} catch (error) {
+		throw new DatabaseError(`Failed to retrieve ads: ${error}`);
+	}
+}
+
+export async function getAdById(id: number) {
+	try {
+		const ad = await db.query.ads.findFirst({
+			where: eq(ads.id, id),
+			with: {
+				newsletters: {
+					columns: {},
+					with: {
+						newsletter: true,
+					},
+				},
+			},
+		});
+
+		if (!ad) {
+			throw new DatabaseError("Ad not found");
+		}
+
+		return ad;
+	} catch (error) {
+		throw new DatabaseError(`Failed to retrieve ad: ${error}`);
+	}
+}
+
+export async function createAd(newAd: NewAd) {
+	try {
+		const [createdAd] = await db.insert(ads).values(newAd).returning();
+		return createdAd;
+	} catch (error) {
+		throw new DatabaseError(`Failed to create ad: ${error}`);
+	}
+}
+
+export async function updateAd(id: number, updatedAd: Partial<NewAd>) {
+	try {
+		const [updated] = await db
+			.update(ads)
+			.set({ ...updatedAd, updatedAt: new Date() })
+			.where(eq(ads.id, id))
+			.returning();
+
+		if (!updated) {
+			throw new DatabaseError("Ad not found");
+		}
+
+		return updated;
+	} catch (error) {
+		throw new DatabaseError(`Failed to update ad: ${error}`);
+	}
+}
+
+export async function deleteAd(id: number) {
+	try {
+		const [deleted] = await db.delete(ads).where(eq(ads.id, id)).returning();
+
+		if (!deleted) {
+			throw new DatabaseError("Ad not found");
+		}
+
+		return deleted;
+	} catch (error) {
+		throw new DatabaseError(`Failed to delete ad: ${error}`);
+	}
+}
+
+export async function addAdToNewsletter(adId: number, newsletterId: number) {
+	try {
+		await db.insert(adNewsletterRelations).values({ adId, newsletterId });
+	} catch (error) {
+		throw new DatabaseError(`Failed to add ad to newsletter: ${error}`);
+	}
+}
+
+export async function removeAdFromNewsletter(
+	adId: number,
+	newsletterId: number,
+) {
+	try {
+		await db
+			.delete(adNewsletterRelations)
+			.where(
+				and(
+					eq(adNewsletterRelations.adId, adId),
+					eq(adNewsletterRelations.newsletterId, newsletterId),
+				),
+			);
+	} catch (error) {
+		throw new DatabaseError(`Failed to remove ad from newsletter: ${error}`);
 	}
 }

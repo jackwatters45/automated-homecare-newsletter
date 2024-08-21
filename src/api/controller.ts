@@ -15,24 +15,31 @@ import { DatabaseError } from "../lib/errors.js";
 import { renderTemplate } from "../lib/template.js";
 import { validateCategory } from "../lib/utils.js";
 import {
+	addAdToNewsletter,
 	addArticle,
 	addBulkRecipients,
 	addBulkReviewers,
 	addRecipient,
 	addReviewer,
+	createAd,
 	createNewsletter,
+	deleteAd,
 	deleteArticle,
 	deleteNewsletter,
 	deleteRecipient,
 	deleteReviewer,
+	getAdById,
+	getAllAds,
 	getAllNewsletters,
 	getAllNewslettersWithRecipients,
 	getAllRecipients,
 	getAllReviewers,
 	getNewsletter,
 	getNewsletterFrequency,
+	removeAdFromNewsletter,
 	removeAllRecipients,
 	removeAllReviewers,
+	updateAd,
 	updateArticleCategory,
 	updateArticleDescription,
 	updateArticleOrder,
@@ -495,6 +502,116 @@ export const reviewerController = {
 			res.status(200).json({ message: "All recipients removed successfully" });
 		} catch (error) {
 			next(error);
+		}
+	},
+};
+
+export const adController = {
+	getAllAds: async (req: Request, res: Response) => {
+		try {
+			const ads = await getAllAds();
+			res.json(ads);
+		} catch (error) {
+			if (error instanceof DatabaseError) {
+				res.status(500).json({ error: error.message });
+			} else {
+				res.status(500).json({ error: "An unexpected error occurred" });
+			}
+		}
+	},
+
+	getAdById: async (req: Request, res: Response) => {
+		const { id } = req.params;
+		try {
+			const ad = await getAdById(Number(id));
+			res.json(ad);
+		} catch (error) {
+			if (error instanceof DatabaseError) {
+				if (error.message === "Ad not found") {
+					res.status(404).json({ error: error.message });
+				} else {
+					res.status(500).json({ error: error.message });
+				}
+			} else {
+				res.status(500).json({ error: "An unexpected error occurred" });
+			}
+		}
+	},
+
+	createAd: async (req: Request, res: Response) => {
+		try {
+			const newAd = await createAd(req.body);
+			res.status(201).json(newAd);
+		} catch (error) {
+			if (error instanceof DatabaseError) {
+				res.status(500).json({ error: error.message });
+			} else {
+				res.status(500).json({ error: "An unexpected error occurred" });
+			}
+		}
+	},
+
+	updateAd: async (req: Request, res: Response) => {
+		const { id } = req.params;
+		try {
+			const updatedAd = await updateAd(Number(id), req.body);
+			res.json(updatedAd);
+		} catch (error) {
+			if (error instanceof DatabaseError) {
+				if (error.message === "Ad not found") {
+					res.status(404).json({ error: error.message });
+				} else {
+					res.status(500).json({ error: error.message });
+				}
+			} else {
+				res.status(500).json({ error: "An unexpected error occurred" });
+			}
+		}
+	},
+
+	deleteAd: async (req: Request, res: Response) => {
+		const { id } = req.params;
+		try {
+			await deleteAd(Number(id));
+			res.json({ message: "Ad deleted successfully" });
+		} catch (error) {
+			if (error instanceof DatabaseError) {
+				if (error.message === "Ad not found") {
+					res.status(404).json({ error: error.message });
+				} else {
+					res.status(500).json({ error: error.message });
+				}
+			} else {
+				res.status(500).json({ error: "An unexpected error occurred" });
+			}
+		}
+	},
+
+	addAdToNewsletter: async (req: Request, res: Response) => {
+		const { adId, newsletterId } = req.params;
+		try {
+			await addAdToNewsletter(Number(adId), Number(newsletterId));
+			res.json({ message: "Ad added to newsletter successfully" });
+		} catch (error) {
+			if (error instanceof DatabaseError) {
+				res.status(500).json({ error: error.message });
+			} else {
+				res.status(500).json({ error: "An unexpected error occurred" });
+			}
+		}
+	},
+
+	removeAdFromNewsletter: async (req: Request, res: Response) => {
+		const { adId, newsletterId } = req.params;
+		try {
+			await removeAdFromNewsletter(Number(adId), Number(newsletterId));
+			res.json({ message: "Ad removed from newsletter successfully" });
+		} catch (error) {
+			if (error instanceof DatabaseError) {
+				res.status(500).json({ error: error.message });
+			} else {
+				res.status(500).json({ error: "An unexpected error occurred" });
+			}
 		}
 	},
 };
