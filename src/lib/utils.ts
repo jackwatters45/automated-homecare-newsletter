@@ -10,6 +10,8 @@ import {
 	BASE_PATH,
 	CATEGORIES,
 	DESCRIPTION_MAX_LENGTH,
+	IS_DEVELOPMENT,
+	MAX_RETRIES,
 } from "../lib/constants.js";
 import type {
 	Category,
@@ -24,16 +26,16 @@ import logger from "./logger.js";
 const log = debug(`${process.env.APP_NAME}:utils.ts`);
 
 let aiCallCount = 0;
-export function logAiCall(prompt: string) {
+export function logAiCall() {
 	aiCallCount++;
-	log(`AI model called ${aiCallCount} times. Prompt: ${prompt.slice(0, 55)}...`);
+	log(`AI model called ${aiCallCount} times.`);
 }
 
 const model = initializeGenAI();
 
 export async function generateJSONResponseFromModel(prompt: string) {
 	try {
-		logAiCall(prompt);
+		logAiCall();
 
 		const result = await model.generateContent(prompt);
 
@@ -43,7 +45,7 @@ export async function generateJSONResponseFromModel(prompt: string) {
 
 		return parseJSONResponse(text);
 	} catch (error) {
-		log(`Unexpected error: ${error}`);
+		logger.error(`Unexpected error: ${error}`);
 		throw new Error(`Unexpected error when generating response: ${error}`);
 	}
 }
@@ -54,8 +56,6 @@ function parseJSONResponse(text: string) {
 		.replace(/^```json\n/, "")
 		.replace(/\n```$/, "")
 		.trim();
-
-	log(`Parsing response: ${cleanedString.slice(0, 100)}...`);
 
 	try {
 		try {
@@ -181,6 +181,8 @@ export function truncateDescription(description: string): string {
 }
 
 export async function fetchPageContent(url: string): Promise<string> {
+	const browser = await getBrowser();
+
 	try {
 		const response = await fetch(url);
 		if (!response.ok) {
@@ -189,7 +191,6 @@ export async function fetchPageContent(url: string): Promise<string> {
 		}
 		return await response.text();
 	} catch (error) {
-		const browser = await getBrowser();
 		const page = await browser.newPage();
 
 		try {
@@ -198,6 +199,8 @@ export async function fetchPageContent(url: string): Promise<string> {
 		} catch (error) {
 			logger.error("Error in fetchPageContent:", { error });
 			throw error;
+		} finally {
+			await browser.close();
 		}
 	}
 }
@@ -258,11 +261,39 @@ export function shuffleArray<T>(array: T[]): T[] {
 	return array;
 }
 
+export async function readTestData<T>(name: string): Promise<T | undefined> {
+	try {
+		const json = await fs.readFile(path.join(BASE_PATH, ".data", name), "utf8");
+
+		return JSON.parse(json);
+	} catch (error) {
+		log(`Error in readTestData: ${error}`);
+		return undefined;
+	}
+}
 export async function writeTestData<T>(name: string, data: T) {
-	await fs.writeFile(
-		path.join(BASE_PATH, "tests", "data", name),
-		JSON.stringify(data, null, 2),
-	);
+	try {
+		await fs.writeFile(
+			path.join(BASE_PATH, ".data", name),
+			JSON.stringify(data, null, 2),
+		);
+	} catch (error) {
+		log(`Error in writeTestData: ${error}`);
+	}
+}
+
+export async function writeDataIfNotExists<T>(name: string, data: T) {
+	if (!IS_DEVELOPMENT) return;
+
+	try {
+		const existingData = await readTestData<T>(name);
+
+		if (existingData) return;
+
+		await writeTestData(name, data);
+	} catch (error) {
+		log(`Error in writeDataIfNotExists: ${error}`);
+	}
 }
 
 export async function checkRobotsTxtPermission(targetUrl: string) {
@@ -298,14 +329,17 @@ export async function checkRobotsTxtPermission(targetUrl: string) {
 	}
 }
 
-export async function retry<T>(fn: () => Promise<T>, maxRetries = 3) {
+export async function retry<T>(fn: () => Promise<T>, maxRetries = MAX_RETRIES) {
 	let retries = 0;
 	while (retries < maxRetries) {
 		try {
 			return await fn();
 		} catch (error) {
 			retries++;
-			if (retries === maxRetries) throw error;
+			if (retries === maxRetries) {
+				throw error;
+			}
+
 			await new Promise((resolve) => setTimeout(resolve, 2 ** retries * 1000));
 		}
 	}

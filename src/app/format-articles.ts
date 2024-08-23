@@ -16,6 +16,7 @@ import {
 	retry,
 	sortCategoriesByName,
 	truncateDescription,
+	writeDataIfNotExists,
 } from "../lib/utils.js";
 import type {
 	ArticleInput,
@@ -29,6 +30,8 @@ const log = debug(`${process.env.APP_NAME}:format-articles.ts`);
 export const enrichArticleData = async (
 	articleData: ValidArticleData,
 ): Promise<ArticleInput> => {
+	let pageContent: string | undefined;
+
 	try {
 		if (articleData.description && articleData.description.length > 120) {
 			return {
@@ -38,7 +41,7 @@ export const enrichArticleData = async (
 			};
 		}
 
-		const pageContent = await retry(() => fetchPageContent(articleData.link));
+		pageContent = await retry(() => fetchPageContent(articleData.link));
 
 		if (!pageContent) {
 			log("Page content is empty");
@@ -72,7 +75,7 @@ export const enrichArticleData = async (
 			description: truncateDescription(description),
 		};
 	} catch (error) {
-		log(`Error enriching article ${articleData.link}: ${error}`);
+		log(`Error enriching article ${articleData.link}: ${error} ${pageContent}`);
 		return {
 			title: articleData.title,
 			link: articleData.link,
@@ -118,7 +121,7 @@ export const enrichArticlesData = async (
 		);
 
 		log(`Enriched ${enrichedArticles.length} articles successfully`);
-		// await writeTestData("display-article-data.json", enrichedArticles);
+		await writeDataIfNotExists("display-article-data.json", enrichedArticles);
 
 		return enrichedArticles;
 	} catch (error) {
@@ -171,7 +174,7 @@ export async function generateSummary(
 	}
 
 	log(`Generated summary: ${formattedDescription}`);
-	// await writeTestData("summary.json", formattedDescription);
+	await writeDataIfNotExists("summary.json", formattedDescription);
 
 	return formattedDescription;
 }
@@ -197,7 +200,7 @@ export async function generateCategories(
   
   Please follow these guidelines:
   1. Assign each article to one of the predefined categories.	
-  2. If an article doesn't fit well into any category, assign it to "Other".
+  2. If an article doesn't fit well into any category, assign it to "Other". Try to avoid using "Other" unless there is a great article that doesn't fit into any category.
 	3. Try to evenly distribute the articles across the categories. Ideally, each category (except other) should have an even number of articles.  
   
   Format your response as a JSON array with the following structure:
@@ -265,5 +268,5 @@ async function writeCategoriesToFile() {
 
 	log(categories);
 
-	// await writeTestData("display-data-full.json", categories);
+	await writeDataIfNotExists("display-data-full.json", categories);
 }

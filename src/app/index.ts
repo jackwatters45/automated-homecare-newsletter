@@ -2,11 +2,7 @@ import "dotenv/config";
 
 import debug from "debug";
 
-import {
-	CLIENT_URL,
-	DESIRED_ARTICLE_COUNT,
-	MAX_RETRIES,
-} from "../lib/constants.js";
+import { CLIENT_URL } from "../lib/constants.js";
 import { resend } from "../lib/email.js";
 
 import { eq } from "drizzle-orm/expressions";
@@ -20,7 +16,7 @@ import { newsletters } from "../db/schema.js";
 import logger from "../lib/logger.js";
 import { renderTemplate } from "../lib/template.js";
 import { getEnv, retry } from "../lib/utils.js";
-import type { NewNewsletter } from "../types/index.js";
+import type { ArticleInput, NewNewsletter } from "../types/index.js";
 import { getArticleData } from "./data-fetching.js";
 import { filterAndRankArticles } from "./data-filtering.js";
 import {
@@ -31,27 +27,39 @@ import {
 
 const log = debug(`${process.env.APP_NAME}:app:index.ts`);
 
-export async function generateNewsletterData(): Promise<
-	NewNewsletter | undefined
-> {
-	log("generating newsletter data");
-
+async function generateNewsletterArticles() {
 	try {
 		const fetchArticles = async () => {
-			const results = await getArticleData();
-			return filterAndRankArticles(results, DESIRED_ARTICLE_COUNT);
+			const results = await retry(getArticleData);
+			if (!results) throw new Error("No articles found");
+			return await retry(() => filterAndRankArticles(results));
 		};
 
-		const articles = await retry(fetchArticles, MAX_RETRIES);
+		const articles = await fetchArticles();
 
 		if (!articles) {
 			logger.error("No articles found");
 			throw new Error("No articles found");
 		}
 
-		log("articles filtered and ranked", articles);
+		return await enrichArticlesData(articles);
+	} catch (error) {
+		logger.error("Error in generateNewsletterArticles:", { error });
+		throw error;
+	}
+}
 
-		const articlesData = await enrichArticlesData(articles);
+export async function generateNewsletterData(): Promise<
+	NewNewsletter | undefined
+> {
+	log("generating newsletter data");
+
+	try {
+		let articlesData: ArticleInput[] = [];
+		// while (articlesData.length < MIN_NUMBER_OF_ARTICLES) {
+		articlesData = await generateNewsletterArticles();
+		// log("generated articles - too few", articlesData.length);
+		// }
 
 		const summary = await generateSummary(articlesData);
 
@@ -62,7 +70,7 @@ export async function generateNewsletterData(): Promise<
 			articles: articlesWithCategories,
 		});
 
-		log("newsletter data generated", newsletter, newsletter.articles.length);
+		log("newsletter data generated", newsletter.articles.length);
 		return newsletter;
 	} catch (error) {
 		logger.error("Error in generateNewsletterData:", { error });

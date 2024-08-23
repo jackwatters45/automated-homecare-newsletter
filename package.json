@@ -27,6 +27,7 @@
 		"@sentry/profiling-node": "^8.14.0",
 		"@supabase/supabase-js": "^2.45.0",
 		"@types/cors": "^2.8.17",
+		"@upstash/redis": "^1.34.0",
 		"autoprefixer": "^10.4.19",
 		"bottleneck": "^2.19.5",
 		"cheerio": "1.0.0-rc.12",

@@ -13,8 +13,16 @@ import {
 } from "./utils.js";
 
 const log = debug(`${process.env.APP_NAME}:google-search.ts`);
+const debugLog = debug(`debug:${process.env.APP_NAME}:google-search.ts`);
+
 const customsearch = google.customsearch("v1");
-const BLACKLISTED_DOMAINS = ["https://nahc.com", "https://www.nejm.org"];
+
+const BLACKLISTED_DOMAINS = [
+	"https://news.google.com",
+	"https://nahc.com",
+	"https://www.nejm.org",
+	"https://homehealthcarenews.com",
+];
 
 export async function getLastDateQuery(
 	q: string,
@@ -53,12 +61,11 @@ async function getPageUrl(
 	url: URL;
 } | null> {
 	try {
-		const response = await page.goto(url, { waitUntil: "networkidle0" });
+		const response = await page.goto(url, {
+			waitUntil: "networkidle0",
+		});
 
 		if (!response?.ok) {
-			log(
-				`Error navigating to ${url}: ${response?.status} ${response?.statusText}`,
-			);
 			return null;
 		}
 
@@ -66,12 +73,16 @@ async function getPageUrl(
 
 		return { content, url: new URL(page.url()) };
 	} catch (error) {
-		log(`Error navigating to ${url}: ${error}`);
+		debugLog(`Error navigating to url: ${error}`);
 		return null;
 	}
 }
 
-export async function searchNews(qs: string[]): Promise<ValidArticleData[]> {
+let num = 0;
+export async function searchNews(
+	qs: string[],
+	pages = 1,
+): Promise<ValidArticleData[]> {
 	const allResults: ArticleData[] = [];
 	let browser: Browser | null = null;
 
@@ -80,7 +91,7 @@ export async function searchNews(qs: string[]): Promise<ValidArticleData[]> {
 		const page = await browser.newPage();
 
 		for (const q of qs) {
-			for (let i = 0; i < 3; i++) {
+			for (let i = 0; i < pages; i++) {
 				const startIndex = i * 10 + 1;
 				try {
 					const query = await getLastDateQuery(q);
@@ -98,20 +109,27 @@ export async function searchNews(qs: string[]): Promise<ValidArticleData[]> {
 						continue;
 					}
 
+					if (!res?.data.items.length) {
+						log(`No results found for query: ${q}`);
+						throw new Error("No results found for query");
+					}
+
+					num = num + res.data.items.length;
+
 					for (const item of res.data.items) {
-						if (!item.link) continue;
+						if (!item.link) {
+							continue;
+						}
 
 						const pageData = await getPageUrl(page, item.link);
 
-						if (!pageData) continue;
+						if (!pageData) {
+							continue;
+						}
 
 						const { content, url } = pageData;
 
 						const origin = url?.origin;
-
-						if (origin?.includes("https://news.google.com") || !origin) {
-							continue;
-						}
 
 						const isBlacklisted = BLACKLISTED_DOMAINS.some((blacklisted) => {
 							return origin.includes(blacklisted);
@@ -123,7 +141,6 @@ export async function searchNews(qs: string[]): Promise<ValidArticleData[]> {
 						}
 
 						const descriptionPrompt = createDescriptionPrompt(content);
-
 						const generatedDescription = await rateLimiter.schedule(() =>
 							retry(() => generateJSONResponseFromModel(descriptionPrompt)),
 						);

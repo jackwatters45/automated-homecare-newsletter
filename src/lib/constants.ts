@@ -30,15 +30,6 @@ export const SPECIFIC_PAGES: PageToScrape[] = [
 		dateSelector: ".post-date",
 	},
 	{
-		url: "https://homehealthcarenews.com/",
-		articleContainerSelector: ".entry-block",
-		linkSelector: "h2 > a",
-		titleSelector: ".entry-title",
-		descriptionSelector: undefined,
-		dateSelector: ".entry-date",
-		removeIfNoDate: true,
-	},
-	{
 		url: "https://valleyhca.com/our-blog/",
 		articleContainerSelector: "article",
 		linkSelector: "a",
@@ -95,10 +86,14 @@ export const CLIENT_URL = IS_DEVELOPMENT
 export const BASE_PATH = path.resolve();
 
 export const CATEGORIES = [
-	"Industry Trends & Policy",
-	"Clinical Research & Care Innovations",
-	"Business Operations & Technology",
-	"Caregiving Excellence: Support & Best Practices",
+	"Policy & Industry Trends",
+	"Clinical Advancements & Best Practices",
+	"Technology & Innovation",
+	"Business Operations & Finance",
+	"Workforce & Professional Development",
+	"Patient Care & Community Health",
+	// "Business Operations & Technology",
+	// "Caregiving Excellence: Support & Best Practices",
 	"Other",
 ] as const;
 
@@ -108,5 +103,9 @@ export const SYSTEM_INSTRUCTION = `You are a homecare business operator. You are
 	`;
 
 export const INITIAL_FETCH_COUNT = 40;
-export const DESIRED_ARTICLE_COUNT = 30;
+export const MAX_NUMBER_OF_ARTICLES = 30;
+export const MIN_NUMBER_OF_ARTICLES = MAX_NUMBER_OF_ARTICLES - 5;
+export const MAX_ARTICLES_PER_SOURCE = 5;
 export const MAX_RETRIES = 3;
+
+export const CACHE_KEY = "articleData";

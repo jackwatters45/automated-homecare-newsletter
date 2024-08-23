@@ -89,7 +89,6 @@ async function getNewsletterFrequency(): Promise<number> {
 	return frequency;
 }
 
-// TODO: Confirm valid
 function createNewsletterCronExpression(weekInterval: number): string {
 	switch (weekInterval) {
 		case 1:

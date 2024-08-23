@@ -1,13 +1,20 @@
 import debug from "debug";
 
+import { parse } from "node:url";
 import { getNewsletterFrequency } from "../api/service.js";
-import { CATEGORIES, TOPIC } from "../lib/constants.js";
-import logger from "../lib/logger.js";
+import {
+	CATEGORIES,
+	MAX_ARTICLES_PER_SOURCE,
+	MAX_NUMBER_OF_ARTICLES,
+	MIN_NUMBER_OF_ARTICLES,
+	TOPIC,
+} from "../lib/constants.js";
 import {
 	generateJSONResponseFromModel,
 	getRecurringFrequency,
 	retry,
 	shuffleArray,
+	writeDataIfNotExists,
 } from "../lib/utils.js";
 import type {
 	ArticleData,
@@ -59,7 +66,7 @@ export async function filterArticlesByPage(
 
 		return filteredArticles;
 	} catch (error) {
-		log(`Error in filterPageArticles: ${error}`);
+		log(`Error in filterPageArticles: ${page.url} ${error}`);
 		return [];
 	}
 }
@@ -105,7 +112,7 @@ export async function filterArticles(
 		const filteredArticles =
 			(await retry(() => generateJSONResponseFromModel(aiFilteringPrompt))) ?? [];
 
-		// await writeTestData("filtered-article-data.json", filteredArticles);
+		await writeDataIfNotExists("filtered-article-data.json", filteredArticles);
 
 		return filteredArticles;
 	} catch (error) {
@@ -116,82 +123,121 @@ export async function filterArticles(
 
 export async function rankArticles(
 	filteredArticles: ArticleFilteringData[],
-	maxNumberOfArticles = 30,
-	minNumberOfArticles = maxNumberOfArticles - 5,
+	maxNumberOfArticles = MAX_NUMBER_OF_ARTICLES,
+	minNumberOfArticles = MIN_NUMBER_OF_ARTICLES,
 ): Promise<ArticleFilteringData[]> {
 	const aiRankingPrompt = `Rank the following list of filtered articles related to ${TOPIC}:
-
-	${JSON.stringify(filteredArticles, null, 2)}
 	
-	Ranking criteria:
-	1. Impact: Prioritize articles that discuss significant industry changes, policy updates, or innovations in homecare and home health.
-	2. Diversity of Content: Ensure a mix of articles covering different aspects of homecare and home health (e.g., technology, policy, patient care, business developments). Try to evenly distribute the articles across the categories. Ideally, each category (except other) should have an even number of articles. Do not include more than 8 articles in a single category.
-	3. Source Variety: Use a diverse range of sources. Limit articles from any single source to a maximum of 3.
-	4. Relevance: Prioritize articles that are directly related to ${TOPIC} and that will fit in one of the following categories: ${CATEGORIES.join(", ")}. Try to include a similar number of articles from each category. Do not include articles that are related to taking care of homes, this is not the homecare i am interested in, it is about homecare (medical) and home health (medical).
-	5. Priority: Prioritize articles that are directly related to the first two categories. These articles should be at the top of the list. 
-	
-	Additional Instructions:
-	- Consider the potential impact of the news on homecare providers, patients, or the industry as a whole when ranking articles.
-	- Ensure a balance between national and local news, favoring stories with broader impact.
-	
-	Output Instructions:
-	- Return the ranked list as a JSON array in the exact format of the input list.
-	- Include the top ${maxNumberOfArticles} most relevant articles in the output.
-	- Return a maximum of ${maxNumberOfArticles} articles and minimum of ${minNumberOfArticles} articles.
-	- If fewer than ${maxNumberOfArticles} articles are in the input, return all of them in ranked order.
-	- Ensure the output strictly adheres to the original JSON structure.
-	- Sort the articles by impact and diversity of content where the most impactful articles are at the top.
-	
-	Example of expected output format:
-	[
-		{
-			"title": "Example Title",
-			"link": "https://example.com",
-			"date": "2023-07-01T12:00:00Z",
-			"description": "Example description",
-			"url": "https://example.com"
-		},
-		// ... more articles
-	]`;
+		${JSON.stringify(filteredArticles, null, 2)}
+		
+		Ranking criteria:
+		1. Impact: Prioritize articles that discuss significant industry changes, policy updates, or innovations in homecare and home health.
+		2. Diversity of Content: Ensure a mix of articles covering different aspects of homecare and home health (e.g., technology, policy, patient care, business developments).
+		3. Category Balance: Aim for an even distribution across these categories: ${CATEGORIES.join(", ")}. Each category should have approximately ${Math.floor(maxNumberOfArticles / CATEGORIES.length)} articles.
+		4. Source Variety: Use a diverse range of sources. Limit articles from any single source to a maximum of 3.
+		5. Relevance: Prioritize articles that are directly related to ${TOPIC}.
+		
+		Additional Instructions:
+		- Consider the potential impact of the news on homecare providers, patients, or the industry as a whole when ranking articles.
+		- Ensure a balance between national and local news, favoring stories with broader impact.
+		- No single category should have more than ${Math.ceil(maxNumberOfArticles / CATEGORIES.length) + 1} articles.
+		
+		Output Instructions:
+		- Return the ranked list as a JSON array in the exact format of the input list.
+		- Include the top ${maxNumberOfArticles} most relevant articles in the output.
+		- Return a maximum of ${maxNumberOfArticles} articles and minimum of ${minNumberOfArticles} articles.
+		- If fewer than ${maxNumberOfArticles} articles are in the input, return all of them in ranked order.
+		- Ensure the output strictly adheres to the original JSON structure.
+		- Sort the articles by impact and diversity of content where the most impactful articles are at the top.
+		
+		Example of expected output format:
+		[
+			{
+				"title": "Example Title",
+				"link": "https://example.com",
+				"date": "2023-07-01T12:00:00Z",
+				"description": "Example description",
+				"url": "https://example.com"
+			},
+			// ... more articles
+		]`;
 
 	const rankedArticles =
 		(await retry(() => generateJSONResponseFromModel(aiRankingPrompt))) ?? [];
 
-	// await writeTestData("ranked-article-data.json", rankedArticles);
-
 	return rankedArticles;
 }
 
+// TODO: source + distribution
 export async function filterAndRankArticles(
 	articles: ValidArticleData[],
-	maxNumberOfArticles = 30,
+	targetArticleCount = MAX_NUMBER_OF_ARTICLES,
+	initialMaxArticlesPerSource = MAX_ARTICLES_PER_SOURCE,
 ): Promise<ValidArticleDataWithCount[]> {
-	const uniqueArticles = deduplicateAndCountArticles(articles);
+	try {
+		const uniqueArticles = deduplicateAndCountArticles(articles);
 
-	const shuffledArticles = shuffleArray(uniqueArticles);
+		const shuffledArticles = shuffleArray(uniqueArticles);
 
-	const aiFilteringInput = extractArticleFilteringData(shuffledArticles);
+		const aiFilteringInput = extractArticleFilteringData(shuffledArticles);
 
-	const filteredArticles = await filterArticles(aiFilteringInput);
-	const rankedArticles = await rankArticles(
-		filteredArticles,
-		maxNumberOfArticles,
-	);
+		const filteredArticles = await filterArticles(aiFilteringInput);
+		const rankedArticles = await rankArticles(
+			filteredArticles,
+			targetArticleCount,
+		);
 
-	const rankedArticlesWithCount = mergeFilteredArticles(
-		shuffledArticles,
-		rankedArticles,
-	);
+		const rankedArticlesWithCount = mergeFilteredArticles(
+			shuffledArticles,
+			rankedArticles,
+		);
 
-	const fileteredAndRankedArticles = rankedArticlesWithCount.slice(
-		0,
-		maxNumberOfArticles,
-	);
+		const filteredAndRankedArticles = rankedArticlesWithCount.slice(
+			0,
+			targetArticleCount,
+		);
 
-	// await writeTestData("filtered-ranked-article-data.json", fileteredAndRankedArticles);
-	log("filtered articles generated", fileteredAndRankedArticles.length);
+		await writeDataIfNotExists(
+			"filtered-ranked-article-data.json",
+			filteredAndRankedArticles,
+		);
 
-	return fileteredAndRankedArticles;
+		log("filtered articles generated", filteredAndRankedArticles.length);
+
+		if (filteredAndRankedArticles.length < MIN_NUMBER_OF_ARTICLES) {
+			log("Not enough articles after filtering and ranking");
+			throw new Error("Not enough articles after filtering and ranking");
+		}
+
+		return filteredAndRankedArticles;
+	} catch (error) {
+		throw new Error("Error in filterAndRankArticles");
+	}
+}
+
+function groupArticlesBySource(
+	articles: ValidArticleDataWithCount[],
+): Map<string, ValidArticleDataWithCount[]> {
+	const groupedArticles = new Map<string, ValidArticleDataWithCount[]>();
+
+	for (const article of articles) {
+		const source = getSourceFromUrl(article.link);
+
+		const groupedArticlesForSource = groupedArticles.get(source);
+
+		if (!groupedArticlesForSource) {
+			groupedArticles.set(source, []);
+		} else {
+			groupedArticlesForSource.push(article);
+		}
+	}
+
+	return groupedArticles;
+}
+
+function getSourceFromUrl(url: string): string {
+	const parsedUrl = new URL(url);
+	return parsedUrl.hostname || url;
 }
 
 function extractArticleFilteringData(
