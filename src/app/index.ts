@@ -16,33 +16,22 @@ import { newsletters } from "../db/schema.js";
 import logger from "../lib/logger.js";
 import { renderTemplate } from "../lib/template.js";
 import { getEnv, retry } from "../lib/utils.js";
-import type { ArticleInput, NewNewsletter } from "../types/index.js";
+import type { NewNewsletter } from "../types/index.js";
 import { getArticleData } from "./data-fetching.js";
 import { filterAndRankArticles } from "./data-filtering.js";
-import {
-	enrichArticlesData,
-	generateCategories,
-	generateSummary,
-} from "./format-articles.js";
+import { generateSummary } from "./format-articles.js";
 
 const log = debug(`${process.env.APP_NAME}:app:index.ts`);
 
 async function generateNewsletterArticles() {
 	try {
-		const fetchArticles = async () => {
-			const results = await retry(getArticleData);
-			if (!results) throw new Error("No articles found");
-			return await retry(() => filterAndRankArticles(results));
-		};
+		const results = await getArticleData();
+		if (!results) throw new Error("No articles found");
 
-		const articles = await fetchArticles();
+		const articles = await filterAndRankArticles(results);
+		if (!articles) throw new Error("No articles found");
 
-		if (!articles) {
-			logger.error("No articles found");
-			throw new Error("No articles found");
-		}
-
-		return await enrichArticlesData(articles);
+		return articles;
 	} catch (error) {
 		logger.error("Error in generateNewsletterArticles:", { error });
 		throw error;
@@ -55,22 +44,17 @@ export async function generateNewsletterData(): Promise<
 	log("generating newsletter data");
 
 	try {
-		let articlesData: ArticleInput[] = [];
-		// while (articlesData.length < MIN_NUMBER_OF_ARTICLES) {
-		articlesData = await generateNewsletterArticles();
-		// log("generated articles - too few", articlesData.length);
-		// }
+		const articlesData = await generateNewsletterArticles();
 
 		const summary = await generateSummary(articlesData);
 
-		const articlesWithCategories = await generateCategories(articlesData);
-
 		const newsletter = await createNewsletter({
 			summary,
-			articles: articlesWithCategories,
+			articles: articlesData,
 		});
 
 		log("newsletter data generated", newsletter.articles.length);
+
 		return newsletter;
 	} catch (error) {
 		logger.error("Error in generateNewsletterData:", { error });
@@ -93,24 +77,26 @@ export async function sendNewsletterReviewEmail() {
 			throw new Error("Newsletter ID not found");
 		}
 
-		const reviewers = await getAllReviewerEmails();
+		retry(async () => {
+			const reviewers = await getAllReviewerEmails();
 
-		const { data, error } = await resend.emails.send({
-			from: getEnv("RESEND_FROM_EMAIL"),
-			to: reviewers,
-			subject: "Review TrollyCare Newsletter",
-			text: `Please review the newsletter and approve it before it is sent. link to newsletter: ${CLIENT_URL}/newsletters/${id}`,
+			const { data, error } = await resend.emails.send({
+				from: getEnv("RESEND_FROM_EMAIL"),
+				to: reviewers,
+				subject: "Review TrollyCare Newsletter",
+				text: `Please review the newsletter and approve it before it is sent. link to newsletter: ${CLIENT_URL}/newsletters/${id}`,
+			});
+
+			if (error) {
+				return logger.error("Error in sendNewsletterReviewEmail:", { error });
+			}
+
+			return {
+				newsletter: newsletterData,
+				data,
+				message: "Email sent successfully",
+			};
 		});
-
-		if (error) {
-			return logger.error("Error in sendNewsletterReviewEmail:", { error });
-		}
-
-		return {
-			newsletter: newsletterData,
-			data,
-			message: "Email sent successfully",
-		};
 	} catch (error) {
 		logger.error("Error in sendNewsletterReviewEmail:", { error });
 		return { message: "Error sending email", error };

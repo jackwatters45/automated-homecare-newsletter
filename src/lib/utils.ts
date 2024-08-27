@@ -146,7 +146,7 @@ export async function fetchPageContent(url: string): Promise<string> {
 			logger.error("Error in fetchPageContent:", { error });
 			throw error;
 		} finally {
-			await browser.close();
+			await closeBrowser();
 		}
 	}
 }
@@ -209,18 +209,34 @@ export function shuffleArray<T>(array: T[]): T[] {
 
 export async function readTestData<T>(name: string): Promise<T | undefined> {
 	try {
-		const json = await fs.readFile(path.join(BASE_PATH, ".data", name), "utf8");
+		const filePath = path.join(BASE_PATH, "data", name);
 
-		return JSON.parse(json);
+		// Check if the file exists before attempting to read it
+		try {
+			await fs.access(filePath);
+		} catch (error) {
+			return undefined;
+		}
+
+		const json = await fs.readFile(filePath, "utf8");
+
+		// Attempt to parse the JSON
+		try {
+			return JSON.parse(json);
+		} catch (parseError) {
+			log(`Error parsing JSON from ${name}: ${parseError}`);
+			return undefined;
+		}
 	} catch (error) {
-		log(`Error in readTestData: ${error}`);
+		log(`Error reading test data from ${name}: ${error}`);
 		return undefined;
 	}
 }
-export async function writeTestData<T>(name: string, data: T) {
+
+export async function writeTestData<T>(name: string[], data: T) {
 	try {
 		await fs.writeFile(
-			path.join(BASE_PATH, ".data", name),
+			path.join(BASE_PATH, "data", ...name),
 			JSON.stringify(data, null, 2),
 		);
 	} catch (error) {
@@ -236,7 +252,7 @@ export async function writeDataIfNotExists<T>(name: string, data: T) {
 
 		if (existingData) return;
 
-		await writeTestData(name, data);
+		await writeTestData([name], data);
 	} catch (error) {
 		log(`Error in writeDataIfNotExists: ${error}`);
 	}
@@ -289,6 +305,8 @@ export async function retry<T>(fn: () => Promise<T>, maxRetries = MAX_RETRIES) {
 			await new Promise((resolve) => setTimeout(resolve, 2 ** retries * 1000));
 		}
 	}
+
+	throw new Error("Retry limit exceeded");
 }
 
 export const extractTextContent = (
@@ -331,23 +349,34 @@ export function getRecurringFrequency(weeks: number): number {
 }
 
 export const getDescription = async (
-	articleData: NewArticleInput,
+	articleData: ArticleWithOptionalDescription,
 ): Promise<string> => {
-	if (articleData.description) return articleData.description;
+	try {
+		if (articleData.description) return articleData.description;
 
-	const pageContent = await retry(() => fetchPageContent(articleData.link));
+		const pageContent = await retry(() => fetchPageContent(articleData.link));
 
-	if (!pageContent) throw new Error("Error getting page content");
+		if (!pageContent) throw new Error("Error getting page content");
 
-	const $ = cheerio.load(pageContent);
+		const $ = cheerio.load(pageContent);
 
-	const descriptionPrompt = createDescriptionPrompt($.html());
+		const descriptionPrompt = createDescriptionPrompt($.html());
 
-	const description = await generateJSONResponseFromModel(descriptionPrompt);
+		const { text } = await generateText({
+			model: google("gemini-1.5-flash-latest"),
+			system: SYSTEM_INSTRUCTION,
+			prompt: descriptionPrompt,
+		});
 
-	if (!description) throw new Error("Error generating description");
+		logAiCall();
 
-	return description?.trim();
+		if (!text) throw new Error("Error generating description");
+
+		return text?.trim();
+	} catch (error) {
+		log(`Error in getDescription: ${error}`);
+		return "";
+	}
 };
 
 export function isValidEmail(email: string): boolean {

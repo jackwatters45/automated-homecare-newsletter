@@ -8,7 +8,6 @@ import { db } from "../db/index.js";
 import { cronLogs, settings } from "../db/schema.js";
 import { pingServer } from "./health.js";
 import logger from "./logger.js";
-import { retry } from "./utils.js";
 
 const log = debug(`${process.env.APP_NAME}:cron.ts`);
 
@@ -38,7 +37,7 @@ async function logCronExecution(
 async function runNewsletterTask(): Promise<void> {
 	const jobName = "sendNewsletterReviewEmail";
 	try {
-		await retry(sendNewsletterReviewEmail);
+		await sendNewsletterReviewEmail();
 		await logCronExecution(
 			jobName,
 			"success",

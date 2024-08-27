@@ -1,29 +1,138 @@
 import debug from "debug";
 import { google } from "googleapis";
 import type { Browser, Page } from "puppeteer";
+
 import { getNewsletterFrequency } from "../api/service.js";
-import { createDescriptionPrompt } from "../app/format-articles.js";
-import type { ArticleData, ValidArticleData } from "../types/index.js";
-import { getBrowser } from "./browser.js";
-import { rateLimiter } from "./rate-limit.js";
-import {
-	generateJSONResponseFromModel,
-	getRecurringFrequency,
-	retry,
-} from "./utils.js";
+
+import type { ArticleWithSnippet, BaseArticle } from "../types/index.js";
+import { closeBrowser, getBrowser } from "./browser.js";
+import { BLACKLISTED_DOMAINS, REDIRECT_URLS } from "./constants.js";
+import { getRecurringFrequency, retry } from "./utils.js";
 
 const log = debug(`${process.env.APP_NAME}:google-search.ts`);
 const debugLog = debug(`debug:${process.env.APP_NAME}:google-search.ts`);
 
 const customsearch = google.customsearch("v1");
 
-const BLACKLISTED_DOMAINS = [
-	"https://news.google.com",
-	"https://nahc.com",
-	"https://www.nejm.org",
-	"https://homehealthcarenews.com",
-];
+export async function searchNews(
+	qs: string[],
+	pages = 1,
+): Promise<ArticleWithSnippet[]> {
+	const allResults: ArticleWithSnippet[] = [];
+	let browser: Browser | null = null;
 
+	try {
+		browser = await getBrowser();
+		const page = await browser.newPage();
+
+		for (const q of qs) {
+			for (let i = 0; i < pages; i++) {
+				const startIndex = i * 10 + 1;
+				try {
+					const query = await getLastDateQuery(q);
+					const res = await retry(() => {
+						return customsearch.cse.list({
+							cx: process.env.CUSTOM_ENGINE_ID,
+							auth: process.env.CUSTOM_SEARCH_API_KEY,
+							q: query,
+							start: startIndex,
+							dateRestrict: "d7",
+							sort: "date",
+							cr: "countryUS",
+							gl: "us",
+							hl: "en",
+						});
+					});
+
+					if (!res?.data.items?.length) {
+						log(`No results found for query: ${q}`);
+						throw new Error("No results found for query");
+					}
+
+					for (const item of res.data.items) {
+						const link = item.link;
+						if (!link) continue;
+
+						const urlpage = new URL(link);
+						if (!(urlpage.pathname.length > 1) && urlpage.pathname.endsWith("/")) {
+							continue;
+						}
+
+						let finalUrl = new URL(link);
+						if (REDIRECT_URLS.includes(finalUrl.origin)) {
+							const url = await getPageUrl(page, link);
+							if (!url) continue;
+							finalUrl = url;
+						}
+
+						const isBlacklisted = BLACKLISTED_DOMAINS.some((blacklisted) => {
+							return finalUrl.origin.includes(blacklisted);
+						});
+
+						if (isBlacklisted) {
+							log(`Blacklisted domain: ${finalUrl.origin}`);
+							continue;
+						}
+
+						const title = item.title;
+						if (!title) {
+							log(`No title found for query: ${q}`);
+							continue;
+						}
+
+						const snippet = item.snippet;
+						if (!snippet) {
+							log(`No snippet found for query: ${q}`);
+							continue;
+						}
+
+						allResults.push({
+							title: title,
+							link: finalUrl.href,
+							description: "",
+							snippet: snippet,
+						});
+					}
+				} catch (error) {
+					log(`Error searching for query "${q}": ${error}`);
+				}
+			}
+		}
+	} catch (error) {
+		log(`Error in searchNews: ${error}`);
+	} finally {
+		if (browser) {
+			await closeBrowser();
+		}
+	}
+
+	const validResults = allResults.filter(
+		(article): article is ArticleWithSnippet => !!article.link && !!article.title,
+	);
+
+	log(
+		`Found ${validResults.length} valid results out of ${allResults.length} total results`,
+	);
+
+	return validResults;
+}
+
+async function getPageUrl(page: Page, url: string): Promise<URL | null> {
+	try {
+		const response = await page.goto(url, {
+			waitUntil: "networkidle0",
+		});
+
+		if (!response?.ok) {
+			return null;
+		}
+
+		return new URL(response.url());
+	} catch (error) {
+		debugLog(`Error navigating to url: ${error}`);
+		return null;
+	}
+}
 export async function getLastDateQuery(
 	q: string,
 	customFrequency?: number,
@@ -53,131 +162,7 @@ export async function getLastDateQuery(
 	}
 }
 
-async function getPageUrl(
-	page: Page,
-	url: string,
-): Promise<{
-	content: string;
-	url: URL;
-} | null> {
-	try {
-		const response = await page.goto(url, {
-			waitUntil: "networkidle0",
-		});
-
-		if (!response?.ok) {
-			return null;
-		}
-
-		const content = await page.content();
-
-		return { content, url: new URL(page.url()) };
-	} catch (error) {
-		debugLog(`Error navigating to url: ${error}`);
-		return null;
-	}
-}
-
-let num = 0;
-export async function searchNews(
-	qs: string[],
-	pages = 1,
-): Promise<ValidArticleData[]> {
-	const allResults: ArticleData[] = [];
-	let browser: Browser | null = null;
-
-	try {
-		browser = await getBrowser();
-		const page = await browser.newPage();
-
-		for (const q of qs) {
-			for (let i = 0; i < pages; i++) {
-				const startIndex = i * 10 + 1;
-				try {
-					const query = await getLastDateQuery(q);
-					const res = await retry(() => {
-						return customsearch.cse.list({
-							cx: process.env.CUSTOM_ENGINE_ID,
-							auth: process.env.CUSTOM_SEARCH_API_KEY,
-							q: query,
-							start: startIndex,
-						});
-					});
-
-					if (!res?.data.items) {
-						log(`No results found for query: ${q}`);
-						continue;
-					}
-
-					if (!res?.data.items.length) {
-						log(`No results found for query: ${q}`);
-						throw new Error("No results found for query");
-					}
-
-					num = num + res.data.items.length;
-
-					for (const item of res.data.items) {
-						if (!item.link) {
-							continue;
-						}
-
-						const pageData = await getPageUrl(page, item.link);
-
-						if (!pageData) {
-							continue;
-						}
-
-						const { content, url } = pageData;
-
-						const origin = url?.origin;
-
-						const isBlacklisted = BLACKLISTED_DOMAINS.some((blacklisted) => {
-							return origin.includes(blacklisted);
-						});
-
-						if (isBlacklisted) {
-							log(`Blacklisted domain: ${origin}`);
-							continue;
-						}
-
-						const descriptionPrompt = createDescriptionPrompt(content);
-						const generatedDescription = await rateLimiter.schedule(() =>
-							retry(() => generateJSONResponseFromModel(descriptionPrompt)),
-						);
-
-						const description = generatedDescription?.trim();
-
-						allResults.push({
-							title: item.title,
-							link: origin,
-							description: description,
-							snippet: item.snippet,
-						});
-					}
-				} catch (error) {
-					log(`Error searching for query "${q}": ${error}`);
-				}
-			}
-		}
-	} catch (error) {
-		log(`Error in searchNews: ${error}`);
-	} finally {
-		if (browser) {
-			await browser.close();
-		}
-	}
-
-	const validResults = allResults.filter(
-		(article): article is ValidArticleData => !!article.link && !!article.title,
-	);
-
-	log(
-		`Found ${validResults.length} valid results out of ${allResults.length} total results`,
-	);
-	return validResults;
-}
-
-export async function safeSingleSearch(q: string): Promise<ValidArticleData[]> {
+export async function safeSingleSearch(q: string): Promise<BaseArticle[]> {
 	try {
 		const results = await searchNews([q]);
 		return results;

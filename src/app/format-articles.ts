@@ -101,94 +101,107 @@ export async function generateSummary(
 	return formattedDescription;
 }
 
-async function writeSummaryToFile() {
-	const articles = await fs.readFile(
-		path.join(BASE_PATH, "tests", "data", "display-article-data.json"),
-		"utf8",
-	);
-
-	await generateSummary(JSON.parse(articles));
-}
-
 export async function generateCategories(
-	articles: ValidArticleData[],
-): Promise<ArticleInputWithCategory[]> {
-	const prompt = `Analyze the following articles and categorize them according to the predefined categories:
+	articles: ArticleForCategorization[],
+): Promise<CategorizedArticle[]> {
+	// Step 1: Use AI to assign up to 3 ranked categories to each article
+	const articlesWithRankedCategories = await assignRankedCategories(articles);
 
-  ${JSON.stringify(articles, null, 2)}
-  
-  CATEGORIES (maintain the order):
-  ${CATEGORIES.join("\n")}
-  
-  Please follow these guidelines:
-  1. Assign each article to one of the predefined categories.	
-  2. If an article doesn't fit well into any category, assign it to "Other". Try to avoid using "Other" unless there is a great article that doesn't fit into any category.
-	3. Try to evenly distribute the articles across the categories. Ideally, each category (except other) should have an even number of articles.  
-  
-  Format your response as a JSON array with the following structure:
-  [
-    {
-      "title": "Article Title",
-      "link": "Article Link",
-      "description": "Article Description",
-      "category": "Category Name"
-    },
-    ...
-  ]
+	// Step 2: Distribute articles across categories, assigning a single category to each
+	const distributedArticles = distributeArticles(articlesWithRankedCategories);
 
-  Ensure your response is valid JSON that can be parsed programmatically.`;
-
-	const generatedArticles = await retry<ArticleInputWithCategory[]>(() =>
-		generateJSONResponseFromModel(prompt),
+	await writeDataIfNotExists(
+		"articles-with-categories.json",
+		distributedArticles,
 	);
 
-	if (!generatedArticles || generatedArticles.length === 0) {
-		throw new Error("Error generating categorized articles");
-	}
+	log("articlesWithCategories", distributedArticles.length);
 
-	return generatedArticles;
+	return distributedArticles;
 }
 
-function deduplicateArticles(articles: ArticleInput[]): ArticleInput[] {
-	const articleMap = new Map<string, ArticleInput>();
+async function assignRankedCategories(
+	articles: ArticleForCategorization[],
+): Promise<ArticleWithCategories[]> {
+	const prompt = `
+    Categorize the following articles into these categories:
+    ${CATEGORIES.join(", ")}
 
-	for (const article of articles) {
-		if (articleMap.has(article.title)) {
-			// biome-ignore lint/style/noNonNullAssertion: <>
-			const existingArticle = articleMap.get(article.title)!;
-			existingArticle.description += `\n\n${article.description}`;
-		} else {
-			articleMap.set(article.title, { ...article });
+    For each article, assign up to 3 most relevant categories, ranked by relevance. 
+    If no category fits, use "Other" as the only category.
+    
+    Articles:
+    ${JSON.stringify(articles, null, 2)}
+
+    Respond with an array where each item has the original article data plus a 'categories' array.
+    The 'categories' array should contain up to 3 categories, ordered from most to least relevant.
+  `;
+
+	const { object } = await generateObject({
+		model: google("gemini-1.5-flash-latest"),
+		system: SYSTEM_INSTRUCTION,
+		output: "array",
+		schema: z.object({
+			title: z.string(),
+			description: z.string(),
+			link: z.string(),
+			quality: z.number(),
+			categories: z.array(z.enum(CATEGORIES)),
+		}),
+		prompt: prompt,
+		maxTokens: MAX_TOKENS,
+	});
+
+	logAiCall();
+
+	return object;
+}
+
+function distributeArticles(
+	articles: ArticleWithCategories[],
+): CategorizedArticle[] {
+	const categoryCount: Record<Category, number> = {} as Record<Category, number>;
+	for (let i = 0; i < CATEGORIES.length; i++) {
+		categoryCount[CATEGORIES[i]] = 0;
+	}
+
+	const distributedArticles: CategorizedArticle[] = [];
+
+	for (let i = 0; i < articles.length; i++) {
+		const article = articles[i];
+		let assignedCategory: Category = "Other";
+
+		// Try to assign to one of the article's ranked categories
+		for (let j = 0; j < article.categories.length; j++) {
+			const category = article.categories[j];
+			if (category !== "Other") {
+				// Check if the category is not overly represented
+				if (
+					categoryCount[category] < Math.ceil(articles.length / CATEGORIES.length)
+				) {
+					assignedCategory = category;
+					break;
+				}
+			}
 		}
+
+		distributedArticles.push({
+			title: article.title,
+			description: article.description,
+			quality: article.quality,
+			category: assignedCategory,
+		});
+		categoryCount[assignedCategory]++;
 	}
 
-	return Array.from(articleMap.values());
-}
+	// Log category distribution
+	log("Category distribution:", categoryCount);
 
-function processCategories(
-	generatedCategories: CategoryInput[],
-): CategoryInput[] {
-	log("generated categories", generatedCategories);
+	if (distributedArticles.length < MIN_NUMBER_OF_ARTICLES) {
+		log("Not enough articlesWithCategories on this attempt");
+		throw new Error("Not enough articlesWithCategories on this attempt");
+	}
 
-	return generatedCategories
-		.map((category) => ({
-			...category,
-			articles: deduplicateArticles(category.articles),
-		}))
-		.filter((category) => category.articles.length > 0);
-}
-
-async function writeCategoriesToFile() {
-	const articleData = JSON.parse(
-		await fs.readFile(
-			path.join(BASE_PATH, "tests", "data", "display-article-data.json"),
-			"utf8",
-		),
-	);
-
-	const categories = await generateCategories(articleData);
-
-	log(categories);
-
-	await writeDataIfNotExists("display-data-full.json", categories);
+	// Shuffle to ensure a good mix of articles within each category
+	return shuffleArray(distributedArticles);
 }
