@@ -7,6 +7,7 @@ import {
 	INITIAL_FETCH_COUNT,
 	IS_DEVELOPMENT,
 	SPECIFIC_PAGES,
+	SYSTEM_INSTRUCTION,
 } from "../lib/constants.js";
 import { searchNews } from "../lib/google-search.js";
 import logger from "../lib/logger.js";

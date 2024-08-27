@@ -12,15 +12,20 @@ import {
 	DESCRIPTION_MAX_LENGTH,
 	IS_DEVELOPMENT,
 	MAX_RETRIES,
+	SYSTEM_INSTRUCTION,
 } from "../lib/constants.js";
 import type {
+	ArticleWithOptionalDescription,
+	BaseArticle,
 	Category,
 	NewArticleInput,
 	PageToScrape,
 	PopulatedCategory,
 } from "../types/index.js";
-import { initializeGenAI } from "./ai.js";
-import { getBrowser } from "./browser.js";
+
+import { google } from "@ai-sdk/google";
+import { generateText } from "ai";
+import { closeBrowser, getBrowser } from "./browser.js";
 import logger from "./logger.js";
 
 const log = debug(`${process.env.APP_NAME}:utils.ts`);
@@ -29,65 +34,6 @@ let aiCallCount = 0;
 export function logAiCall() {
 	aiCallCount++;
 	log(`AI model called ${aiCallCount} times.`);
-}
-
-const model = initializeGenAI();
-
-export async function generateJSONResponseFromModel(prompt: string) {
-	try {
-		logAiCall();
-
-		const result = await model.generateContent(prompt);
-
-		const response = await result.response;
-
-		const text = response.text();
-
-		return parseJSONResponse(text);
-	} catch (error) {
-		logger.error(`Unexpected error: ${error}`);
-		throw new Error(`Unexpected error when generating response: ${error}`);
-	}
-}
-
-function parseJSONResponse(text: string) {
-	log;
-	const cleanedString = text
-		.replace(/^```json\n/, "")
-		.replace(/\n```$/, "")
-		.trim();
-
-	try {
-		try {
-			const jsonResponse = JSON.parse(cleanedString);
-
-			if (jsonResponse.type === "text") {
-				return jsonResponse.text;
-			}
-
-			return jsonResponse;
-		} catch (parseError) {
-			const jsonMatch = cleanedString.match(/\{[\s\S]*\}|\[[\s\S]*\]/);
-			if (jsonMatch) {
-				return JSON.parse(jsonMatch[0]);
-			}
-
-			// If parsing fails, check if it's a simple string
-			if (
-				typeof cleanedString === "string" &&
-				cleanedString.startsWith('"') &&
-				cleanedString.endsWith('"')
-			) {
-				return cleanedString.slice(1, -1);
-			}
-
-			// If it's not a valid JSON or a quoted string, return the raw text
-			return cleanedString;
-		}
-	} catch (error) {
-		log(`Error parsing JSON response: ${error}`);
-		throw error;
-	}
 }
 
 export function constructFullUrl(
@@ -433,3 +379,74 @@ export function sortCategoriesByName(
 		return orderA - orderB;
 	});
 }
+
+export function getCategoryKeywords(category: Category): string[] {
+	const keywordMap: Record<Category, string[]> = {
+		"Industry Trends & Policy": [
+			"policy",
+			"trend",
+			"regulation",
+			"industry",
+			"market",
+			"legislation",
+		],
+		"Clinical Innovations & Best Practices": [
+			"clinical",
+			"innovation",
+			"best practice",
+			"treatment",
+			"protocol",
+			"methodology",
+		],
+		"Business Operations & Technology": [
+			"business",
+			"operation",
+			"technology",
+			"finance",
+			"digital",
+			"software",
+			"AI",
+			"automation",
+			"tech",
+			"ops",
+		],
+		"Caregiver Support & Resources": [
+			"caregiver",
+			"caretaker",
+			"support",
+			"resource",
+			"tips",
+			"self-care",
+			"burnout",
+			"training",
+			"education",
+			"wellness",
+		],
+		Other: [],
+	};
+	return keywordMap[category] || [];
+}
+
+export function getSourceFromUrl(url: string): string {
+	try {
+		const parsedUrl = new URL(url);
+		return parsedUrl.hostname;
+	} catch (error) {
+		log(`Error parsing URL: ${url}`);
+		return url;
+	}
+}
+
+export const getDescriptionFromContent = async (content: string) => {
+	const descriptionPrompt = createDescriptionPrompt(content);
+
+	const { text } = await generateText({
+		model: google("gemini-1.5-flash-latest"),
+		system: SYSTEM_INSTRUCTION,
+		prompt: descriptionPrompt,
+	});
+
+	logAiCall();
+
+	return text?.trim();
+};
