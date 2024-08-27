@@ -1,5 +1,5 @@
 import { Redis } from "@upstash/redis";
-import type { ValidArticleData } from "../types/index.js";
+import type { ArticleWithOptionalSource } from "../types/index.js";
 import logger from "./logger.js";
 
 const getRedisArgs = () => {
@@ -19,7 +19,7 @@ const redis = new Redis(getRedisArgs());
 
 export async function setCache(
 	key: string,
-	data: ValidArticleData[],
+	data: ArticleWithOptionalSource[],
 	ttl = 86400,
 ): Promise<void> {
 	try {
@@ -32,9 +32,9 @@ export async function setCache(
 
 export async function getCache(
 	key: string,
-): Promise<ValidArticleData[] | null> {
+): Promise<ArticleWithOptionalSource[] | null> {
 	try {
-		return await redis.get<ValidArticleData[]>(key);
+		return await redis.get<ArticleWithOptionalSource[]>(key);
 	} catch (error) {
 		logger.error("Error getting cache:", error);
 		return null;

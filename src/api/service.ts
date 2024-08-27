@@ -16,7 +16,7 @@ import {
 import { DatabaseError } from "../lib/errors.js";
 import type {
 	Article,
-	ArticleInputWithCategory,
+	ArticleWithQualityAndCategory,
 	Category,
 	NewAd,
 	NewArticleInput,
@@ -161,7 +161,7 @@ export async function createNewsletter({
 	articles: articleInputs,
 }: {
 	summary: string;
-	articles: ArticleInputWithCategory[];
+	articles: ArticleWithQualityAndCategory[];
 }): Promise<NewNewsletter & { articles: Article[] }> {
 	try {
 		log("Creating newsletter");

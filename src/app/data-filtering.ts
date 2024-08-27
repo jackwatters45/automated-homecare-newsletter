@@ -42,7 +42,7 @@ export async function filterArticlesByPage(
 		const cutoffDate = Date.now() - frequency;
 
 		const filteredArticles = articles?.filter(
-			(article): article is ValidArticleData => {
+			(article): article is ArticleWithQuality => {
 				try {
 					const isValidDate =
 						!article.date || new Date(article.date).getTime() > cutoffDate;

@@ -7,7 +7,10 @@ import type {
 } from "../db/schema.js";
 import type { CATEGORIES } from "../lib/constants.js";
 
-// Data collection + formatting types
+// Basic types
+export type Category = (typeof CATEGORIES)[number];
+
+// Scraping types
 export interface PageToScrape {
 	url: string;
 	articleContainerSelector: string;
@@ -18,58 +21,92 @@ export interface PageToScrape {
 	removeIfNoDate?: boolean;
 }
 
-export interface ArticleData {
-	link?: string | null;
-	title?: string | null;
-	description?: string | null;
-	date?: Date | null;
-	snippet?: string | null;
-}
-
-export interface ValidArticleData {
-	link: string;
+// Article types
+interface TitleAndDescription {
 	title: string;
-	description?: string;
-	date?: Date;
-	snippet?: string;
-}
-
-export interface ArticleFilteringData {
-	title: string;
-	description?: string;
-}
-
-export interface ValidArticleDataWithCount extends ValidArticleData {
-	count: number;
-}
-
-export type Category = (typeof CATEGORIES)[number];
-
-// Input types (pre-database)
-export interface ArticleInput {
-	title: string;
-	link: string;
 	description: string;
 }
 
-export interface NewArticleInput extends Omit<ArticleInput, "description"> {
+export interface ArticleWithOptionalDescription {
+	title: string;
 	description?: string;
-	newsletterId: number;
+	link: string;
+}
+
+export interface BaseArticle extends TitleAndDescription {
+	link: string;
+}
+
+export interface ArticleWithSnippet extends BaseArticle {
+	snippet: string;
+}
+
+export interface ArticleData extends Partial<BaseArticle> {
+	date?: Date | null;
+}
+
+export interface ArticleWithSource extends BaseArticle {
+	source: string;
+}
+
+export interface ArticleWithOptionalSource extends BaseArticle {
+	source?: string;
+}
+export interface RankedArticle
+	extends Omit<ArticleWithSource, "link">,
+		Omit<ArticleWithQuality, "link">,
+		Omit<ArticleWithCount, "link"> {}
+
+export interface ArticleFilteringData
+	extends Omit<ArticleWithSourceAndCount, "link"> {}
+
+export interface ArticleWithOptionalSourceAndCount
+	extends ArticleWithOptionalSource {
+	count: number;
+}
+
+export interface ValidArticleData extends BaseArticle {
+	date?: Date;
+}
+
+export interface ArticleWithQuality extends ValidArticleData {
+	quality: number;
+}
+
+export interface ArticleWithCategories extends BaseArticle {
+	categories: Category[];
+	quality: number;
+}
+
+export interface ArticleWithCount extends BaseArticle {
+	count: number;
+}
+
+export interface ArticleWithSourceAndCategories
+	extends ArticleWithSource,
+		ArticleWithCategories {}
+
+export interface ArticleWithSourceAndQuality
+	extends ArticleWithSource,
+		ArticleWithQuality {}
+
+export interface ArticleWithSourceAndCount
+	extends ArticleWithSource,
+		ArticleWithCount {}
+
+export interface ArticleWithQualityAndCategory extends ArticleWithQuality {
 	category: Category;
 }
 
-export interface ArticleInputWithCategory extends ArticleInput {
+export interface ArticleForFiltering extends ArticleWithSource {
+	count: number;
+}
+
+export interface ArticleForCategorization
+	extends Pick<ArticleWithQuality, "title" | "description" | "quality"> {}
+
+export interface CategorizedArticle extends ArticleForCategorization {
 	category: Category;
-}
-
-export interface CategoryInput {
-	name: string;
-	articles: ArticleInput[];
-}
-
-export interface NewsletterInput {
-	categories: CategoryInput[];
-	summary: string;
 }
 
 // Database types
@@ -88,18 +125,30 @@ export type NewReviewer = typeof reviewers.$inferInsert;
 export type Ad = typeof ads.$inferSelect;
 export type NewAd = typeof ads.$inferInsert;
 
-// Populated types (post-database retrieval)
-export type ArticleWithCategory = Article & {
-	category: string;
-};
-
-export type PopulatedCategory = {
+// Populated types
+export interface PopulatedCategory {
 	name: Category;
 	articles: Article[];
-};
+}
 
-export type PopulatedNewsletter = Newsletter & {
+export interface PopulatedNewsletter extends Newsletter {
 	categories: PopulatedCategory[];
 	ads: Ad[];
 	recipients: Recipient[];
-};
+}
+
+// Input types
+export interface NewArticleInput extends BaseArticle {
+	newsletterId: number;
+	category: Category;
+}
+
+export interface CategoryInput {
+	name: Category;
+	articles: BaseArticle[];
+}
+
+export interface NewsletterInput {
+	categories: CategoryInput[];
+	summary: string;
+}
