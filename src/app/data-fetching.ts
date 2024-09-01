@@ -3,6 +3,7 @@ import debug from "debug";
 
 import { google } from "@ai-sdk/google";
 import { generateText } from "ai";
+import { getAllBlacklistedDomainNames } from "../api/service.js";
 import { getCache, setCache } from "../lib/cache.js";
 import {
 	CACHE_KEY,
@@ -133,7 +134,13 @@ async function fetchSpecificPageResults(): Promise<
 	ArticleWithOptionalSource[]
 > {
 	const specificPageResults: ArticleWithOptionalSource[] = [];
-	for (const page of SPECIFIC_PAGES) {
+
+	const blacklistedDomains = await getAllBlacklistedDomainNames();
+	const filteredSpecificPages = SPECIFIC_PAGES.filter((page) => {
+		return !blacklistedDomains.some((domain) => page.url.includes(domain));
+	});
+
+	for (const page of filteredSpecificPages) {
 		const articleLinks = await scrapeArticles(page);
 		const relevantArticles = await filterArticlesByPage(articleLinks, page);
 		specificPageResults.push(...relevantArticles);

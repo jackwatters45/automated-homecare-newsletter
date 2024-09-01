@@ -1069,6 +1069,23 @@ export async function getAllBlacklistedDomainNames() {
 	}
 }
 
+export async function getAllExternalBlacklistedDomainNames() {
+	try {
+		const domains = await db
+			.select()
+			.from(blacklistedDomains)
+			.where(eq(blacklistedDomains.type, "EXTERNAL"));
+
+		return domains.map((d) => d.domain);
+	} catch (error) {
+		throw new DatabaseError("Failed to retrieve blacklisted domains", {
+			operation: "select",
+			table: "blacklisted_domains",
+			error: error instanceof Error ? error.message : String(error),
+		});
+	}
+}
+
 export async function addBlacklistedDomain(rawDomain: string) {
 	let domain = "";
 	try {

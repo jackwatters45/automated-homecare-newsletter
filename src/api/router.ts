@@ -70,6 +70,10 @@ apiRouter.post("/reviewers/:id", reviewerController.addReviewer);
 
 // Blacklisted Domains Routes
 apiRouter.get("/blacklisted-domains", blacklistedDomainController.getAll);
+apiRouter.get(
+	"/blacklisted-domains/external",
+	blacklistedDomainController.getAllExternal,
+);
 apiRouter.delete(
 	"/blacklisted-domains/all",
 	blacklistedDomainController.removeAll,

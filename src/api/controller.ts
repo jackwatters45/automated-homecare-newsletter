@@ -34,6 +34,7 @@ import {
 	getAdById,
 	getAllAds,
 	getAllBlacklistedDomainNames,
+	getAllExternalBlacklistedDomainNames,
 	getAllNewsletters,
 	getAllNewslettersWithRecipients,
 	getAllRecipients,
@@ -568,6 +569,16 @@ export const blacklistedDomainController = {
 	getAll: async (req: Request, res: Response, next: NextFunction) => {
 		try {
 			const domains = await getAllBlacklistedDomainNames();
+			res.json(domains);
+		} catch (error) {
+			next(error);
+		}
+	},
+
+	//	Get all external blacklisted domains
+	getAllExternal: async (req: Request, res: Response, next: NextFunction) => {
+		try {
+			const domains = await getAllExternalBlacklistedDomainNames();
 			res.json(domains);
 		} catch (error) {
 			next(error);
