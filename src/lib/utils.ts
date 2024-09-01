@@ -16,7 +16,6 @@ import {
 } from "../lib/constants.js";
 import type {
 	ArticleWithOptionalDescription,
-	BaseArticle,
 	Category,
 	NewArticleInput,
 	PageToScrape,

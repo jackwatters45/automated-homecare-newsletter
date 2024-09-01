@@ -17,6 +17,8 @@ import { validateCategory } from "../lib/utils.js";
 import {
 	addAdToNewsletter,
 	addArticle,
+	addBlacklistedDomain,
+	addBulkBlacklistedDomains,
 	addBulkRecipients,
 	addBulkReviewers,
 	addRecipient,
@@ -25,11 +27,13 @@ import {
 	createNewsletter,
 	deleteAd,
 	deleteArticle,
+	deleteBlacklistedDomain,
 	deleteNewsletter,
 	deleteRecipient,
 	deleteReviewer,
 	getAdById,
 	getAllAds,
+	getAllBlacklistedDomainNames,
 	getAllNewsletters,
 	getAllNewslettersWithRecipients,
 	getAllRecipients,
@@ -37,6 +41,7 @@ import {
 	getNewsletter,
 	getNewsletterFrequency,
 	removeAdFromNewsletter,
+	removeAllBlacklistedDomains,
 	removeAllRecipients,
 	removeAllReviewers,
 	updateAd,
@@ -500,6 +505,84 @@ export const reviewerController = {
 		try {
 			await removeAllReviewers();
 			res.status(200).json({ message: "All recipients removed successfully" });
+		} catch (error) {
+			next(error);
+		}
+	},
+};
+
+export const blacklistedDomainController = {
+	// Get all blacklisted domains
+	getAll: async (req: Request, res: Response, next: NextFunction) => {
+		try {
+			const domains = await getAllBlacklistedDomainNames();
+			res.json(domains);
+		} catch (error) {
+			next(error);
+		}
+	},
+
+	// Add a blacklisted domain
+	addDomain: async (req: Request, res: Response, next: NextFunction) => {
+		const { domain } = req.body;
+
+		try {
+			const addedDomain = await addBlacklistedDomain(domain);
+			res.json(addedDomain);
+		} catch (error) {
+			if (
+				error instanceof DatabaseError &&
+				error.message === "Domain already blacklisted"
+			) {
+				res.status(409).json({ error: "Domain already blacklisted" });
+			} else {
+				next(error);
+			}
+		}
+	},
+
+	// Delete a blacklisted domain
+	deleteDomain: async (req: Request, res: Response, next: NextFunction) => {
+		const { id: domain } = req.params;
+		try {
+			await deleteBlacklistedDomain(domain);
+			res.json({ message: "Domain removed from blacklist successfully" });
+		} catch (error) {
+			if (
+				error instanceof DatabaseError &&
+				error.message === "Domain not found in blacklist"
+			) {
+				res.status(404).json({ error: "Domain not found in blacklist" });
+			} else {
+				next(error);
+			}
+		}
+	},
+
+	// Add bulk blacklisted domains
+	addBulk: async (req: Request, res: Response, next: NextFunction) => {
+		try {
+			const { domains } = req.body as { domains: string[] };
+
+			if (!Array.isArray(domains)) {
+				return res
+					.status(400)
+					.json({ error: "Invalid input: domains should be an array" });
+			}
+			const addedDomains = await addBulkBlacklistedDomains(domains);
+			res.status(200).json(addedDomains);
+		} catch (error) {
+			next(error);
+		}
+	},
+
+	// Remove all blacklisted domains
+	removeAll: async (req: Request, res: Response, next: NextFunction) => {
+		try {
+			await removeAllBlacklistedDomains();
+			res
+				.status(200)
+				.json({ message: "All blacklisted domains removed successfully" });
 		} catch (error) {
 			next(error);
 		}

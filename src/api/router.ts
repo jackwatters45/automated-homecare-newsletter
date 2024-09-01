@@ -2,6 +2,7 @@ import express from "express";
 import {
 	adController,
 	articleController,
+	blacklistedDomainController,
 	newsletterController,
 	pagesController,
 	recipientController,
@@ -61,6 +62,19 @@ router.delete("/reviewers/all", reviewerController.removeAll);
 router.delete("/reviewers/:id", reviewerController.deleteReviewer);
 router.post("/reviewers/bulk", reviewerController.addBulk);
 router.post("/reviewers/:id", reviewerController.addReviewer);
+
+// Blacklisted Domains Routes
+router.get("/blacklisted-domains", blacklistedDomainController.getAll);
+router.delete(
+	"/blacklisted-domains/all",
+	blacklistedDomainController.removeAll,
+);
+router.delete(
+	"/blacklisted-domains/:id",
+	blacklistedDomainController.deleteDomain,
+);
+router.post("/blacklisted-domains/bulk", blacklistedDomainController.addBulk);
+router.post("/blacklisted-domains/:id", blacklistedDomainController.addDomain);
 
 // Ad Routes
 router.get("/ads", adController.getAllAds);

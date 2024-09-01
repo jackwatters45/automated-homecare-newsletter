@@ -114,6 +114,13 @@ export const reviewers = createTable("newsletter_reviewers", {
 	updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+export const blacklistedDomains = createTable("blacklisted_domains", {
+	id: serial("id").primaryKey(),
+	domain: text("domain").notNull(),
+	createdAt: timestamp("created_at").defaultNow(),
+	updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 export const cronStatusEnum = pgEnum("cron_status", ["SUCCESS", "FAILURE"]);
 
 export const cronLogs = createTable("cron_logs", {

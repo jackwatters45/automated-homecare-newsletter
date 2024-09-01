@@ -2,11 +2,14 @@ import debug from "debug";
 import { google } from "googleapis";
 import type { Browser, Page } from "puppeteer";
 
-import { getNewsletterFrequency } from "../api/service.js";
+import {
+	getAllBlacklistedDomainNames,
+	getNewsletterFrequency,
+} from "../api/service.js";
 
 import type { ArticleWithSnippet, BaseArticle } from "../types/index.js";
 import { closeBrowser, getBrowser } from "./browser.js";
-import { BLACKLISTED_DOMAINS, REDIRECT_URLS } from "./constants.js";
+import { REDIRECT_URLS } from "./constants.js";
 import { getRecurringFrequency, retry } from "./utils.js";
 
 const log = debug(`${process.env.APP_NAME}:google-search.ts`);
@@ -23,7 +26,10 @@ export async function searchNews(
 
 	try {
 		browser = await getBrowser();
+		if (!browser) throw new Error("Browser not found");
+
 		const page = await browser.newPage();
+		if (!page) throw new Error("Unable to create page");
 
 		for (const q of qs) {
 			for (let i = 0; i < pages; i++) {
@@ -65,7 +71,8 @@ export async function searchNews(
 							finalUrl = url;
 						}
 
-						const isBlacklisted = BLACKLISTED_DOMAINS.some((blacklisted) => {
+						const blacklistedDomains = await getAllBlacklistedDomainNames();
+						const isBlacklisted = blacklistedDomains.some((blacklisted) => {
 							return finalUrl.origin.includes(blacklisted);
 						});
 

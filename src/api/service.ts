@@ -7,6 +7,7 @@ import {
 	adNewsletterRelations,
 	ads,
 	articles,
+	blacklistedDomains,
 	newsletterRecipients,
 	newsletters,
 	recipients,
@@ -454,7 +455,11 @@ export async function updateArticleDescription(
 	}
 }
 
-export async function addArticle(articleData: NewArticleInput) {
+interface AddArticleInput extends Omit<NewArticleInput, "description"> {
+	description?: string;
+}
+
+export async function addArticle(articleData: AddArticleInput) {
 	try {
 		const description = await getDescription(articleData);
 
@@ -1020,8 +1025,152 @@ export async function removeAllReviewers(): Promise<void> {
 	}
 }
 
-// Ads
+const domainSchema = z.string().url();
 
+// Blacklisted Domains
+export async function getAllBlacklistedDomains() {
+	try {
+		return await db.select().from(blacklistedDomains);
+	} catch (error) {
+		if (error instanceof DatabaseError) throw error;
+		throw new DatabaseError("Failed to retrieve blacklisted domains", {
+			operation: "select",
+			table: "blacklisted_domains",
+			error: error instanceof Error ? error.message : String(error),
+		});
+	}
+}
+
+export async function getAllBlacklistedDomainNames() {
+	try {
+		const domains = await getAllBlacklistedDomains();
+		return domains.map((d) => d.domain);
+	} catch (error) {
+		throw new DatabaseError("Failed to retrieve blacklisted domains", {
+			operation: "select",
+			table: "blacklisted_domains",
+			error: error instanceof Error ? error.message : String(error),
+		});
+	}
+}
+
+export async function addBlacklistedDomain(rawDomain: string) {
+	let domain = "";
+	try {
+		domain = rawDomain.toLowerCase();
+		// Assuming you have a domainSchema for validation
+
+		log("parsing");
+		domainSchema.parse(domain);
+
+		log("domain", domain);
+		const existingDomain = await db
+			.select()
+			.from(blacklistedDomains)
+			.where(eq(blacklistedDomains.domain, domain))
+			.limit(1);
+
+		if (existingDomain.length > 0) {
+			throw new DatabaseError("Domain already blacklisted", { domain });
+		}
+
+		const [newBlacklistedDomain] = await db
+			.insert(blacklistedDomains)
+			.values({ domain })
+			.returning();
+
+		return newBlacklistedDomain;
+	} catch (error) {
+		if (error instanceof DatabaseError) throw error;
+		if (error instanceof z.ZodError) {
+			throw new DatabaseError("Invalid domain format", { rawDomain, domain });
+		}
+		throw new DatabaseError("Failed to add blacklisted domain", {
+			operation: "insert",
+			table: "blacklisted_domains",
+			domain,
+			error: error instanceof Error ? error.message : String(error),
+		});
+	}
+}
+
+export async function deleteBlacklistedDomain(rawDomain: string) {
+	let domain = "";
+	try {
+		domain = rawDomain.toLowerCase();
+		domainSchema.parse(domain);
+
+		const [deletedDomain] = await db
+			.delete(blacklistedDomains)
+			.where(eq(blacklistedDomains.domain, domain))
+			.returning();
+
+		if (!deletedDomain) {
+			throw new DatabaseError("Blacklisted domain not found", { domain });
+		}
+
+		return deletedDomain;
+	} catch (error) {
+		if (error instanceof DatabaseError) throw error;
+		if (error instanceof z.ZodError) {
+			throw new DatabaseError("Invalid domain format", { rawDomain, domain });
+		}
+		throw new DatabaseError("Failed to delete blacklisted domain", {
+			operation: "delete",
+			table: "blacklisted_domains",
+			domain,
+			error: error instanceof Error ? error.message : String(error),
+		});
+	}
+}
+
+export async function addBulkBlacklistedDomains(
+	domains: string[],
+): Promise<string[]> {
+	try {
+		const uniqueDomains = [...new Set(domains.map((d) => d.toLowerCase()))];
+		const validDomains = uniqueDomains.filter((domain) => {
+			return domainSchema.safeParse(domain).success;
+		});
+
+		if (validDomains.length === 0) return [];
+
+		return await db.transaction(async (tx) => {
+			const insertedDomains = await Promise.all(
+				validDomains.map(async (domain) => {
+					const [newDomain] = await tx
+						.insert(blacklistedDomains)
+						.values({ domain })
+						.returning();
+
+					return newDomain;
+				}),
+			);
+
+			return insertedDomains.map((d) => d.domain);
+		});
+	} catch (error) {
+		throw new DatabaseError("Failed to add blacklisted domains", {
+			operation: "insert",
+			table: "blacklisted_domains",
+			error: error instanceof Error ? error.message : String(error),
+		});
+	}
+}
+
+export async function removeAllBlacklistedDomains(): Promise<void> {
+	try {
+		await db.delete(blacklistedDomains).returning();
+	} catch (error) {
+		throw new DatabaseError("Failed to remove all blacklisted domains", {
+			operation: "delete",
+			table: "blacklisted_domains",
+			error: error instanceof Error ? error.message : String(error),
+		});
+	}
+}
+
+// Ads
 export async function getAllAds() {
 	try {
 		return await db.query.ads.findMany({
