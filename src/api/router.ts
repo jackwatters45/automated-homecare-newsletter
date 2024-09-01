@@ -7,88 +7,109 @@ import {
 	pagesController,
 	recipientController,
 	reviewerController,
+	subscriptionController,
 } from "./controller.js";
 
-const router = express.Router();
+export const apiRouter = express.Router();
 
 // Newsletter Routes
-router.get("/newsletters/frequency", newsletterController.getFrequency);
-router.get(
+apiRouter.get("/newsletters/frequency", newsletterController.getFrequency);
+apiRouter.get(
 	"/newsletters/with-recipients",
 	newsletterController.getAllWithRecipients,
 );
-router.get("/newsletters/:id", newsletterController.getOne);
-router.get("/newsletters", newsletterController.getAll);
+apiRouter.get("/newsletters", newsletterController.getAll);
+apiRouter.get("/newsletters/unsent", newsletterController.getAllUnsent);
+apiRouter.get("/newsletters/:id", newsletterController.getOne);
 
-router.post("/newsletters/generate", newsletterController.generate);
-router.post("/newsletters/review", newsletterController.review);
-router.post("/newsletters/:id/review", newsletterController.reviewById);
-router.post("/newsletters/:id/send", newsletterController.send);
-router.post("/newsletters", newsletterController.create);
+apiRouter.post("/newsletters/generate", newsletterController.generate);
+apiRouter.post("/newsletters/review", newsletterController.review);
+apiRouter.post("/newsletters/:id/review", newsletterController.reviewById);
+apiRouter.post("/newsletters/:id/send", newsletterController.send);
+apiRouter.post("/newsletters", newsletterController.create);
 
-router.patch(
+apiRouter.patch(
 	"/newsletters/:id/update-order",
 	newsletterController.updateArticleOrder,
 );
-router.patch(
+apiRouter.patch(
 	"/newsletters/:id/update-category/:articleId",
 	newsletterController.updateArticleCategory,
 );
-router.patch("/newsletters/:id/summary", newsletterController.updateSummary);
+apiRouter.patch("/newsletters/:id/summary", newsletterController.updateSummary);
 
-router.put("/newsletters/frequency", newsletterController.updateFrequency);
+apiRouter.put("/newsletters/frequency", newsletterController.updateFrequency);
 
-router.delete("/newsletters/:id", newsletterController.delete);
+apiRouter.delete("/newsletters/:id", newsletterController.delete);
 
 // Article Routes
-router.patch("/articles/:id/description", articleController.updateDescription);
-router.post("/articles", articleController.create);
-router.delete("/articles/:id", articleController.delete);
+apiRouter.patch(
+	"/articles/:id/description",
+	articleController.updateDescription,
+);
+apiRouter.post("/articles", articleController.create);
+apiRouter.delete("/articles/:id", articleController.delete);
 
 // Recipient Routes
-router.get("/recipients", recipientController.getAll);
-router.delete("/recipients/all", recipientController.removeAll);
-router.delete("/recipients/:id", recipientController.deleteRecipient);
-router.post("/recipients/bulk", recipientController.addBulk);
-router.post("/recipients/:id", recipientController.addRecipient);
+apiRouter.get("/recipients", recipientController.getAll);
+apiRouter.delete("/recipients/all", recipientController.removeAll);
+apiRouter.delete("/recipients/:id", recipientController.deleteRecipient);
+apiRouter.post("/recipients/bulk", recipientController.addBulk);
+apiRouter.post("/recipients/:id", recipientController.addRecipient);
 
 // Page Routes
-router.get("/page/generate", pagesController.renderGenerateButton);
-router.get("/page/newsletter/:id", pagesController.renderNewsletterPreview);
+apiRouter.get("/page/generate", pagesController.renderGenerateButton);
+apiRouter.get("/page/newsletter/:id", pagesController.renderNewsletterPreview);
 
 // Reviewer Routes
-router.get("/reviewers", reviewerController.getAll);
-router.delete("/reviewers/all", reviewerController.removeAll);
-router.delete("/reviewers/:id", reviewerController.deleteReviewer);
-router.post("/reviewers/bulk", reviewerController.addBulk);
-router.post("/reviewers/:id", reviewerController.addReviewer);
+apiRouter.get("/reviewers", reviewerController.getAll);
+apiRouter.delete("/reviewers/all", reviewerController.removeAll);
+apiRouter.delete("/reviewers/:id", reviewerController.deleteReviewer);
+apiRouter.post("/reviewers/bulk", reviewerController.addBulk);
+apiRouter.post("/reviewers/:id", reviewerController.addReviewer);
 
 // Blacklisted Domains Routes
-router.get("/blacklisted-domains", blacklistedDomainController.getAll);
-router.delete(
+apiRouter.get("/blacklisted-domains", blacklistedDomainController.getAll);
+apiRouter.delete(
 	"/blacklisted-domains/all",
 	blacklistedDomainController.removeAll,
 );
-router.delete(
+apiRouter.delete(
 	"/blacklisted-domains/:id",
 	blacklistedDomainController.deleteDomain,
 );
-router.post("/blacklisted-domains/bulk", blacklistedDomainController.addBulk);
-router.post("/blacklisted-domains/:id", blacklistedDomainController.addDomain);
+apiRouter.post(
+	"/blacklisted-domains/bulk",
+	blacklistedDomainController.addBulk,
+);
+apiRouter.post(
+	"/blacklisted-domains/:id",
+	blacklistedDomainController.addDomain,
+);
 
 // Ad Routes
-router.get("/ads", adController.getAllAds);
-router.get("/ads/:id", adController.getAdById);
-router.post("/ads", adController.createAd);
-router.put("/ads/:id", adController.updateAd);
-router.delete("/ads/:id", adController.deleteAd);
-router.post(
+apiRouter.get("/ads", adController.getAllAds);
+apiRouter.get("/ads/:id", adController.getAdById);
+apiRouter.post("/ads", adController.createAd);
+apiRouter.put("/ads/:id", adController.updateAd);
+apiRouter.delete("/ads/:id", adController.deleteAd);
+apiRouter.post(
 	"/ads/:adId/newsletters/:newsletterId",
 	adController.addAdToNewsletter,
 );
-router.delete(
+apiRouter.delete(
 	"/ads/:adId/newsletters/:newsletterId",
 	adController.removeAdFromNewsletter,
 );
 
-export default router;
+export const subscriptionRouter = express.Router();
+
+// Subscription Routes
+subscriptionRouter.post(
+	"/subscribe/:id",
+	subscriptionController.addSubscription,
+);
+subscriptionRouter.delete(
+	"/unsubscribe/:id",
+	subscriptionController.removeSubscription,
+);

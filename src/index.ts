@@ -12,7 +12,7 @@ import helmet from "helmet";
 import morgan from "morgan";
 
 import { engine } from "express-handlebars";
-import apiRouter from "./api/router.js";
+import { apiRouter, subscriptionRouter } from "./api/router.js";
 import { authMiddleware } from "./lib/auth-middleware.js";
 import { API_URL, BASE_PATH, IS_DEVELOPMENT, PORT } from "./lib/constants.js";
 import { setupCronJobs } from "./lib/cron.js";
@@ -108,6 +108,7 @@ app.get("/", (_, res) => res.redirect("/health"));
 
 app.get("/health", healthCheck);
 
+app.use("/api", subscriptionRouter);
 app.use("/api", authMiddleware, apiRouter);
 
 // Setup cron jobs

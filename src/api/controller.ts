@@ -38,6 +38,7 @@ import {
 	getAllNewslettersWithRecipients,
 	getAllRecipients,
 	getAllReviewers,
+	getAllUnsentNewsletters,
 	getNewsletter,
 	getNewsletterFrequency,
 	removeAdFromNewsletter,
@@ -77,6 +78,16 @@ export const newsletterController = {
 		try {
 			const allNewsletters = await getAllNewsletters();
 			res.json(allNewsletters);
+		} catch (error) {
+			next(error);
+		}
+	},
+
+	// Get all unsent newsletters
+	getAllUnsent: async (req: Request, res: Response, next: NextFunction) => {
+		try {
+			const allUnsentNewsletters = await getAllUnsentNewsletters();
+			res.json(allUnsentNewsletters);
 		} catch (error) {
 			next(error);
 		}
@@ -325,6 +336,8 @@ export const articleController = {
 	},
 };
 
+const emailSchema = z.string().email("Invalid email address");
+
 // Recipient Controllers
 export const recipientController = {
 	// Get all recipients
@@ -364,6 +377,7 @@ export const recipientController = {
 	// Delete a recipient
 	deleteRecipient: async (req: Request, res: Response, next: NextFunction) => {
 		const { id: email } = req.params;
+
 		try {
 			await deleteRecipient(email);
 			res.json({ message: "Recipient deleted successfully" });
@@ -404,6 +418,44 @@ export const recipientController = {
 	},
 };
 
+// Subscription Controllers
+export const subscriptionController = {
+	// add a subscription
+	addSubscription: async (req: Request, res: Response, next: NextFunction) => {
+		try {
+			const { id: email } = req.params;
+
+			const subscription = await addRecipient(email);
+			res.json(subscription);
+		} catch (error) {
+			next(error);
+		}
+	},
+
+	// remove a subscription
+	removeSubscription: async (
+		req: Request,
+		res: Response,
+		next: NextFunction,
+	) => {
+		try {
+			const { id: email } = req.params;
+
+			const subscription = await deleteRecipient(email);
+			res.json(subscription);
+		} catch (error) {
+			if (
+				error instanceof DatabaseError &&
+				error.message === "Subscriber not found"
+			) {
+				res.status(404).json({ error: "Subscriber not found" });
+			} else {
+				next(error);
+			}
+		}
+	},
+};
+
 // Pages Controllers
 export const pagesController = {
 	// Update an article's description
@@ -431,7 +483,7 @@ export const pagesController = {
 		try {
 			const newsletterData = await getNewsletter(Number(id));
 
-			const template = await renderTemplate(newsletterData);
+			const template = await renderTemplate({ data: newsletterData });
 
 			res.send(template);
 		} catch (error) {

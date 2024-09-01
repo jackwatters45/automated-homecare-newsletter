@@ -6,15 +6,21 @@ import Handlebars from "handlebars";
 import juice from "juice";
 import postcss from "postcss";
 import type { PopulatedNewsletter } from "../types/index.js";
-import { BASE_PATH, COMPANY_NAME } from "./constants.js";
+import { BASE_PATH, CLIENT_URL, COMPANY_NAME } from "./constants.js";
 import { getPastPeriodDate } from "./utils.js";
 
 const log = debug(`${process.env.APP_NAME}:template.ts`);
 
-export async function renderTemplate(
-	data: PopulatedNewsletter,
+interface RenderTemplateOptions {
+	data: PopulatedNewsletter;
+	recipientEmail?: string;
+	fileName?: string;
+}
+export async function renderTemplate({
+	data,
+	recipientEmail,
 	fileName = "newsletter.hbs",
-): Promise<string> {
+}: RenderTemplateOptions): Promise<string> {
 	const source = await fs.readFile(
 		path.join(BASE_PATH, "public", "views", fileName),
 		"utf-8",
@@ -53,6 +59,8 @@ export async function renderTemplate(
 		categories: data?.categories,
 		summary: data?.summary,
 		ads: data?.ads,
+		unsubscribeUrl: `${CLIENT_URL}/unsubscribe?email=${encodeURIComponent(recipientEmail ?? "example@example.com")}`,
+		subscribeUrl: `${CLIENT_URL}/subscribe`,
 	});
 
 	const inlinedHtml = juice.inlineContent(htmlContent, postcssResult.css);

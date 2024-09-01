@@ -53,6 +53,21 @@ export async function getAllNewsletters() {
 	}
 }
 
+export async function getAllUnsentNewsletters() {
+	try {
+		return await db.query.newsletters.findMany({
+			where: not(eq(newsletters.status, "SENT")),
+		});
+	} catch (error) {
+		if (error instanceof DatabaseError) throw error;
+		throw new DatabaseError("Failed to retrieve newsletters", {
+			operation: "findMany",
+			table: "newsletters",
+			error: error instanceof Error ? error.message : String(error),
+		});
+	}
+}
+
 export async function getAllNewslettersWithRecipients() {
 	try {
 		return await db.query.newsletters
@@ -667,7 +682,7 @@ export async function deleteRecipient(rawEmail: string) {
 			});
 
 			if (!recipient) {
-				throw new DatabaseError("Active recipient not found", { email });
+				return { message: "Recipient deleted successfully" };
 			}
 
 			// Soft delete: update status to INACTIVE

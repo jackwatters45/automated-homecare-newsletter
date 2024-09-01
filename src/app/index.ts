@@ -140,38 +140,27 @@ export async function sendNewsletter(id: number) {
 	try {
 		const newsletterData = await getNewsletter(id);
 
-		const html = await renderTemplate(newsletterData);
+		for (const recipient of newsletterData.recipients) {
+			const html = await renderTemplate({
+				data: newsletterData,
+				recipientEmail: recipient.email,
+			});
 
-		if (!html) {
-			logger.error("Incomplete newsletter template");
-			throw new Error("Incomplete newsletter template");
-		}
+			if (!html) {
+				logger.error("Incomplete newsletter template");
+				throw new Error("Incomplete newsletter template");
+			}
 
-		const recipientEmails = newsletterData.recipients.map(
-			(recipient) => recipient.email,
-		);
+			const { error } = await resend.emails.send({
+				from: getEnv("RESEND_FROM_EMAIL"),
+				to: recipient.email,
+				subject: `TrollyCare Newsletter - ${new Date().toLocaleDateString()}`,
+				html,
+			});
 
-		const { data, error } = await resend.emails.send({
-			from: getEnv("RESEND_FROM_EMAIL"),
-			to: recipientEmails,
-			subject: `TrollyCare Newsletter - ${new Date().toLocaleDateString()}`,
-			html,
-		});
-
-		if (error) {
-			const updatedNewsletter = await db
-				.update(newsletters)
-				.set({ status: "FAILED" })
-				.where(eq(newsletters.id, id))
-				.returning();
-
-			logger.error("Error in sendNewsletter:", { error });
-
-			return {
-				message: "Error sending email",
-				error,
-				newsletter: updatedNewsletter,
-			};
+			if (error) {
+				throw new Error("Error sending email");
+			}
 		}
 
 		const updatedNewsletter = await db
@@ -182,10 +171,15 @@ export async function sendNewsletter(id: number) {
 
 		return {
 			message: "Email sent successfully",
-			email: data,
 			newsletter: updatedNewsletter,
 		};
 	} catch (error) {
+		await db
+			.update(newsletters)
+			.set({ status: "FAILED" })
+			.where(eq(newsletters.id, id))
+			.returning();
+
 		logger.error("Error in sendNewsletter:", { error });
 	}
 }
