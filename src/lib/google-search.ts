@@ -33,20 +33,17 @@ export async function searchNews(
 
 		for (const q of qs) {
 			for (let i = 0; i < pages; i++) {
+				const searchTermWithDate = generateSearchTerm(q);
 				const startIndex = i * 10 + 1;
 				try {
-					const query = await getLastDateQuery(q);
 					const res = await retry(() => {
 						return customsearch.cse.list({
 							cx: process.env.CUSTOM_ENGINE_ID,
 							auth: process.env.CUSTOM_SEARCH_API_KEY,
-							q: query,
+							q: searchTermWithDate,
 							start: startIndex,
 							dateRestrict: "d7",
-							sort: "date",
 							cr: "countryUS",
-							gl: "us",
-							hl: "en",
 						});
 					});
 
@@ -140,41 +137,45 @@ async function getPageUrl(page: Page, url: string): Promise<URL | null> {
 		return null;
 	}
 }
-export async function getLastDateQuery(
-	q: string,
-	customFrequency?: number,
-): Promise<string> {
-	try {
-		let beforeMs: number;
 
-		if (customFrequency !== undefined) {
-			beforeMs = customFrequency;
-		} else {
-			const frequencyWeeks = await getNewsletterFrequency();
-			beforeMs = getRecurringFrequency(frequencyWeeks);
-		}
-
-		const pastDate = new Date().getTime() - beforeMs;
-		const formattedPastDate = new Date(pastDate).toISOString().split("T")[0];
-
-		return `${q} after:${formattedPastDate}`;
-	} catch (error) {
-		log(`Error in getLastDateQuery: ${error}`);
-
-		// Fallback to a default of 1 week if there's an error
-		const oneWeekAgo = new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000);
-		const formattedOneWeekAgo = oneWeekAgo.toISOString().split("T")[0];
-
-		return `${q} after:${formattedOneWeekAgo}`;
-	}
+function getCurrentMonth(): string {
+	const now = new Date();
+	const options = { month: "long" } as Intl.DateTimeFormatOptions;
+	return new Intl.DateTimeFormat("en-US", options).format(now);
 }
 
-export async function safeSingleSearch(q: string): Promise<BaseArticle[]> {
+function generateSearchTerm(baseTerm: string): string {
+	const month = getCurrentMonth();
+	return `${baseTerm} ${month}`;
+}
+
+export async function simpleSearch(query: string, pages = 1): Promise<void> {
 	try {
-		const results = await searchNews([q]);
-		return results;
+		const searchResults = [];
+		for (let i = 0; i < pages; i++) {
+			const page = await customsearch.cse.list({
+				cx: process.env.CUSTOM_ENGINE_ID,
+				auth: process.env.CUSTOM_SEARCH_API_KEY,
+				q: query,
+				dateRestrict: "d7",
+				cr: "countryUS",
+				start: i * 10 + 1,
+			});
+
+			searchResults.push(...(page.data.items ?? []));
+		}
+
+		if (!searchResults?.length) {
+			log(`No results found for query: ${query}`);
+			return;
+		}
+
+		log(`Results for query: ${query}`);
+		searchResults.forEach((item, index) => {
+			log(`${index + 1}. ${item.title}`);
+		});
+		log("\n");
 	} catch (error) {
-		log(`Error in safeSingleSearch for query "${q}": ${error}`);
-		return [];
+		log(`Error searching for query "${query}": ${error}`);
 	}
 }

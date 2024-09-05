@@ -43,6 +43,7 @@ export async function filterAndRankArticles(
 	targetArticleCount = TARGET_NUMBER_OF_ARTICLES * 2,
 	maxArticlesPerSource = MAX_ARTICLES_PER_SOURCE,
 ) {
+	log("filtering and ranking articles");
 	try {
 		const uniqueArticles = deduplicateAndCountArticles(rawArticles);
 

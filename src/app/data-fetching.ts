@@ -36,22 +36,22 @@ import { createDescriptionPrompt } from "./format-articles.js";
 const log = debug(`${process.env.APP_NAME}:data-fetching.ts`);
 
 export async function getArticleData() {
-	if (IS_DEVELOPMENT) {
-		// if development, read test data
-		log("reading test data");
-		const testData = await readTestData<ArticleWithSource[]>(
-			"raw-article-data.json",
-		);
-		if (testData) return testData;
-		log("No test data found, falling back to live data");
-	} else {
-		// Check Upstash Redis cache first
-		const cachedData = await getCache(CACHE_KEY);
-		if (cachedData) {
-			log("Using cached article data from Upstash Redis");
-			return cachedData;
-		}
-	}
+	// if (IS_DEVELOPMENT) {
+	// 	// if development, read test data
+	// 	log("reading test data");
+	// 	const testData = await readTestData<ArticleWithSource[]>(
+	// 		"raw-article-data.json",
+	// 	);
+	// 	if (testData) return testData;
+	// 	log("No test data found, falling back to live data");
+	// } else {
+	// 	// Check Upstash Redis cache first
+	// 	const cachedData = await getCache(CACHE_KEY);
+	// 	if (cachedData) {
+	// 		log("Using cached article data from Upstash Redis");
+	// 		return cachedData;
+	// 	}
+	// }
 
 	const [googleResults, specificPageResults] = await Promise.all([
 		fetchGoogleSearchResults(),
@@ -74,44 +74,22 @@ export async function getArticleData() {
 	return results;
 }
 
+const searchQueries = [
+	"homecare ai",
+	"homecare legislation",
+	"homecare best practices",
+	"homecare workforce challenges",
+	"homecare telemedicine integration",
+	"homecare remote monitoring tools",
+	"homecare caregiver burnout strategies",
+	"homecare caregiver burnout prevention",
+	"homecare AI-driven decision support",
+	"homecare fall prevention technology",
+];
+
 export async function fetchGoogleSearchResults(): Promise<BaseArticle[]> {
 	try {
-		const googleSearchResults = await searchNews([
-			// General industry news
-			"homecare industry news",
-			"home-based care updates",
-
-			// Policy and regulations
-			"homecare policy updates",
-			"home-based care legislation",
-
-			// Technology and innovations
-			"homecare technology innovations",
-			"digital solutions in homecare",
-			"telecare advancements",
-
-			// Workforce and trends
-			"homecare workforce trends",
-			"caregiver recruitment homecare",
-			"in-home care staffing solutions",
-
-			// Clinical practices
-			"homecare best practices",
-			"in-home care clinical innovations",
-
-			// Business operations
-			"homecare agency management",
-			"in-home care financial trends",
-
-			// Specific care areas
-			"elder homecare news",
-			"pediatric in-home care",
-			"chronic care management at home",
-
-			// Industry events
-			"homecare industry conferences",
-			"in-home care webinars",
-		]);
+		const googleSearchResults = await searchNews(searchQueries);
 
 		if (!googleSearchResults || !googleSearchResults.length) {
 			logger.error("No results found in Google search");
