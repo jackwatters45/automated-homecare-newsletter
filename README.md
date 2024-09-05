@@ -1,7 +1,9 @@
 # Automated Homecare Newsletter
 
-- best way to get google results
-- better distribution by source
+- fix api
+
+- better distribution by source (ensure its okay doesnt have to be perfect)
+- mock api to sync contacts
 - update pages in claude + optimize
 
 ## Roadmap
