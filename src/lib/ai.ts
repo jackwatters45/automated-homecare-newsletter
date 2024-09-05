@@ -8,17 +8,24 @@ import { z } from "zod";
 
 const log = debug(`${process.env.APP_NAME}:ai.ts`);
 
-type Format = "json" | "text";
-
-interface GenerateParams<T extends z.ZodTypeAny> {
+type TextParams = {
 	prompt: string;
-	format: Format;
-	schema?: T;
-}
+};
 
-type GenerateResult<T extends z.ZodTypeAny> =
-	| { type: "json"; content: z.infer<T>; rawResponse: string }
-	| { type: "text"; content: string };
+type JsonParams<T extends z.ZodTypeAny> = {
+	prompt: string;
+
+	schema: T;
+};
+
+type TextResult = {
+	content: string;
+};
+
+type JsonResult<T extends z.ZodTypeAny> = {
+	content: z.infer<T>;
+	rawResponse: string;
+};
 
 class AIUtility {
 	private model: GenerativeModel;
@@ -39,73 +46,68 @@ class AIUtility {
 		});
 	}
 
-	async generateResponse<T extends z.ZodTypeAny>(
-		params: GenerateParams<T>,
-	): Promise<GenerateResult<T>> {
-		try {
-			let formatInstruction =
-				"Respond with plain text. Do not use any Markdown formatting or special characters for emphasis or structure.";
-			if (params.format === "json") {
-				formatInstruction =
-					"Respond with a valid JSON object or array. Your entire response should be valid JSON without any additional text. Ensure all required fields are included in your response.";
-				if (params.schema instanceof z.ZodObject) {
-					const shape = params.schema.shape;
-					const fields = Object.keys(shape)
-						.map((key) => `"${key}"`)
-						.join(", ");
-					formatInstruction += ` The JSON object should include the following fields: ${fields}.`;
-				} else if (params.schema instanceof z.ZodArray) {
-					formatInstruction += " The response should be an array of objects.";
-					if (params.schema.element instanceof z.ZodObject) {
-						const shape = params.schema.element.shape;
-						const fields = Object.keys(shape)
-							.map((key) => `"${key}"`)
-							.join(", ");
-						formatInstruction += ` Each object in the array should include the following fields: ${fields}.`;
-					}
-				}
-			}
+	async generateTextResponse(params: TextParams): Promise<TextResult> {
+		const formatInstruction =
+			"Respond with plain text. Do not use any Markdown formatting or special characters for emphasis or structure.";
+		const fullPrompt = `${formatInstruction}\n\n${params.prompt}`;
 
-			const fullPrompt = `${formatInstruction}\n\n${params.prompt}`;
+		const result = await this.model.generateContent(fullPrompt);
+		const response = await result.response;
+		const text = response.text();
 
-			log("Sending prompt to AI:", fullPrompt);
-
-			const result = await this.model.generateContent(fullPrompt);
-			const response = await result.response;
-			const text = response.text();
-
-			log("Raw AI response:", text);
-
-			return this.parseResponse(text, params);
-		} catch (error) {
-			log(`Error generating AI response: ${error}`);
-			throw new Error(`Failed to generate AI response: ${error}`);
-		}
+		return this.parseTextResponse(text);
 	}
 
-	private parseResponse<T extends z.ZodTypeAny>(
-		text: string,
-		params: GenerateParams<T>,
-	): GenerateResult<T> {
-		const cleanedText = text.replace(/^```json\n|```$/g, "").trim();
+	async generateJsonResponse<T extends z.ZodTypeAny>(
+		params: JsonParams<T>,
+	): Promise<JsonResult<T>> {
+		let formatInstruction =
+			"Respond with a valid JSON object or array. Your entire response should be valid JSON without any additional text. Ensure all required fields are included in your response.";
 
-		if (params.format === "json" && params.schema) {
-			try {
-				const jsonContent = JSON.parse(cleanedText);
-				const validatedContent = params.schema.parse(jsonContent);
-				return {
-					type: "json",
-					content: validatedContent,
-					rawResponse: cleanedText,
-				};
-			} catch (error) {
-				log(`Error parsing JSON response: ${error}`);
-				log("Attempted to parse:", cleanedText);
-				return { type: "text", content: cleanedText };
+		if (params.schema instanceof z.ZodObject) {
+			const shape = params.schema.shape;
+			const fields = Object.keys(shape)
+				.map((key) => `"${key}"`)
+				.join(", ");
+			formatInstruction += ` The JSON object should include the following fields: ${fields}.`;
+		} else if (params.schema instanceof z.ZodArray) {
+			formatInstruction += " The response should be an array of objects.";
+			if (params.schema.element instanceof z.ZodObject) {
+				const shape = params.schema.element.shape;
+				const fields = Object.keys(shape)
+					.map((key) => `"${key}"`)
+					.join(", ");
+				formatInstruction += ` Each object in the array should include the following fields: ${fields}.`;
 			}
-		} else {
-			const strippedText = this.stripMarkdown(cleanedText);
-			return { type: "text", content: strippedText };
+		}
+
+		const fullPrompt = `${formatInstruction}\n\n${params.prompt}`;
+
+		const result = await this.model.generateContent(fullPrompt);
+		const response = await result.response;
+		const text = response.text();
+
+		return this.parseJsonResponse(text, params);
+	}
+
+	private parseTextResponse(text: string): TextResult {
+		const strippedText = this.stripMarkdown(text.trim());
+		return { content: strippedText };
+	}
+
+	private parseJsonResponse<T extends z.ZodTypeAny>(
+		text: string,
+		params: JsonParams<T>,
+	): JsonResult<T> {
+		const cleanedText = text.replace(/^```json\n|```$/g, "").trim();
+		try {
+			const jsonContent = JSON.parse(cleanedText);
+			const validatedContent = params.schema.parse(jsonContent);
+			return { content: validatedContent, rawResponse: cleanedText };
+		} catch (error) {
+			log(`Error parsing JSON response: ${error}`);
+			log("Attempted to parse:", cleanedText);
+			throw new Error(`Failed to parse JSON response: ${error}`);
 		}
 	}
 
@@ -125,8 +127,14 @@ class AIUtility {
 
 export const aiUtility = new AIUtility();
 
-export async function generateAIResponse<T extends z.ZodTypeAny>(
-	params: GenerateParams<T>,
-): Promise<GenerateResult<T>> {
-	return aiUtility.generateResponse(params);
+export function generateAITextResponse(
+	params: TextParams,
+): Promise<TextResult> {
+	return aiUtility.generateTextResponse(params);
+}
+
+export function generateAIJsonResponse<T extends z.ZodTypeAny>(
+	params: JsonParams<T>,
+): Promise<JsonResult<T>> {
+	return aiUtility.generateJsonResponse(params);
 }

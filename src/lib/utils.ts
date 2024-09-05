@@ -12,7 +12,6 @@ import {
 	DESCRIPTION_MAX_LENGTH,
 	IS_DEVELOPMENT,
 	MAX_RETRIES,
-	SYSTEM_INSTRUCTION,
 } from "../lib/constants.js";
 import type {
 	ArticleWithOptionalDescription,
@@ -22,8 +21,7 @@ import type {
 	PopulatedCategory,
 } from "../types/index.js";
 
-import { google } from "@ai-sdk/google";
-import { generateText } from "ai";
+import { generateAITextResponse } from "./ai.js";
 import { closeBrowser, getBrowser } from "./browser.js";
 import logger from "./logger.js";
 
@@ -361,17 +359,15 @@ export const getDescription = async (
 
 		const descriptionPrompt = createDescriptionPrompt($.html());
 
-		const { text } = await generateText({
-			model: google("gemini-1.5-flash-latest"),
-			system: SYSTEM_INSTRUCTION,
+		const { content } = await generateAITextResponse({
 			prompt: descriptionPrompt,
 		});
 
 		logAiCall();
 
-		if (!text) throw new Error("Error generating description");
+		if (!content) throw new Error("Error generating description");
 
-		return text?.trim();
+		return content?.trim();
 	} catch (error) {
 		log(`Error in getDescription: ${error}`);
 		return "";
@@ -467,14 +463,11 @@ export function getSourceFromUrl(url: string): string {
 
 export const getDescriptionFromContent = async (content: string) => {
 	const descriptionPrompt = createDescriptionPrompt(content);
-
-	const { text } = await generateText({
-		model: google("gemini-1.5-flash-latest"),
-		system: SYSTEM_INSTRUCTION,
+	const { content: description } = await generateAITextResponse({
 		prompt: descriptionPrompt,
 	});
 
 	logAiCall();
 
-	return text?.trim();
+	return description?.trim();
 };

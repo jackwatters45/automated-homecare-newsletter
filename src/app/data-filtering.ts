@@ -1,15 +1,13 @@
 import debug from "debug";
 
-import { google } from "@ai-sdk/google";
-import { generateObject } from "ai";
+import { int } from "drizzle-orm/mysql-core";
 import { z } from "zod";
 import { getNewsletterFrequency } from "../api/service.js";
+import { generateAIJsonResponse } from "../lib/ai.js";
 import {
 	CATEGORIES,
 	MAX_ARTICLES_PER_SOURCE,
-	MAX_TOKENS,
 	MIN_NUMBER_OF_ARTICLES,
-	SYSTEM_INSTRUCTION,
 	TARGET_NUMBER_OF_ARTICLES,
 	TOPIC,
 } from "../lib/constants.js";
@@ -41,12 +39,12 @@ import { generateCategories } from "./format-articles.js";
 const log = debug(`${process.env.APP_NAME}:date-filtering.ts`);
 
 export async function filterAndRankArticles(
-	articles: ArticleWithOptionalSource[],
+	rawArticles: ArticleWithOptionalSource[],
 	targetArticleCount = TARGET_NUMBER_OF_ARTICLES * 2,
 	maxArticlesPerSource = MAX_ARTICLES_PER_SOURCE,
 ) {
 	try {
-		const uniqueArticles = deduplicateAndCountArticles(articles);
+		const uniqueArticles = deduplicateAndCountArticles(rawArticles);
 
 		const shuffledArticles = shuffleArray(uniqueArticles);
 		const aiFilteringInput = extractArticleFilteringData(shuffledArticles);
@@ -102,7 +100,11 @@ export async function filterAndRankArticles(
 			articlesWithCategories,
 		);
 
-		return mergedRankedArticles;
+		const articles = deduplicateArticles(mergedRankedArticles);
+
+		log("final (deduplicated) article count", articles.length);
+
+		return articles;
 	} catch (error) {
 		throw new Error("Error in filterAndRankArticles");
 	}
@@ -209,19 +211,17 @@ Example of expected output format:
 ]`;
 
 	try {
-		const { object: filteredArticles } = await generateObject({
-			model: google("gemini-1.5-flash-latest"),
-			system: SYSTEM_INSTRUCTION,
-			output: "array",
-			schema: z.object({
-				title: z.string(),
-				description: z.string(),
-				count: z.number(),
-				source: z.string(),
-				link: z.string(),
-			}),
+		const { content: filteredArticles } = await generateAIJsonResponse({
+			schema: z.array(
+				z.object({
+					title: z.string(),
+					description: z.string(),
+					count: z.number(),
+					source: z.string(),
+					link: z.string(),
+				}),
+			),
 			prompt: aiFilteringPrompt,
-			maxTokens: MAX_TOKENS,
 		});
 
 		logAiCall();
@@ -288,19 +288,17 @@ export async function rankArticles(
 			// ... more articles
 		]`;
 
-	const { object: rankedArticles } = await generateObject({
-		model: google("gemini-1.5-flash-latest"),
-		system: SYSTEM_INSTRUCTION,
-		output: "array",
-		schema: z.object({
-			title: z.string(),
-			description: z.string(),
-			source: z.string(),
-			count: z.number(),
-			quality: z.number(),
-		}),
+	const { content: rankedArticles } = await generateAIJsonResponse({
+		schema: z.array(
+			z.object({
+				title: z.string(),
+				description: z.string(),
+				source: z.string(),
+				count: z.number(),
+				quality: z.number(),
+			}),
+		),
 		prompt: aiRankingPrompt,
-		maxTokens: MAX_TOKENS,
 	});
 
 	logAiCall();
@@ -431,15 +429,26 @@ export async function mergeFilteredArticles(
 	}
 }
 
-export function deduplicateAndCountArticles(
-	arr: ArticleWithOptionalSource[],
-	fields: (keyof ArticleWithOptionalSource)[] = ["title", "link"],
-): ArticleWithOptionalSourceAndCount[] {
+interface WithTitleAndLink {
+	title: string;
+	link: string;
+}
+
+type WithTitleAndLinkAndCount<T> = T & {
+	count: number;
+};
+
+export function deduplicateAndCountArticles<T extends WithTitleAndLink>(
+	arr: T[],
+	fields: (keyof T)[] = ["title", "link"],
+): WithTitleAndLinkAndCount<T>[] {
 	try {
-		const uniqueMap = new Map<string, ArticleWithOptionalSourceAndCount>();
+		const uniqueMap = new Map<string, WithTitleAndLinkAndCount<T>>();
 
 		for (const item of arr) {
-			const key = fields.map((field) => `${field}:${item[field]}`).join("|");
+			const key = fields
+				.map((field) => `${String(field)}:${item[field]}`)
+				.join("|");
 
 			if (!uniqueMap.has(key)) {
 				const existingItem = uniqueMap.get(key);
@@ -458,6 +467,34 @@ export function deduplicateAndCountArticles(
 		return uniqueArticles;
 	} catch (error) {
 		log(`Error in removeDuplicatesAndCount: ${error}`);
+		return [];
+	}
+}
+
+export function deduplicateArticles<T extends WithTitleAndLink>(
+	arr: T[],
+	fields: (keyof T)[] = ["title", "link"],
+): T[] {
+	try {
+		const uniqueMap = new Map<string, T>();
+
+		for (const item of arr) {
+			const key = fields
+				.map((field) => `${String(field)}:${item[field]}`)
+				.join("|");
+
+			if (!uniqueMap.has(key)) {
+				uniqueMap.set(key, item);
+			}
+		}
+
+		const uniqueArticles = Array.from(uniqueMap.values());
+
+		log("unfiltered unique articles", uniqueArticles.length);
+
+		return uniqueArticles;
+	} catch (error) {
+		log(`Error in deduplicateArticles: ${error}`);
 		return [];
 	}
 }

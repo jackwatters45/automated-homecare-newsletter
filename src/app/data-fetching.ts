@@ -1,20 +1,17 @@
 import * as cheerio from "cheerio";
 import debug from "debug";
 
-import { google } from "@ai-sdk/google";
-import { generateText } from "ai";
 import { getAllBlacklistedDomainNames } from "../api/service.js";
+import { generateAITextResponse } from "../lib/ai.js";
 import { getCache, setCache } from "../lib/cache.js";
 import {
 	CACHE_KEY,
 	INITIAL_FETCH_COUNT,
 	IS_DEVELOPMENT,
 	SPECIFIC_PAGES,
-	SYSTEM_INSTRUCTION,
 } from "../lib/constants.js";
 import { searchNews } from "../lib/google-search.js";
 import logger from "../lib/logger.js";
-import { rateLimiter } from "../lib/rate-limit.js";
 import {
 	checkRobotsTxtPermission,
 	constructFullUrl,
@@ -213,15 +210,13 @@ export async function extractArticleData({
 	if (!description && getDescription) {
 		const descriptionPrompt = createDescriptionPrompt($.html());
 
-		const { text } = await generateText({
-			model: google("gemini-1.5-flash-latest"),
-			system: SYSTEM_INSTRUCTION,
+		const { content } = await generateAITextResponse({
 			prompt: descriptionPrompt,
 		});
 
 		logAiCall();
 
-		description = text?.trim();
+		description = content?.trim();
 	}
 
 	const link = constructFullUrl(rawHref, targetPage);

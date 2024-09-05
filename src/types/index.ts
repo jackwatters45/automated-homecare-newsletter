@@ -52,6 +52,7 @@ export interface ArticleWithSource extends BaseArticle {
 export interface ArticleWithOptionalSource extends BaseArticle {
 	source?: string;
 }
+
 export interface RankedArticle
 	extends Omit<ArticleWithSource, "link">,
 		Omit<ArticleWithQuality, "link">,
@@ -65,15 +66,12 @@ export interface ArticleWithOptionalSourceAndCount
 	count: number;
 }
 
-export interface ValidArticleData extends BaseArticle {
+export interface ArticleWithQuality extends BaseArticle {
 	date?: Date;
-}
-
-export interface ArticleWithQuality extends ValidArticleData {
 	quality: number;
 }
 
-export interface ArticleWithCategories extends BaseArticle {
+export interface ArticleWithCategories extends Omit<BaseArticle, "link"> {
 	categories: Category[];
 	quality: number;
 }
@@ -82,24 +80,12 @@ export interface ArticleWithCount extends BaseArticle {
 	count: number;
 }
 
-export interface ArticleWithSourceAndCategories
-	extends ArticleWithSource,
-		ArticleWithCategories {}
-
-export interface ArticleWithSourceAndQuality
-	extends ArticleWithSource,
-		ArticleWithQuality {}
-
 export interface ArticleWithSourceAndCount
 	extends ArticleWithSource,
 		ArticleWithCount {}
 
 export interface ArticleWithQualityAndCategory extends ArticleWithQuality {
 	category: Category;
-}
-
-export interface ArticleForFiltering extends ArticleWithSource {
-	count: number;
 }
 
 export interface ArticleForCategorization

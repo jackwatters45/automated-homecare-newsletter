@@ -1,14 +1,11 @@
 import debug from "debug";
 
-import { google } from "@ai-sdk/google";
-import { generateObject, generateText } from "ai";
 import { z } from "zod";
+import { generateAIJsonResponse, generateAITextResponse } from "../lib/ai.js";
 import {
 	CATEGORIES,
 	DESCRIPTION_MAX_LENGTH,
-	MAX_TOKENS,
 	MIN_NUMBER_OF_ARTICLES,
-	SYSTEM_INSTRUCTION,
 } from "../lib/constants.js";
 import logger from "../lib/logger.js";
 import { logAiCall, shuffleArray, writeDataIfNotExists } from "../lib/utils.js";
@@ -80,9 +77,7 @@ export async function generateSummary(
   
   Your summary should provide a quick, informative overview that gives readers a clear sense of the valuable content available, without revealing all the details.`;
 
-	const { text: generatedDescription } = await generateText({
-		model: google("gemini-1.5-flash-latest"),
-		system: SYSTEM_INSTRUCTION,
+	const { content: generatedDescription } = await generateAITextResponse({
 		prompt: prompt,
 	});
 
@@ -137,24 +132,21 @@ async function assignRankedCategories(
     The 'categories' array should contain up to 3 categories, ordered from most to least relevant.
   `;
 
-	const { object } = await generateObject({
-		model: google("gemini-1.5-flash-latest"),
-		system: SYSTEM_INSTRUCTION,
-		output: "array",
-		schema: z.object({
-			title: z.string(),
-			description: z.string(),
-			link: z.string(),
-			quality: z.number(),
-			categories: z.array(z.enum(CATEGORIES)),
-		}),
+	const { content } = await generateAIJsonResponse({
+		schema: z.array(
+			z.object({
+				title: z.string(),
+				description: z.string(),
+				quality: z.number(),
+				categories: z.array(z.enum(CATEGORIES)),
+			}),
+		),
 		prompt: prompt,
-		maxTokens: MAX_TOKENS,
 	});
 
 	logAiCall();
 
-	return object;
+	return content;
 }
 
 function distributeArticles(
