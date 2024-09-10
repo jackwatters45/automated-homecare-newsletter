@@ -11,6 +11,7 @@ import {
 	TARGET_NUMBER_OF_ARTICLES,
 	TOPIC,
 } from "../lib/constants.js";
+import { AppError, NotFoundError } from "../lib/errors.js";
 import {
 	getDescription,
 	getRecurringFrequency,
@@ -107,7 +108,8 @@ export async function filterAndRankArticles(
 
 		return articles;
 	} catch (error) {
-		throw new Error("Error in filterAndRankArticles");
+		if (error instanceof AppError) throw error;
+		throw new AppError("Error in filterAndRankArticles", { cause: error });
 	}
 }
 
@@ -117,8 +119,11 @@ export async function filterArticlesByPage(
 ) {
 	try {
 		if (!articles.length) {
-			throw new Error(
+			throw new NotFoundError(
 				"No articles found. Please check the scraping process and try again.",
+				{
+					page,
+				},
 			);
 		}
 
@@ -236,15 +241,15 @@ Example of expected output format:
 
 		if (filteredArticles.length < TARGET_NUMBER_OF_ARTICLES) {
 			log(`Not enough strictly relevant articles after filter ${attempt}.`);
-			throw new Error(
+			throw new AppError(
 				`Not enough strictly relevant articles after filter ${attempt}.`,
 			);
 		}
 
 		return filteredArticles;
 	} catch (error) {
-		log(`Error in filterArticles: ${error}`);
-		throw error;
+		if (error instanceof AppError) throw error;
+		throw new AppError("Error in filterArticles", { cause: error });
 	}
 }
 
@@ -289,84 +294,96 @@ export async function rankArticles(
 			// ... more articles
 		]`;
 
-	const { content: rankedArticles } = await generateAIJsonResponse({
-		schema: z.array(
-			z.object({
-				title: z.string(),
-				description: z.string(),
-				source: z.string(),
-				count: z.number(),
-				quality: z.number(),
-			}),
-		),
-		prompt: aiRankingPrompt,
-	});
+	try {
+		const { content: rankedArticles } = await generateAIJsonResponse({
+			schema: z.array(
+				z.object({
+					title: z.string(),
+					description: z.string(),
+					source: z.string(),
+					count: z.number(),
+					quality: z.number(),
+				}),
+			),
+			prompt: aiRankingPrompt,
+		});
 
-	logAiCall();
+		logAiCall();
 
-	await writeTestData(["ranked-article-data.json"], rankedArticles);
+		await writeTestData(["ranked-article-data.json"], rankedArticles);
 
-	log("ranked articles", rankedArticles?.length);
+		log("ranked articles", rankedArticles?.length);
 
-	if (rankedArticles.length < MIN_NUMBER_OF_ARTICLES) {
-		log("Not enough ranked articles on this attempt");
-		throw new Error("Not enough ranked articles on this attempt");
+		if (rankedArticles.length < MIN_NUMBER_OF_ARTICLES) {
+			log("Not enough ranked articles on this attempt");
+			throw new AppError("Not enough ranked articles on this attempt");
+		}
+
+		return rankedArticles;
+	} catch (error) {
+		if (error instanceof AppError) throw error;
+		throw new AppError("Error in rankArticles", { cause: error });
 	}
-
-	return rankedArticles;
 }
 
 async function limitArticlesPerSource(
 	articles: RankedArticle[],
 	maxArticlesPerSource = MAX_ARTICLES_PER_SOURCE,
 ): Promise<ArticleForCategorization[]> {
-	// Group articles by source
-	const groupedArticles = articles.reduce<
-		Record<string, ArticleForCategorization[]>
-	>((acc, article) => {
-		if (!acc[article.source]) {
-			acc[article.source] = [
-				{
-					title: article.title,
-					description: article.description,
-					quality: article.quality,
-				},
-			];
+	try {
+		// Group articles by source
+		const groupedArticles = articles.reduce<
+			Record<string, ArticleForCategorization[]>
+		>((acc, article) => {
+			if (!acc[article.source]) {
+				acc[article.source] = [
+					{
+						title: article.title,
+						description: article.description,
+						quality: article.quality,
+					},
+				];
+			}
+			acc[article.source].push({
+				title: article.title,
+				description: article.description,
+				quality: article.quality,
+			});
+			return acc;
+		}, {});
+
+		// Sort articles within each source by quality (descending) and limit the number
+		const limitedArticles = Object.values(groupedArticles).flatMap(
+			(sourceArticles) =>
+				sourceArticles
+					.sort((a, b) => b.quality - a.quality) // Sort by quality descending
+					.slice(0, maxArticlesPerSource),
+		);
+
+		// Sort the final list by quality (descending)
+		const sortedLimitedArticles = limitedArticles.sort(
+			(a, b) => b.quality - a.quality,
+		);
+
+		await writeDataIfNotExists(
+			"articles-with-limited-sources.json",
+			sortedLimitedArticles,
+		);
+
+		log("articles with limited sources", sortedLimitedArticles?.length);
+
+		if (sortedLimitedArticles.length < MIN_NUMBER_OF_ARTICLES) {
+			log("Not enough articles with limited sources on this attempt");
+			throw new AppError(
+				"Not enough articles with limited sources on this attempt",
+			);
 		}
-		acc[article.source].push({
-			title: article.title,
-			description: article.description,
-			quality: article.quality,
-		});
-		return acc;
-	}, {});
 
-	// Sort articles within each source by quality (descending) and limit the number
-	const limitedArticles = Object.values(groupedArticles).flatMap(
-		(sourceArticles) =>
-			sourceArticles
-				.sort((a, b) => b.quality - a.quality) // Sort by quality descending
-				.slice(0, maxArticlesPerSource),
-	);
-
-	// Sort the final list by quality (descending)
-	const sortedLimitedArticles = limitedArticles.sort(
-		(a, b) => b.quality - a.quality,
-	);
-
-	await writeDataIfNotExists(
-		"articles-with-limited-sources.json",
-		sortedLimitedArticles,
-	);
-
-	log("articles with limited sources", sortedLimitedArticles?.length);
-
-	if (sortedLimitedArticles.length < MIN_NUMBER_OF_ARTICLES) {
-		log("Not enough articles with limited sources on this attempt");
-		throw new Error("Not enough articles with limited sources on this attempt");
+		return sortedLimitedArticles;
+	} catch (error) {
+		if (error instanceof AppError) throw error;
+		throw new AppError("Error in limitArticlesPerSource", { cause: error });
 	}
-
-	return sortedLimitedArticles;
 }
 
 function extractArticleFilteringData(
@@ -418,15 +435,15 @@ export async function mergeFilteredArticles(
 
 		if (mergedArticles.length < MIN_NUMBER_OF_ARTICLES) {
 			log("Not enough mergedRankedArticles on this attempt");
-			throw new Error("Not enough mergedRankedArticles on this attempt");
+			throw new AppError("Not enough mergedRankedArticles on this attempt");
 		}
 
 		log("merged ranked articles", mergedArticles.length);
 
 		return mergedArticles;
 	} catch (error) {
-		log(`Error in mergeFilteredArticles: ${error}`);
-		throw error;
+		if (error instanceof AppError) throw error;
+		throw new AppError("Error in mergeFilteredArticles", { cause: error });
 	}
 }
 
@@ -491,7 +508,7 @@ export function deduplicateArticles<T extends WithTitleAndLink>(
 
 		const uniqueArticles = Array.from(uniqueMap.values());
 
-		log("unfiltered unique articles", uniqueArticles.length);
+		log("Deduplicated articles", uniqueArticles.length);
 
 		return uniqueArticles;
 	} catch (error) {

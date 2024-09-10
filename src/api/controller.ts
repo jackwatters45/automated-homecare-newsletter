@@ -11,7 +11,13 @@ import {
 } from "../app/index.js";
 import { BASE_PATH } from "../lib/constants.js";
 import { updateNewsletterFrequency } from "../lib/cron.js";
-import { DatabaseError } from "../lib/errors.js";
+import {
+	AppError,
+	ConflictError,
+	DatabaseError,
+	NotFoundError,
+	ValidationError,
+} from "../lib/errors.js";
 import { renderTemplate } from "../lib/template.js";
 import { validateCategory } from "../lib/utils.js";
 import {
@@ -71,6 +77,8 @@ const updateArticleOrderSchema = z.object({
 const updateArticleCategorySchema = z.object({
 	toCategoryId: z.string(),
 });
+
+const idSchema = z.string();
 
 // Newsletter Controllers
 export const newsletterController = {
@@ -138,7 +146,11 @@ export const newsletterController = {
 			);
 			res.json(updatedNewsletter);
 		} catch (error) {
-			next(error);
+			if (error instanceof z.ZodError) {
+				next(new ValidationError("Invalid input", { details: error.errors }));
+			} else {
+				next(error);
+			}
 		}
 	},
 
@@ -153,7 +165,11 @@ export const newsletterController = {
 			);
 			res.json(updatedNewsletter);
 		} catch (error) {
-			next(error);
+			if (error instanceof z.ZodError) {
+				next(new ValidationError("Invalid input", { details: error.errors }));
+			} else {
+				next(error);
+			}
 		}
 	},
 
@@ -166,7 +182,7 @@ export const newsletterController = {
 			res.json(updatedNewsletter);
 		} catch (error) {
 			if (error instanceof z.ZodError) {
-				res.status(400).json({ error: "Invalid input", details: error.errors });
+				next(new ValidationError("Invalid input", { details: error.errors }));
 			} else {
 				next(error);
 			}
@@ -229,11 +245,8 @@ export const newsletterController = {
 			const weeks = await getNewsletterFrequency();
 			res.json({ weeks });
 		} catch (error) {
-			if (
-				error instanceof DatabaseError &&
-				error.message === "Setting not found"
-			) {
-				res.status(404).json({ error: `Setting 'newsletterFrequency' not found` });
+			if (error instanceof AppError && error.message === "Setting not found") {
+				next(new NotFoundError("Setting 'newsletterFrequency' not found"));
 			} else {
 				next(error);
 			}
@@ -255,12 +268,12 @@ export const newsletterController = {
 			res.json({ weeks: updatedWeeks });
 		} catch (error) {
 			if (error instanceof z.ZodError) {
-				res.status(400).json({ error: "Invalid input", details: error.errors });
-			} else if (error instanceof DatabaseError) {
+				next(new ValidationError("Invalid input", { details: error.errors }));
+			} else if (error instanceof AppError) {
 				if (error.message === "Setting not found") {
-					res.status(404).json({ error: `Setting 'newsletterFrequency' not found` });
+					next(new NotFoundError("Setting 'newsletterFrequency' not found"));
 				} else if (error.message.includes("Invalid setting")) {
-					res.status(400).json({ error: error.message });
+					next(new ValidationError(error.message));
 				} else {
 					next(error);
 				}
@@ -285,6 +298,10 @@ const updateDescriptionSchema = z.object({
 	description: z.string().min(1).max(1000),
 });
 
+const emailSchema = z.string().email("Invalid email address");
+
+const bulkEmailsSchema = z.array(emailSchema);
+
 // Article Controllers
 export const articleController = {
 	// Update an article's description
@@ -299,7 +316,7 @@ export const articleController = {
 			res.json(updatedArticle);
 		} catch (error) {
 			if (error instanceof z.ZodError) {
-				res.status(400).json({ error: "Invalid input", details: error.errors });
+				next(new ValidationError("Invalid input", { details: error.errors }));
 			} else {
 				next(error);
 			}
@@ -316,7 +333,7 @@ export const articleController = {
 			res.status(201).json(newArticle);
 		} catch (error) {
 			if (error instanceof z.ZodError) {
-				res.status(400).json({ error: "Invalid input", details: error.errors });
+				next(new ValidationError("Invalid input", { details: error.errors }));
 			} else {
 				next(error);
 			}
@@ -337,8 +354,6 @@ export const articleController = {
 	},
 };
 
-const emailSchema = z.string().email("Invalid email address");
-
 // Recipient Controllers
 export const recipientController = {
 	// Get all recipients
@@ -347,29 +362,29 @@ export const recipientController = {
 			const recipients = await getAllRecipients();
 			res.json(recipients);
 		} catch (error) {
-			if (
-				error instanceof DatabaseError &&
-				error.details?.type === "EMPTY_RESULT"
-			) {
-				res.json([]);
-			} else {
-				next(error);
-			}
+			next(error);
 		}
 	},
 	// Add a recipient
 	addRecipient: async (req: Request, res: Response, next: NextFunction) => {
 		const { id: email } = req.params;
 
+		const parsedEmail = emailSchema.safeParse(email);
+		if (!parsedEmail.success) {
+			next(new ValidationError("Invalid email format"));
+		}
+
 		try {
 			const recipient = await addRecipient(email);
 			res.json(recipient);
 		} catch (error) {
-			if (
-				error instanceof DatabaseError &&
+			if (error instanceof z.ZodError) {
+				next(new ValidationError("Invalid input", { details: error.errors }));
+			} else if (
+				error instanceof AppError &&
 				error.message === "Recipient already exists"
 			) {
-				res.status(409).json({ error: "Recipient already exists" });
+				next(new ConflictError("Recipient already exists"));
 			} else {
 				next(error);
 			}
@@ -379,15 +394,22 @@ export const recipientController = {
 	deleteRecipient: async (req: Request, res: Response, next: NextFunction) => {
 		const { id: email } = req.params;
 
+		const parsedEmail = emailSchema.safeParse(email);
+		if (!parsedEmail.success) {
+			next(new ValidationError("Invalid email format"));
+		}
+
 		try {
 			await deleteRecipient(email);
 			res.json({ message: "Recipient deleted successfully" });
 		} catch (error) {
-			if (
-				error instanceof DatabaseError &&
+			if (error instanceof z.ZodError) {
+				next(new ValidationError("Invalid input", { details: error.errors }));
+			} else if (
+				error instanceof AppError &&
 				error.message === "Recipient not found"
 			) {
-				res.status(404).json({ error: "Recipient not found" });
+				next(new NotFoundError("Recipient not found"));
 			} else {
 				next(error);
 			}
@@ -397,15 +419,19 @@ export const recipientController = {
 	addBulk: async (req: Request, res: Response, next: NextFunction) => {
 		try {
 			const { emails } = req.body;
-			if (!Array.isArray(emails)) {
-				return res
-					.status(400)
-					.json({ error: "Invalid input: emails should be an array" });
+			const parsedEmails = bulkEmailsSchema.safeParse(emails);
+			if (!parsedEmails.success) {
+				next(new ValidationError("Invalid input: emails should be an array"));
 			}
+
 			const addedEmails = await addBulkRecipients(emails);
 			res.status(200).json(addedEmails);
 		} catch (error) {
-			next(error);
+			if (error instanceof z.ZodError) {
+				next(new ValidationError("Invalid input", { details: error.errors }));
+			} else {
+				next(error);
+			}
 		}
 	},
 	// Remove all recipients
@@ -426,10 +452,19 @@ export const subscriptionController = {
 		try {
 			const { id: email } = req.params;
 
+			const parsedEmail = emailSchema.safeParse(email);
+			if (!parsedEmail.success) {
+				next(new ValidationError("Invalid email format"));
+			}
+
 			const subscription = await addRecipient(email);
 			res.json(subscription);
 		} catch (error) {
-			next(error);
+			if (error instanceof z.ZodError) {
+				next(new ValidationError("Invalid input", { details: error.errors }));
+			} else {
+				next(error);
+			}
 		}
 	},
 
@@ -442,14 +477,16 @@ export const subscriptionController = {
 		try {
 			const { id: email } = req.params;
 
+			const parsedEmail = emailSchema.safeParse(email);
+			if (!parsedEmail.success) {
+				next(new ValidationError("Invalid email format"));
+			}
+
 			const subscription = await deleteRecipient(email);
 			res.json(subscription);
 		} catch (error) {
-			if (
-				error instanceof DatabaseError &&
-				error.message === "Subscriber not found"
-			) {
-				res.status(404).json({ error: "Subscriber not found" });
+			if (error instanceof AppError && error.message === "Subscriber not found") {
+				next(new NotFoundError("Subscriber not found"));
 			} else {
 				next(error);
 			}
@@ -481,6 +518,11 @@ export const pagesController = {
 	) => {
 		const { id } = req.params;
 
+		const parsedId = idSchema.safeParse(id);
+		if (!parsedId.success) {
+			next(new ValidationError("Invalid input: id is required"));
+		}
+
 		try {
 			const newsletterData = await getNewsletter(Number(id));
 
@@ -488,7 +530,11 @@ export const pagesController = {
 
 			res.send(template);
 		} catch (error) {
-			next(error);
+			if (error instanceof z.ZodError) {
+				next(new ValidationError("Invalid input", { details: error.errors }));
+			} else {
+				next(error);
+			}
 		}
 	},
 };
@@ -507,15 +553,22 @@ export const reviewerController = {
 	addReviewer: async (req: Request, res: Response, next: NextFunction) => {
 		const { id: email } = req.params;
 
+		const parsedEmail = emailSchema.safeParse(email);
+		if (!parsedEmail.success) {
+			next(new ValidationError("Invalid email format"));
+		}
+
 		try {
 			const reviewer = await addReviewer(email);
 			res.json(reviewer);
 		} catch (error) {
-			if (
-				error instanceof DatabaseError &&
+			if (error instanceof z.ZodError) {
+				next(new ValidationError("Invalid input", { details: error.errors }));
+			} else if (
+				error instanceof AppError &&
 				error.message === "Reviewer already exists"
 			) {
-				res.status(409).json({ error: "Reviewer already exists" });
+				next(new ConflictError("Reviewer already exists"));
 			} else {
 				next(error);
 			}
@@ -524,15 +577,23 @@ export const reviewerController = {
 	// Delete a reviewer
 	deleteReviewer: async (req: Request, res: Response, next: NextFunction) => {
 		const { id: email } = req.params;
+
+		const parsedEmail = emailSchema.safeParse(email);
+		if (!parsedEmail.success) {
+			next(new ValidationError("Invalid email format"));
+		}
+
 		try {
 			await deleteReviewer(email);
 			res.json({ message: "Reviewer deleted successfully" });
 		} catch (error) {
-			if (
-				error instanceof DatabaseError &&
+			if (error instanceof z.ZodError) {
+				next(new ValidationError("Invalid input", { details: error.errors }));
+			} else if (
+				error instanceof AppError &&
 				error.message === "Reviewer not found"
 			) {
-				res.status(404).json({ error: "Reviewer not found" });
+				next(new NotFoundError("Reviewer not found"));
 			} else {
 				next(error);
 			}
@@ -540,17 +601,22 @@ export const reviewerController = {
 	},
 	// Add bulk reviewers
 	addBulk: async (req: Request, res: Response, next: NextFunction) => {
+		const { emails } = req.body;
+
+		const parsedEmails = bulkEmailsSchema.safeParse(emails);
+		if (!parsedEmails.success) {
+			next(new ValidationError("Invalid input: emails should be an array"));
+		}
+
 		try {
-			const { emails } = req.body;
-			if (!Array.isArray(emails)) {
-				return res
-					.status(400)
-					.json({ error: "Invalid input: emails should be an array" });
-			}
 			const addedEmails = await addBulkReviewers(emails);
 			res.status(200).json(addedEmails);
 		} catch (error) {
-			next(error);
+			if (error instanceof z.ZodError) {
+				next(new ValidationError("Invalid input", { details: error.errors }));
+			} else {
+				next(error);
+			}
 		}
 	},
 	// Remove all reviewers
@@ -563,6 +629,10 @@ export const reviewerController = {
 		}
 	},
 };
+
+const domainSchema = z.string().url();
+
+const bulkDomainsSchema = z.array(domainSchema);
 
 export const blacklistedDomainController = {
 	// Get all blacklisted domains
@@ -589,15 +659,22 @@ export const blacklistedDomainController = {
 	addDomain: async (req: Request, res: Response, next: NextFunction) => {
 		const { domain } = req.body;
 
+		const parsedDomain = domainSchema.safeParse(domain);
+		if (!parsedDomain.success) {
+			next(new ValidationError("Invalid domain format"));
+		}
+
 		try {
 			const addedDomain = await addBlacklistedDomain(domain);
 			res.json(addedDomain);
 		} catch (error) {
-			if (
-				error instanceof DatabaseError &&
+			if (error instanceof z.ZodError) {
+				next(new ValidationError("Invalid input", { details: error.errors }));
+			} else if (
+				error instanceof AppError &&
 				error.message === "Domain already blacklisted"
 			) {
-				res.status(409).json({ error: "Domain already blacklisted" });
+				next(new ConflictError("Domain already blacklisted"));
 			} else {
 				next(error);
 			}
@@ -607,15 +684,23 @@ export const blacklistedDomainController = {
 	// Delete a blacklisted domain
 	deleteDomain: async (req: Request, res: Response, next: NextFunction) => {
 		const { id: domain } = req.params;
+
+		const parsedDomain = domainSchema.safeParse(domain);
+		if (!parsedDomain.success) {
+			next(new ValidationError("Invalid domain format"));
+		}
+
 		try {
 			await deleteBlacklistedDomain(domain);
 			res.json({ message: "Domain removed from blacklist successfully" });
 		} catch (error) {
-			if (
-				error instanceof DatabaseError &&
+			if (error instanceof z.ZodError) {
+				next(new ValidationError("Invalid input", { details: error.errors }));
+			} else if (
+				error instanceof AppError &&
 				error.message === "Domain not found in blacklist"
 			) {
-				res.status(404).json({ error: "Domain not found in blacklist" });
+				next(new NotFoundError("Domain not found in blacklist"));
 			} else {
 				next(error);
 			}
@@ -624,18 +709,22 @@ export const blacklistedDomainController = {
 
 	// Add bulk blacklisted domains
 	addBulk: async (req: Request, res: Response, next: NextFunction) => {
-		try {
-			const { domains } = req.body as { domains: string[] };
+		const { domains } = req.body;
 
-			if (!Array.isArray(domains)) {
-				return res
-					.status(400)
-					.json({ error: "Invalid input: domains should be an array" });
-			}
+		const parsedDomains = bulkDomainsSchema.safeParse(domains);
+		if (!parsedDomains.success) {
+			next(new ValidationError("Invalid input: domains should be an array"));
+		}
+
+		try {
 			const addedDomains = await addBulkBlacklistedDomains(domains);
 			res.status(200).json(addedDomains);
 		} catch (error) {
-			next(error);
+			if (error instanceof z.ZodError) {
+				next(new ValidationError("Invalid input", { details: error.errors }));
+			} else {
+				next(error);
+			}
 		}
 	},
 
@@ -653,110 +742,149 @@ export const blacklistedDomainController = {
 };
 
 export const adController = {
-	getAllAds: async (req: Request, res: Response) => {
+	getAllAds: async (req: Request, res: Response, next: NextFunction) => {
 		try {
 			const ads = await getAllAds();
 			res.json(ads);
 		} catch (error) {
-			if (error instanceof DatabaseError) {
-				res.status(500).json({ error: error.message });
+			if (error instanceof AppError) {
+				next(new NotFoundError("Ad not found"));
 			} else {
-				res.status(500).json({ error: "An unexpected error occurred" });
+				next(error);
 			}
 		}
 	},
 
-	getAdById: async (req: Request, res: Response) => {
+	getAdById: async (req: Request, res: Response, next: NextFunction) => {
 		const { id } = req.params;
+
+		const parsedId = idSchema.safeParse(id);
+		if (!parsedId.success) {
+			next(new ValidationError("Invalid input: id is required"));
+		}
+
 		try {
 			const ad = await getAdById(Number(id));
 			res.json(ad);
 		} catch (error) {
-			if (error instanceof DatabaseError) {
-				if (error.message === "Ad not found") {
-					res.status(404).json({ error: error.message });
-				} else {
-					res.status(500).json({ error: error.message });
-				}
+			if (error instanceof z.ZodError) {
+				next(new ValidationError("Invalid input", { details: error.errors }));
+			} else if (error instanceof AppError && error.message === "Ad not found") {
+				next(new NotFoundError(error.message));
 			} else {
-				res.status(500).json({ error: "An unexpected error occurred" });
+				next(error);
 			}
 		}
 	},
 
-	createAd: async (req: Request, res: Response) => {
+	// TODO: once ad schema include here
+	createAd: async (req: Request, res: Response, next: NextFunction) => {
 		try {
 			const newAd = await createAd(req.body);
 			res.status(201).json(newAd);
 		} catch (error) {
-			if (error instanceof DatabaseError) {
-				res.status(500).json({ error: error.message });
-			} else {
-				res.status(500).json({ error: "An unexpected error occurred" });
+			if (error instanceof z.ZodError) {
+				next(new ValidationError("Invalid input", { details: error.errors }));
 			}
 		}
 	},
 
-	updateAd: async (req: Request, res: Response) => {
+	updateAd: async (req: Request, res: Response, next: NextFunction) => {
 		const { id } = req.params;
+
+		const parsedId = idSchema.safeParse(id);
+		if (!parsedId.success) {
+			next(new ValidationError("Invalid input: id is required"));
+		}
+
 		try {
 			const updatedAd = await updateAd(Number(id), req.body);
 			res.json(updatedAd);
 		} catch (error) {
-			if (error instanceof DatabaseError) {
-				if (error.message === "Ad not found") {
-					res.status(404).json({ error: error.message });
-				} else {
-					res.status(500).json({ error: error.message });
-				}
+			if (error instanceof z.ZodError) {
+				next(new ValidationError("Invalid input", { details: error.errors }));
+			} else if (error instanceof AppError && error.message === "Ad not found") {
+				next(new NotFoundError(error.message));
 			} else {
-				res.status(500).json({ error: "An unexpected error occurred" });
+				next(error);
 			}
 		}
 	},
 
-	deleteAd: async (req: Request, res: Response) => {
+	deleteAd: async (req: Request, res: Response, next: NextFunction) => {
 		const { id } = req.params;
+
+		const parsedId = idSchema.safeParse(id);
+		if (!parsedId.success) {
+			next(new ValidationError("Invalid input: id is required"));
+		}
+
 		try {
 			await deleteAd(Number(id));
 			res.json({ message: "Ad deleted successfully" });
 		} catch (error) {
-			if (error instanceof DatabaseError) {
-				if (error.message === "Ad not found") {
-					res.status(404).json({ error: error.message });
-				} else {
-					res.status(500).json({ error: error.message });
-				}
+			if (error instanceof z.ZodError) {
+				next(new ValidationError("Invalid input", { details: error.errors }));
+			} else if (error instanceof AppError && error.message === "Ad not found") {
+				next(new NotFoundError(error.message));
 			} else {
-				res.status(500).json({ error: "An unexpected error occurred" });
+				next(error);
 			}
 		}
 	},
 
-	addAdToNewsletter: async (req: Request, res: Response) => {
+	addAdToNewsletter: async (req: Request, res: Response, next: NextFunction) => {
 		const { adId, newsletterId } = req.params;
+
+		const parsedAdId = idSchema.safeParse(adId);
+		const parsedNewsletterId = idSchema.safeParse(newsletterId);
+
+		if (!parsedAdId.success || !parsedNewsletterId.success) {
+			next(
+				new ValidationError("Invalid input: adId and newsletterId are required"),
+			);
+		}
+
 		try {
 			await addAdToNewsletter(Number(adId), Number(newsletterId));
 			res.json({ message: "Ad added to newsletter successfully" });
 		} catch (error) {
-			if (error instanceof DatabaseError) {
-				res.status(500).json({ error: error.message });
+			if (error instanceof z.ZodError) {
+				next(new ValidationError("Invalid input", { details: error.errors }));
+			} else if (error instanceof AppError && error.message === "Ad not found") {
+				next(new NotFoundError(error.message));
 			} else {
-				res.status(500).json({ error: "An unexpected error occurred" });
+				next(error);
 			}
 		}
 	},
 
-	removeAdFromNewsletter: async (req: Request, res: Response) => {
+	removeAdFromNewsletter: async (
+		req: Request,
+		res: Response,
+		next: NextFunction,
+	) => {
 		const { adId, newsletterId } = req.params;
+
+		const parsedAdId = idSchema.safeParse(adId);
+		const parsedNewsletterId = idSchema.safeParse(newsletterId);
+
+		if (!parsedAdId.success || !parsedNewsletterId.success) {
+			next(
+				new ValidationError("Invalid input: adId and newsletterId are required"),
+			);
+		}
+
 		try {
 			await removeAdFromNewsletter(Number(adId), Number(newsletterId));
 			res.json({ message: "Ad removed from newsletter successfully" });
 		} catch (error) {
-			if (error instanceof DatabaseError) {
-				res.status(500).json({ error: error.message });
+			if (error instanceof z.ZodError) {
+				next(new ValidationError("Invalid input", { details: error.errors }));
+			} else if (error instanceof AppError && error.message === "Ad not found") {
+				next(new NotFoundError(error.message));
 			} else {
-				res.status(500).json({ error: "An unexpected error occurred" });
+				next(error);
 			}
 		}
 	},

@@ -5,6 +5,7 @@ import {
 } from "@google/generative-ai";
 import debug from "debug";
 import { z } from "zod";
+import { AppError } from "./errors.js";
 
 const log = debug(`${process.env.APP_NAME}:ai.ts`);
 
@@ -33,7 +34,7 @@ class AIUtility {
 	constructor() {
 		const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY;
 		if (!apiKey) {
-			throw new Error(
+			throw new AppError(
 				"GOOGLE_GENERATIVE_AI_API_KEY environment variable is not set",
 			);
 		}
@@ -107,7 +108,9 @@ class AIUtility {
 		} catch (error) {
 			log(`Error parsing JSON response: ${error}`);
 			log("Attempted to parse:", cleanedText);
-			throw new Error(`Failed to parse JSON response: ${error}`);
+			throw new AppError("Failed to parse JSON response", {
+				cause: error,
+			});
 		}
 	}
 

@@ -6,6 +6,7 @@ import { eq } from "drizzle-orm/expressions";
 import { sendNewsletterReviewEmail } from "../app/index.js";
 import { db } from "../db/index.js";
 import { cronLogs, settings } from "../db/schema.js";
+import { AppError } from "./errors.js";
 import { pingServer } from "./health.js";
 import logger from "./logger.js";
 
@@ -103,7 +104,7 @@ function createNewsletterCronExpression(weekInterval: number): string {
 			// Every fourth Monday at 9 AM
 			return "0 9 1-7 * 1";
 		default:
-			throw new Error("Week interval must be 1, 2, 3, or 4");
+			throw new AppError("Week interval must be 1, 2, 3, or 4");
 	}
 }
 
@@ -159,7 +160,7 @@ export async function updateNewsletterFrequency(
 	newFrequency: number,
 ): Promise<void> {
 	if (newFrequency < 1 || newFrequency > 4) {
-		throw new Error("Newsletter frequency must be 1, 2, 3, or 4 weeks");
+		throw new AppError("Newsletter frequency must be 1, 2, 3, or 4 weeks");
 	}
 
 	await db

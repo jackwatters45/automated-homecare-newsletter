@@ -1,4 +1,5 @@
 import "dotenv/config";
+import logger from "../lib/logger.js";
 import { db } from "./index.js";
 import { settings } from "./schema.js";
 
@@ -14,9 +15,9 @@ async function seedSettings() {
 				target: settings.key,
 				set: { value: "1" },
 			});
-		console.log("Newsletter frequency setting seeded successfully");
+		logger.info("Seeded newsletter frequency setting");
 	} catch (error) {
-		console.error("Error seeding newsletter frequency setting:", error);
+		logger.error("Error seeding newsletter frequency setting:", error);
 	}
 }
 

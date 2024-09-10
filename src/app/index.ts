@@ -13,6 +13,7 @@ import {
 } from "../api/service.js";
 import { db } from "../db/index.js";
 import { newsletters } from "../db/schema.js";
+import { AppError, NotFoundError } from "../lib/errors.js";
 import logger from "../lib/logger.js";
 import { renderTemplate } from "../lib/template.js";
 import { getEnv, retry } from "../lib/utils.js";
@@ -26,15 +27,15 @@ const log = debug(`${process.env.APP_NAME}:app:index.ts`);
 async function generateNewsletterArticles() {
 	try {
 		const results = await getArticleData();
-		if (!results) throw new Error("No articles found");
+		if (!results) throw new AppError("Error fetching articles");
 
 		const articles = await filterAndRankArticles(results);
-		if (!articles) throw new Error("No articles found");
+		if (!articles) throw new AppError("Error filtering articles");
 
 		return articles;
 	} catch (error) {
-		logger.error("Error in generateNewsletterArticles:", { error });
-		throw error;
+		if (error instanceof AppError) throw error;
+		throw new AppError("Error in generateNewsletterArticles", { cause: error });
 	}
 }
 
@@ -57,8 +58,8 @@ export async function generateNewsletterData(): Promise<
 
 		return newsletter;
 	} catch (error) {
-		logger.error("Error in generateNewsletterData:", { error });
-		throw error;
+		if (error instanceof AppError) throw error;
+		throw new AppError("Error in generateNewsletterData", { cause: error });
 	}
 }
 
@@ -67,14 +68,12 @@ export async function sendNewsletterReviewEmail() {
 		const newsletterData = await generateNewsletterData();
 
 		if (!newsletterData) {
-			logger.error("Newsletter data not found");
-			throw new Error("Newsletter data not found");
+			throw new NotFoundError("Newsletter data not found", { newsletterData });
 		}
 
 		const id = newsletterData?.id;
 		if (!id) {
-			logger.error("Newsletter ID not found");
-			throw new Error("Newsletter ID not found");
+			throw new NotFoundError("Newsletter ID not found", { newsletterData });
 		}
 
 		retry(async () => {
@@ -88,7 +87,7 @@ export async function sendNewsletterReviewEmail() {
 			});
 
 			if (error) {
-				return logger.error("Error in sendNewsletterReviewEmail:", { error });
+				throw new AppError("Error sending email", { cause: error });
 			}
 
 			return {
@@ -98,8 +97,8 @@ export async function sendNewsletterReviewEmail() {
 			};
 		});
 	} catch (error) {
-		logger.error("Error in sendNewsletterReviewEmail:", { error });
-		return { message: "Error sending email", error };
+		if (error instanceof AppError) throw error;
+		throw new AppError("Error in sendNewsletterReviewEmail", { cause: error });
 	}
 }
 
@@ -108,8 +107,7 @@ export async function sendNewsletterReviewEmailById(id: number) {
 		const newsletterData = await getNewsletter(id);
 
 		if (!newsletterData) {
-			logger.error("Newsletter data not found");
-			throw new Error("Newsletter data not found");
+			throw new NotFoundError("Newsletter data not found", { newsletterData });
 		}
 
 		const reviewers = await getAllReviewerEmails();
@@ -122,7 +120,7 @@ export async function sendNewsletterReviewEmailById(id: number) {
 		});
 
 		if (error) {
-			return logger.error("Error in sendNewsletterReviewEmail:", { error });
+			throw new AppError("Error sending email", { cause: error });
 		}
 
 		return {
@@ -131,8 +129,8 @@ export async function sendNewsletterReviewEmailById(id: number) {
 			message: "Email sent successfully",
 		};
 	} catch (error) {
-		logger.error("Error in sendNewsletterReviewEmail:", { error });
-		return { message: "Error sending email", error };
+		if (error instanceof AppError) throw error;
+		throw new AppError("Error in sendNewsletterReviewEmail", { cause: error });
 	}
 }
 
@@ -147,8 +145,7 @@ export async function sendNewsletter(id: number) {
 			});
 
 			if (!html) {
-				logger.error("Incomplete newsletter template");
-				throw new Error("Incomplete newsletter template");
+				throw new AppError("Incomplete newsletter template", { recipient });
 			}
 
 			const { error } = await resend.emails.send({
@@ -159,7 +156,7 @@ export async function sendNewsletter(id: number) {
 			});
 
 			if (error) {
-				throw new Error("Error sending email");
+				throw new AppError("Error sending email", { cause: error });
 			}
 		}
 
@@ -180,6 +177,7 @@ export async function sendNewsletter(id: number) {
 			.where(eq(newsletters.id, id))
 			.returning();
 
-		logger.error("Error in sendNewsletter:", { error });
+		if (error instanceof AppError) throw error;
+		throw new AppError("Error in sendNewsletter", { cause: error });
 	}
 }

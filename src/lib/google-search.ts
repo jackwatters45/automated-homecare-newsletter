@@ -10,6 +10,8 @@ import {
 import type { ArticleWithSnippet, BaseArticle } from "../types/index.js";
 import { closeBrowser, getBrowser } from "./browser.js";
 import { REDIRECT_URLS } from "./constants.js";
+import { handleError } from "./errorHandler.js";
+import { AppError, NetworkError, NotFoundError } from "./errors.js";
 import { getRecurringFrequency, retry } from "./utils.js";
 
 const log = debug(`${process.env.APP_NAME}:google-search.ts`);
@@ -26,10 +28,10 @@ export async function searchNews(
 
 	try {
 		browser = await getBrowser();
-		if (!browser) throw new Error("Browser not found");
+		if (!browser) throw new AppError("Browser not found");
 
 		const page = await browser.newPage();
-		if (!page) throw new Error("Unable to create page");
+		if (!page) throw new AppError("Unable to create page");
 
 		for (const q of qs) {
 			for (let i = 0; i < pages; i++) {
@@ -48,8 +50,7 @@ export async function searchNews(
 					});
 
 					if (!res?.data.items?.length) {
-						log(`No results found for query: ${q}`);
-						throw new Error("No results found for query");
+						throw new NotFoundError(`No results found for query: ${q}`);
 					}
 
 					for (const item of res.data.items) {
@@ -103,7 +104,10 @@ export async function searchNews(
 			}
 		}
 	} catch (error) {
-		log(`Error in searchNews: ${error}`);
+		handleError(
+			new NetworkError("Failed to search news", { cause: error, query: qs }),
+		);
+		throw error;
 	} finally {
 		if (browser) {
 			await closeBrowser();

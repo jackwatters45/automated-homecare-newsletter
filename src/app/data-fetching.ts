@@ -10,6 +10,7 @@ import {
 	IS_DEVELOPMENT,
 	SPECIFIC_PAGES,
 } from "../lib/constants.js";
+import { AppError, NetworkError, NotFoundError } from "../lib/errors.js";
 import { searchNews } from "../lib/google-search.js";
 import logger from "../lib/logger.js";
 import {
@@ -36,42 +37,47 @@ import { createDescriptionPrompt } from "./format-articles.js";
 const log = debug(`${process.env.APP_NAME}:data-fetching.ts`);
 
 export async function getArticleData() {
-	// if (IS_DEVELOPMENT) {
-	// 	// if development, read test data
-	// 	log("reading test data");
-	// 	const testData = await readTestData<ArticleWithSource[]>(
-	// 		"raw-article-data.json",
-	// 	);
-	// 	if (testData) return testData;
-	// 	log("No test data found, falling back to live data");
-	// } else {
-	// 	// Check Upstash Redis cache first
-	// 	const cachedData = await getCache(CACHE_KEY);
-	// 	if (cachedData) {
-	// 		log("Using cached article data from Upstash Redis");
-	// 		return cachedData;
-	// 	}
-	// }
+	try {
+		if (IS_DEVELOPMENT) {
+			// if development, read test data
+			log("reading test data");
+			const testData = await readTestData<ArticleWithSource[]>(
+				"raw-article-data.json",
+			);
+			if (testData) return testData;
+			log("No test data found, falling back to live data");
+		} else {
+			// Check Upstash Redis cache first
+			const cachedData = await getCache(CACHE_KEY);
+			if (cachedData) {
+				log("Using cached article data from Upstash Redis");
+				return cachedData;
+			}
+		}
 
-	const [googleResults, specificPageResults] = await Promise.all([
-		fetchGoogleSearchResults(),
-		fetchSpecificPageResults(),
-	]);
+		const [googleResults, specificPageResults] = await Promise.all([
+			fetchGoogleSearchResults(),
+			fetchSpecificPageResults(),
+		]);
 
-	const results: ArticleWithOptionalSource[] = [
-		...googleResults,
-		...specificPageResults,
-	];
+		const results: ArticleWithOptionalSource[] = [
+			...googleResults,
+			...specificPageResults,
+		];
 
-	if (results.length < INITIAL_FETCH_COUNT) {
-		const additionalResults = await fetchFromAdditionalSources();
-		results.push(...additionalResults);
+		if (results.length < INITIAL_FETCH_COUNT) {
+			const additionalResults = await fetchFromAdditionalSources();
+			results.push(...additionalResults);
+		}
+
+		await setCache(CACHE_KEY, results);
+		await writeDataIfNotExists("raw-article-data.json", results);
+
+		return results;
+	} catch (error) {
+		if (error instanceof AppError) throw error;
+		throw new AppError("Failed to fetch article data", { cause: error });
 	}
-
-	await setCache(CACHE_KEY, results);
-	await writeDataIfNotExists("raw-article-data.json", results);
-
-	return results;
 }
 
 const searchQueries = [
@@ -92,43 +98,53 @@ export async function fetchGoogleSearchResults(): Promise<BaseArticle[]> {
 		const googleSearchResults = await searchNews(searchQueries);
 
 		if (!googleSearchResults || !googleSearchResults.length) {
-			logger.error("No results found in Google search");
-			throw new Error("No results found in Google search");
+			throw new NotFoundError("No results found in Google search");
 		}
 
 		log("google search results count", googleSearchResults.length);
 
 		return googleSearchResults;
 	} catch (error) {
-		logger.error("Error in fetchGoogleSearchResults:", { error });
-		throw error;
+		if (error instanceof NotFoundError) throw error;
+		throw new NetworkError("Failed to fetch Google search results", {
+			cause: error,
+			searchQueries,
+		});
 	}
 }
 
 async function fetchSpecificPageResults(): Promise<
 	ArticleWithOptionalSource[]
 > {
-	const specificPageResults: ArticleWithOptionalSource[] = [];
+	try {
+		const specificPageResults: ArticleWithOptionalSource[] = [];
 
-	const blacklistedDomains = await getAllBlacklistedDomainNames();
-	const filteredSpecificPages = SPECIFIC_PAGES.filter((page) => {
-		return !blacklistedDomains.some((domain) => page.url.includes(domain));
-	});
+		const blacklistedDomains = await getAllBlacklistedDomainNames();
+		const filteredSpecificPages = SPECIFIC_PAGES.filter((page) => {
+			return !blacklistedDomains.some((domain) => page.url.includes(domain));
+		});
 
-	for (const page of filteredSpecificPages) {
-		const articleLinks = await scrapeArticles(page);
-		const relevantArticles = await filterArticlesByPage(articleLinks, page);
-		specificPageResults.push(...relevantArticles);
+		for (const page of filteredSpecificPages) {
+			const articleLinks = await scrapeArticles(page);
+			const relevantArticles = await filterArticlesByPage(articleLinks, page);
+			specificPageResults.push(...relevantArticles);
+		}
+
+		log("specific page results count", specificPageResults.length);
+
+		if (specificPageResults.length === 0) {
+			throw new NotFoundError("No valid articles found from specific pages", {
+				pages: filteredSpecificPages,
+			});
+		}
+
+		return specificPageResults;
+	} catch (error) {
+		if (error instanceof NotFoundError) throw error;
+		throw new AppError("Failed to fetch specific page results", {
+			cause: error,
+		});
 	}
-
-	log("specific page results count", specificPageResults.length);
-
-	if (specificPageResults.length === 0) {
-		logger.error("No valid articles found");
-		throw new Error("No valid articles found");
-	}
-
-	return specificPageResults;
 }
 
 export async function scrapeArticles(targetPage: PageToScrape) {
@@ -177,49 +193,74 @@ export async function extractArticleData({
 	element,
 	getDescription = false,
 }: ArticleExtractionParams): Promise<ArticleData | null> {
-	const rawHref = $(element).find(targetPage.linkSelector).attr("href");
+	try {
+		const rawHref = $(element).find(targetPage.linkSelector).attr("href");
 
-	let description = extractTextContent(
-		$,
-		element,
-		targetPage.descriptionSelector,
-	);
+		let description = extractTextContent(
+			$,
+			element,
+			targetPage.descriptionSelector,
+		);
 
-	if (!description && getDescription) {
-		const descriptionPrompt = createDescriptionPrompt($.html());
+		if (!description && getDescription) {
+			const descriptionPrompt = createDescriptionPrompt($.html());
 
-		const { content } = await generateAITextResponse({
-			prompt: descriptionPrompt,
+			const { content } = await generateAITextResponse({
+				prompt: descriptionPrompt,
+			});
+
+			logAiCall();
+
+			description = content?.trim();
+		}
+
+		const link = constructFullUrl(rawHref, targetPage);
+		const title = extractTextContent($, element, targetPage.titleSelector);
+		if (!title || !link) {
+			return null;
+		}
+
+		return {
+			link: link,
+			title: title,
+			description: description,
+			date: extractDate($, element, targetPage.dateSelector),
+		};
+	} catch (error) {
+		logger.error("Error in extractArticleData:", {
+			error,
+			targetPage,
 		});
-
-		logAiCall();
-
-		description = content?.trim();
-	}
-
-	const link = constructFullUrl(rawHref, targetPage);
-	const title = extractTextContent($, element, targetPage.titleSelector);
-	if (!title || !link) {
 		return null;
 	}
-
-	return {
-		link: link,
-		title: title,
-		description: description,
-		date: extractDate($, element, targetPage.dateSelector),
-	};
 }
 
 async function fetchFromAdditionalSources(): Promise<BaseArticle[]> {
-	const additionalResults = await searchNews(
-		[
-			"home health industry news",
-			"homecare technology updates",
-			"home health policy changes",
-		],
-		3,
-	);
+	try {
+		const additionalResults = await searchNews(
+			[
+				"home health industry news",
+				"homecare technology updates",
+				"home health policy changes",
+			],
+			3,
+		);
 
-	return additionalResults;
+		if (additionalResults.length === 0) {
+			throw new NotFoundError("No additional results found", {
+				queries: [
+					"home health industry news",
+					"homecare technology updates",
+					"home health policy changes",
+				],
+			});
+		}
+
+		return additionalResults;
+	} catch (error) {
+		if (error instanceof AppError) throw error;
+		throw new NetworkError("Failed to fetch from additional sources", {
+			cause: error,
+		});
+	}
 }

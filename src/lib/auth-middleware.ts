@@ -1,10 +1,14 @@
 import type { NextFunction, Request, Response } from "express";
 import jwt, { type Secret } from "jsonwebtoken";
+import { AppError } from "./errors.js";
+import logger from "./logger.js";
 
 const SUPABASE_JWT_SECRET = process.env.SUPABASE_JWT_SECRET;
 
 if (!SUPABASE_JWT_SECRET) {
-	throw new Error("SUPABASE_JWT_SECRET is not set in the environment variables");
+	throw new AppError(
+		"SUPABASE_JWT_SECRET is not set in the environment variables",
+	);
 }
 
 export function authMiddleware(
@@ -27,7 +31,7 @@ export function authMiddleware(
 		(req as any).user = decoded;
 		next();
 	} catch (error) {
-		console.error("Token verification failed:", error);
+		logger.error("Token verification failed:", error);
 		return res.status(401).json({ error: "Invalid token" });
 	}
 }

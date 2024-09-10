@@ -16,7 +16,8 @@ import { apiRouter, subscriptionRouter } from "./api/router.js";
 import { authMiddleware } from "./lib/auth-middleware.js";
 import { API_URL, BASE_PATH, IS_DEVELOPMENT, PORT } from "./lib/constants.js";
 import { setupCronJobs } from "./lib/cron.js";
-import { handleErrors } from "./lib/errors.js";
+import { errorMiddleware } from "./lib/errorMiddleware.js";
+import { AppError } from "./lib/errors.js";
 import { healthCheck } from "./lib/health.js";
 
 const log = debug(`${process.env.APP_NAME}:index.ts`);
@@ -63,7 +64,7 @@ const corsOptions: cors.CorsOptions = {
 			log(origin.startsWith("http://localhost"));
 
 			log(`CORS error: Origin ${origin} not allowed`);
-			callback(new Error("Not allowed by CORS"));
+			callback(new AppError("Not allowed by CORS"));
 		}
 	},
 	methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
@@ -117,7 +118,7 @@ setupCronJobs();
 // Error handling
 Sentry.setupExpressErrorHandler(app);
 
-app.use(handleErrors);
+app.use(errorMiddleware);
 
 // Start the server
 app.listen(PORT, () => {

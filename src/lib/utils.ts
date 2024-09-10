@@ -23,6 +23,7 @@ import type {
 
 import { generateAITextResponse } from "./ai.js";
 import { closeBrowser, getBrowser } from "./browser.js";
+import { AppError, NetworkError } from "./errors.js";
 import logger from "./logger.js";
 
 const log = debug(`${process.env.APP_NAME}:utils.ts`);
@@ -129,8 +130,14 @@ export async function fetchPageContent(url: string): Promise<string> {
 	try {
 		const response = await fetch(url);
 		if (!response.ok) {
-			logger.error(`HTTP error! Status: ${response.status}`, { url });
-			throw new Error(`HTTP error! Status: ${response.status}`);
+			logger.error(
+				`Unable to fetch page content. HTTP error! Status: ${response.status}`,
+				{ url },
+			);
+			throw new NetworkError(
+				`Unable to fetch page content. HTTP error! Status: ${response.status}`,
+				{ url },
+			);
 		}
 		return await response.text();
 	} catch (error) {
@@ -177,7 +184,7 @@ export async function getPastPeriodDate(): Promise<{
 			year: today.getFullYear(),
 		};
 	} catch (error) {
-		console.error("Error fetching newsletter frequency:", error);
+		logger.error("Error fetching newsletter frequency:", error);
 		// Fallback to default 1 week if there's an error
 		const oneWeekAgo = new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000);
 		return {
@@ -303,7 +310,7 @@ export async function retry<T>(fn: () => Promise<T>, maxRetries = MAX_RETRIES) {
 		}
 	}
 
-	throw new Error("Retry limit exceeded");
+	throw new AppError("Retry limit exceeded");
 }
 
 export const extractTextContent = (
@@ -327,7 +334,7 @@ export const extractDate = (
 export const getEnv = (name: string) => {
 	const value = process.env[name];
 	if (!value) {
-		throw new Error(`Missing environment variable: ${name}`);
+		throw new AppError(`Missing environment variable: ${name}`);
 	}
 	return value;
 };
@@ -353,7 +360,11 @@ export const getDescription = async (
 
 		const pageContent = await retry(() => fetchPageContent(articleData.link));
 
-		if (!pageContent) throw new Error("Error getting page content");
+		if (!pageContent) {
+			throw new NetworkError(
+				`Error getting page content for article ${articleData.link}`,
+			);
+		}
 
 		const $ = cheerio.load(pageContent);
 
@@ -365,7 +376,7 @@ export const getDescription = async (
 
 		logAiCall();
 
-		if (!content) throw new Error("Error generating description");
+		if (!content) throw new AppError("Error using ai to generate description");
 
 		return content?.trim();
 	} catch (error) {

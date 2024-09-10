@@ -1,5 +1,6 @@
 import { Redis } from "@upstash/redis";
 import type { ArticleWithOptionalSource } from "../types/index.js";
+import { AppError } from "./errors.js";
 import logger from "./logger.js";
 
 const getRedisArgs = () => {
@@ -7,7 +8,7 @@ const getRedisArgs = () => {
 	const token = process.env.UPSTASH_REDIS_REST_TOKEN;
 
 	if (!url || !token) {
-		throw new Error("Upstash Redis configuration is missing");
+		throw new AppError("Upstash Redis configuration is missing");
 	}
 
 	return {

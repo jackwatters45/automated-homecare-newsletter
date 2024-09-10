@@ -6,6 +6,7 @@ import { db } from "../db/index.js";
 import { recipients } from "../db/schema.js";
 import { cronLogs } from "../db/schema.js"; // Assuming you have a cronLogs table
 import { API_URL } from "./constants.js";
+import { AppError } from "./errors.js";
 import logger from "./logger.js";
 
 const log = debug(`${process.env.APP_NAME}:health.ts`);
@@ -22,11 +23,11 @@ export async function pingServer() {
 
 		const errorMessage = `Server returned an error. Status: ${response.status}`;
 		logger.error(errorMessage);
-		throw new Error(errorMessage);
+		throw new AppError(errorMessage);
 	} catch (error) {
 		const errorMessage = `Failed to reach the server: ${error instanceof Error ? error.message : error}`;
 		logger.error(errorMessage);
-		throw new Error(errorMessage);
+		throw new AppError(errorMessage);
 	}
 }
 

@@ -7,6 +7,7 @@ import {
 	DESCRIPTION_MAX_LENGTH,
 	MIN_NUMBER_OF_ARTICLES,
 } from "../lib/constants.js";
+import { AppError } from "../lib/errors.js";
 import logger from "../lib/logger.js";
 import { logAiCall, shuffleArray, writeDataIfNotExists } from "../lib/utils.js";
 import type {
@@ -77,42 +78,51 @@ export async function generateSummary(
   
   Your summary should provide a quick, informative overview that gives readers a clear sense of the valuable content available, without revealing all the details.`;
 
-	const { content: generatedDescription } = await generateAITextResponse({
-		prompt: prompt,
-	});
+	try {
+		const { content: generatedDescription } = await generateAITextResponse({
+			prompt: prompt,
+		});
 
-	logAiCall();
+		logAiCall();
 
-	const formattedDescription = generatedDescription?.trim();
+		const formattedDescription = generatedDescription?.trim();
 
-	if (!formattedDescription) {
-		logger.error("Error generating summary", { articles });
-		throw new Error("Error generating summary");
+		if (!formattedDescription) {
+			throw new AppError("Error generating summary", { articles });
+		}
+
+		log(`Generated summary: ${formattedDescription}`);
+		await writeDataIfNotExists("summary.json", formattedDescription);
+
+		return formattedDescription;
+	} catch (error) {
+		if (error instanceof AppError) throw error;
+		throw new AppError("Error in generateSummary", { cause: error });
 	}
-
-	log(`Generated summary: ${formattedDescription}`);
-	await writeDataIfNotExists("summary.json", formattedDescription);
-
-	return formattedDescription;
 }
 
 export async function generateCategories(
 	articles: ArticleForCategorization[],
 ): Promise<CategorizedArticle[]> {
-	// Step 1: Use AI to assign up to 3 ranked categories to each article
-	const articlesWithRankedCategories = await assignRankedCategories(articles);
+	try {
+		// Step 1: Use AI to assign up to 3 ranked categories to each article
+		const articlesWithRankedCategories = await assignRankedCategories(articles);
 
-	// Step 2: Distribute articles across categories, assigning a single category to each
-	const distributedArticles = distributeArticles(articlesWithRankedCategories);
+		// Step 2: Distribute articles across categories, assigning a single category to each
+		const distributedArticles = distributeArticles(articlesWithRankedCategories);
 
-	await writeDataIfNotExists(
-		"articles-with-categories.json",
-		distributedArticles,
-	);
+		await writeDataIfNotExists(
+			"articles-with-categories.json",
+			distributedArticles,
+		);
 
-	log("articlesWithCategories", distributedArticles.length);
+		log("articlesWithCategories", distributedArticles.length);
 
-	return distributedArticles;
+		return distributedArticles;
+	} catch (error) {
+		if (error instanceof AppError) throw error;
+		throw new AppError("Error in generateCategories", { cause: error });
+	}
 }
 
 async function assignRankedCategories(
@@ -132,21 +142,26 @@ async function assignRankedCategories(
     The 'categories' array should contain up to 3 categories, ordered from most to least relevant.
   `;
 
-	const { content } = await generateAIJsonResponse({
-		schema: z.array(
-			z.object({
-				title: z.string(),
-				description: z.string(),
-				quality: z.number(),
-				categories: z.array(z.enum(CATEGORIES)),
-			}),
-		),
-		prompt: prompt,
-	});
+	try {
+		const { content } = await generateAIJsonResponse({
+			schema: z.array(
+				z.object({
+					title: z.string(),
+					description: z.string(),
+					quality: z.number(),
+					categories: z.array(z.enum(CATEGORIES)),
+				}),
+			),
+			prompt: prompt,
+		});
 
-	logAiCall();
+		logAiCall();
 
-	return content;
+		return content;
+	} catch (error) {
+		if (error instanceof AppError) throw error;
+		throw new AppError("Error in assignRankedCategories", { cause: error });
+	}
 }
 
 function distributeArticles(
@@ -191,7 +206,7 @@ function distributeArticles(
 
 	if (distributedArticles.length < MIN_NUMBER_OF_ARTICLES) {
 		log("Not enough articlesWithCategories on this attempt");
-		throw new Error("Not enough articlesWithCategories on this attempt");
+		throw new AppError("Not enough articlesWithCategories on this attempt");
 	}
 
 	// Shuffle to ensure a good mix of articles within each category

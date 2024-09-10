@@ -3,6 +3,7 @@ import "dotenv/config";
 import fs from "node:fs/promises";
 import debug from "debug";
 import { google } from "googleapis";
+import logger from "./logger.js";
 
 const log = debug(`${process.env.APP_NAME}:google-simple-search.ts`);
 
@@ -67,15 +68,15 @@ async function aggregateSearchResults(fileName: string): Promise<void> {
 			if (!results) continue;
 			allResults.push(...results);
 		} catch (error) {
-			console.error(`Error performing search for "${query}": ${error}`);
+			logger.error(`Error performing search for "${query}": ${error}`);
 		}
 	}
 
 	try {
 		await fs.writeFile(fileName, JSON.stringify(allResults, null, 2));
-		console.log(`Results have been written to ${fileName}`);
+		logger.info(`Wrote search results to file: ${fileName}`);
 	} catch (error) {
-		console.error(`Error writing to file: ${error}`);
+		logger.error(`Error writing to file: ${error}`);
 	}
 }
 
