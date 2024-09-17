@@ -109,11 +109,19 @@ export const SYSTEM_INSTRUCTION = `You are a homecare business operator. You are
 
 export const REDIRECT_URLS = ["https://news.google.com"];
 
-export const INITIAL_FETCH_COUNT = 40;
-export const TARGET_NUMBER_OF_ARTICLES = 30;
-export const MIN_NUMBER_OF_ARTICLES = TARGET_NUMBER_OF_ARTICLES - 10;
+export const TARGET_NUMBER_OF_ARTICLES_COMBINED = 30; // TARGET_NUMBER_OF_ARTICLES * 2
+export const TARGET_NUMBER_OF_ARTICLES_SINGLE = 15;
+export const MIN_NUMBER_OF_ARTICLES_SINGLE = 10;
+export const MAX_ARTICLES_PER_TYPE = 18;
 export const MAX_ARTICLES_PER_SOURCE = 5;
 export const MAX_RETRIES = 3;
+
+export const JOB_RELATED_URL_PATTERNS = [
+	"/jobs/",
+	"/job/",
+	"/careers/",
+	"/career/",
+];
 
 export const CACHE_KEY = "articleData";
 

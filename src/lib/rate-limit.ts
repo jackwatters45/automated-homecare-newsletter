@@ -1,3 +1,3 @@
 import Bottleneck from "bottleneck";
 
-export const rateLimiter = new Bottleneck({ minTime: 500 });
+export const rateLimiter = new Bottleneck({ minTime: 200, maxConcurrent: 5 });

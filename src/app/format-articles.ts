@@ -5,7 +5,7 @@ import { generateAIJsonResponse, generateAITextResponse } from "../lib/ai.js";
 import {
 	CATEGORIES,
 	DESCRIPTION_MAX_LENGTH,
-	MIN_NUMBER_OF_ARTICLES,
+	MIN_NUMBER_OF_ARTICLES_SINGLE,
 } from "../lib/constants.js";
 import { AppError } from "../lib/errors.js";
 import logger from "../lib/logger.js";
@@ -204,7 +204,7 @@ function distributeArticles(
 	// Log category distribution
 	log("Category distribution:", categoryCount);
 
-	if (distributedArticles.length < MIN_NUMBER_OF_ARTICLES) {
+	if (distributedArticles.length < MIN_NUMBER_OF_ARTICLES_SINGLE) {
 		log("Not enough articlesWithCategories on this attempt");
 		throw new AppError("Not enough articlesWithCategories on this attempt");
 	}

@@ -15,6 +15,7 @@ import {
 } from "../lib/constants.js";
 import type {
 	ArticleWithOptionalDescription,
+	BaseArticle,
 	Category,
 	NewArticleInput,
 	PageToScrape,
@@ -147,8 +148,10 @@ export async function fetchPageContent(url: string): Promise<string> {
 			await page.goto(url, { waitUntil: "networkidle2" });
 			return await page.content();
 		} catch (error) {
-			logger.error("Error in fetchPageContent:", { error });
-			throw error;
+			if (error instanceof AppError) {
+				throw error;
+			}
+			throw new NetworkError("Error in fetchPageContent", { url, error });
 		} finally {
 			await closeBrowser();
 		}
@@ -302,6 +305,7 @@ export async function retry<T>(fn: () => Promise<T>, maxRetries = MAX_RETRIES) {
 			return await fn();
 		} catch (error) {
 			retries++;
+			log(`retrying function: ${fn} | attempt ${retries} of ${maxRetries}`);
 			if (retries === maxRetries) {
 				throw error;
 			}
@@ -471,6 +475,17 @@ export function getSourceFromUrl(url: string): string {
 		return url;
 	}
 }
+
+export type BaseArticleWithSource = BaseArticle & {
+	source: string;
+};
+
+export const AddSourceToArticle = <T extends BaseArticle>(
+	article: T,
+): T & BaseArticleWithSource => ({
+	...article,
+	source: getSourceFromUrl(article.link),
+});
 
 export const getDescriptionFromContent = async (content: string) => {
 	const descriptionPrompt = createDescriptionPrompt(content);

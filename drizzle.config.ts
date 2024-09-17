@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 import type { Config } from "drizzle-kit";
 import { IS_DEVELOPMENT } from "./src/lib/constants";
-import { AppError } from "./src/lib/errors.js";
+import { AppError } from "./src/lib/errors";
 import logger from "./src/lib/logger";
 
 dotenv.config();

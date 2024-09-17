@@ -175,7 +175,7 @@ export async function getNewsletter(id: number): Promise<PopulatedNewsletter> {
 	}
 }
 
-export async function createNewsletter({
+export async function addNewsletterToDB({
 	summary,
 	articles: articleInputs,
 }: {

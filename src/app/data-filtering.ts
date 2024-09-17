@@ -1,24 +1,24 @@
 import debug from "debug";
 
-import { int } from "drizzle-orm/mysql-core";
 import { z } from "zod";
 import { getNewsletterFrequency } from "../api/service.js";
 import { generateAIJsonResponse } from "../lib/ai.js";
 import {
 	CATEGORIES,
 	MAX_ARTICLES_PER_SOURCE,
-	MIN_NUMBER_OF_ARTICLES,
-	TARGET_NUMBER_OF_ARTICLES,
+	MIN_NUMBER_OF_ARTICLES_SINGLE,
+	TARGET_NUMBER_OF_ARTICLES_SINGLE,
 	TOPIC,
 } from "../lib/constants.js";
 import { AppError, NotFoundError } from "../lib/errors.js";
+import { rateLimiter } from "../lib/rate-limit.js";
 import {
+	AddSourceToArticle,
 	getDescription,
 	getRecurringFrequency,
 	getSourceFromUrl,
 	logAiCall,
 	retry,
-	shuffleArray,
 	writeDataIfNotExists,
 	writeTestData,
 } from "../lib/utils.js";
@@ -32,86 +32,188 @@ import type {
 	ArticleWithQualityAndCategory,
 	ArticleWithSourceAndCount,
 	CategorizedArticle,
+	Category,
 	PageToScrape,
+	ProcessedArticle,
 	RankedArticle,
 } from "../types/index.js";
 import { generateCategories } from "./format-articles.js";
 
 const log = debug(`${process.env.APP_NAME}:date-filtering.ts`);
 
-export async function filterAndRankArticles(
+export async function filterAndRankGoogleArticles(
 	rawArticles: ArticleWithOptionalSource[],
-	targetArticleCount = TARGET_NUMBER_OF_ARTICLES * 2,
-	maxArticlesPerSource = MAX_ARTICLES_PER_SOURCE,
-) {
-	log("filtering and ranking articles");
-	try {
-		const uniqueArticles = deduplicateAndCountArticles(rawArticles);
-
-		const shuffledArticles = shuffleArray(uniqueArticles);
-		const aiFilteringInput = extractArticleFilteringData(shuffledArticles);
-
-		// First round of filtering: Filter based on title and description/snippet
-		const firstFilteredArticles = await retry(
-			async () => await filterArticles(aiFilteringInput),
-			5,
-		);
-
-		// Generate descriptions for articles without them
-		const articlesWithDescriptions = await retry(async () => {
-			const articlesWithDescriptions = await Promise.all(
-				firstFilteredArticles.map(async (article) => {
-					if (!article.description) {
-						article.description = (await getDescription(article)) ?? "";
-					}
-					return article;
-				}),
-			);
-
-			log("Added descriptions to articles");
-
-			return articlesWithDescriptions;
-		});
-
-		log("articlesWithDescriptions", articlesWithDescriptions.length);
-
-		// Second round of filtering with updated descriptions
-		const secondFilteredArticles = await retry(
-			async () =>
-				await filterArticles(articlesWithDescriptions, targetArticleCount, false),
-			5,
-		);
-
-		const rankedArticles = await retry(
-			async () => await rankArticles(secondFilteredArticles, targetArticleCount),
-			5,
-		);
-
-		const articlesWithLimitedSources = await retry(
-			async () =>
-				await limitArticlesPerSource(rankedArticles, maxArticlesPerSource),
-			5,
-		);
-
-		const articlesWithCategories = await retry(
-			async () => await generateCategories(articlesWithLimitedSources),
-		);
-
-		const mergedRankedArticles = await mergeFilteredArticles(
-			shuffledArticles,
-			articlesWithCategories,
-		);
-
-		const articles = deduplicateArticles(mergedRankedArticles);
-
-		log("final (deduplicated) article count", articles.length);
-
-		return articles;
-	} catch (error) {
-		if (error instanceof AppError) throw error;
-		throw new AppError("Error in filterAndRankArticles", { cause: error });
-	}
+	targetArticleCount = TARGET_NUMBER_OF_ARTICLES_SINGLE,
+): Promise<ArticleWithQualityAndCategory[]> {
+	return filterAndRankArticles(rawArticles, targetArticleCount, "google");
 }
+
+export async function filterAndRankSpecificSiteArticles(
+	rawArticles: ArticleWithOptionalSource[],
+	targetArticleCount = TARGET_NUMBER_OF_ARTICLES_SINGLE,
+): Promise<ArticleWithQualityAndCategory[]> {
+	return filterAndRankArticles(rawArticles, targetArticleCount, "specific");
+}
+
+async function filterAndRankArticles(
+	rawArticles: ArticleWithOptionalSource[],
+	targetArticleCount: number,
+	sourceType: "google" | "specific",
+): Promise<ArticleWithQualityAndCategory[]> {
+	const uniqueArticles = deduplicateAndCountArticles(rawArticles);
+	const aiFilteringInput = extractArticleFilteringData(uniqueArticles);
+
+	// First round of filtering: Filter based on title and description/snippet
+	const firstFilteredArticles = await retry(
+		async () => await filterArticles(aiFilteringInput),
+		5,
+	);
+
+	// Generate descriptions for articles without them
+	const articlesWithDescriptions = await retry(async () => {
+		const articlesWithDescriptions = await Promise.all(
+			firstFilteredArticles.map(async (article) => {
+				if (!article.description) {
+					article.description = (await getDescription(article)) ?? "";
+				}
+				return article;
+			}),
+		);
+
+		log("Added descriptions to articles");
+
+		return articlesWithDescriptions;
+	});
+
+	log("Filtered articles with descriptions", articlesWithDescriptions.length);
+
+	// Second round of filtering with updated descriptions
+	const secondFilteredArticles = await retry(
+		async () =>
+			await filterArticles(articlesWithDescriptions, targetArticleCount, false),
+		5,
+	);
+
+	const rankedArticles = await retry(
+		async () => await rankArticles(secondFilteredArticles, targetArticleCount),
+		5,
+	);
+
+	const articlesWithLimitedSources = await retry(
+		async () =>
+			await limitArticlesPerSource(rankedArticles, MAX_ARTICLES_PER_SOURCE),
+		5,
+	);
+
+	const articlesWithCategories = await retry(
+		async () => await generateCategories(articlesWithLimitedSources),
+	);
+
+	const mergedRankedArticles = await mergeFilteredArticles(
+		uniqueArticles,
+		articlesWithCategories,
+	);
+
+	await writeDataIfNotExists(
+		`filtered-${sourceType}-articles.json`,
+		mergedRankedArticles,
+	);
+
+	const articles = deduplicateArticles(mergedRankedArticles);
+
+	log("final (deduplicated) article count", articles.length);
+
+	return articles;
+}
+
+async function fetchArticleDescription(
+	article: ArticleWithSourceAndCount,
+): Promise<ArticleWithSourceAndCount> {
+	if (!article.description) {
+		article.description =
+			(await rateLimiter.schedule(() => getDescription(article))) ?? "";
+	}
+	return article;
+}
+
+export async function addDescriptionsToArticles(
+	firstFilteredArticles: ArticleWithSourceAndCount[],
+): Promise<ArticleWithSourceAndCount[]> {
+	return await retry(async () => {
+		const articlesWithDescriptions: ArticleWithSourceAndCount[] = [];
+
+		for (const article of firstFilteredArticles) {
+			const articleWithDescription = await fetchArticleDescription(article);
+			articlesWithDescriptions.push(articleWithDescription);
+		}
+
+		console.log("Added descriptions to articles");
+		return articlesWithDescriptions;
+	});
+}
+
+// export async function filterAndRankArticlesCombined(
+// 	rawArticles: ArticleWithOptionalSource[],
+// 	targetArticleCount = TARGET_NUMBER_OF_ARTICLES,
+// 	maxArticlesPerSource = MAX_ARTICLES_PER_SOURCE,
+// ) {
+// 	log("filtering and ranking articles");
+// 	try {
+// 		const uniqueArticles = deduplicateAndCountArticles(rawArticles);
+
+// 		const shuffledArticles = shuffleArray(uniqueArticles);
+// 		const aiFilteringInput = extractArticleFilteringData(shuffledArticles);
+
+// 		// First round of filtering: Filter based on title and description/snippet
+// 		const firstFilteredArticles = await retry(
+// 			async () => await filterArticles(aiFilteringInput),
+// 			5,
+// 		);
+
+// 		// Generate descriptions for articles without them
+// 		const articlesWithDescriptions = await addDescriptionsToArticles(
+// 			firstFilteredArticles,
+// 		);
+
+// 		log("Filtered articles with descriptions", articlesWithDescriptions.length);
+
+// 		// Second round of filtering with updated descriptions
+// 		const secondFilteredArticles = await retry(
+// 			async () =>
+// 				await filterArticles(articlesWithDescriptions, targetArticleCount, false),
+// 			5,
+// 		);
+
+// 		const rankedArticles = await retry(
+// 			async () => await rankArticles(secondFilteredArticles, targetArticleCount),
+// 			5,
+// 		);
+
+// 		const articlesWithLimitedSources = await retry(
+// 			async () =>
+// 				await limitArticlesPerSource(rankedArticles, maxArticlesPerSource),
+// 			5,
+// 		);
+
+// 		const articlesWithCategories = await retry(
+// 			async () => await generateCategories(articlesWithLimitedSources),
+// 		);
+
+// 		const mergedRankedArticles = await mergeFilteredArticles(
+// 			shuffledArticles,
+// 			articlesWithCategories,
+// 		);
+
+// 		const articles = deduplicateArticles(mergedRankedArticles);
+
+// 		log("final (deduplicated) article count", articles.length);
+
+// 		return articles;
+// 	} catch (error) {
+// 		if (error instanceof AppError) throw error;
+// 		throw new AppError("Error in filterAndRankArticles", { cause: error });
+// 	}
+// }
 
 export async function filterArticlesByPage(
 	articles: ArticleData[],
@@ -163,7 +265,7 @@ export async function filterArticlesByPage(
 
 export async function filterArticles(
 	articles: ArticleWithSourceAndCount[],
-	targetArticleCount = TARGET_NUMBER_OF_ARTICLES * 2,
+	targetArticleCount = TARGET_NUMBER_OF_ARTICLES_SINGLE,
 	isFirstAttempt = true,
 ) {
 	const aiFilteringPrompt = `Evaluate and prioritize the following list of articles related to ${TOPIC}. Your goal is to filter out non-relevant articles, aiming for approximately ${targetArticleCount} high-quality, relevant articles.
@@ -239,7 +341,7 @@ Example of expected output format:
 			`articles after strict filter ${attempt}: ${filteredArticles.length} articles`,
 		);
 
-		if (filteredArticles.length < TARGET_NUMBER_OF_ARTICLES) {
+		if (filteredArticles.length < MIN_NUMBER_OF_ARTICLES_SINGLE) {
 			log(`Not enough strictly relevant articles after filter ${attempt}.`);
 			throw new AppError(
 				`Not enough strictly relevant articles after filter ${attempt}.`,
@@ -255,7 +357,7 @@ Example of expected output format:
 
 export async function rankArticles(
 	filteredArticles: ArticleFilteringData[],
-	targetArticleCount = TARGET_NUMBER_OF_ARTICLES,
+	targetArticleCount = TARGET_NUMBER_OF_ARTICLES_SINGLE,
 ): Promise<RankedArticle[]> {
 	const aiRankingPrompt = `Rank the following list of filtered articles related to ${TOPIC}:
 	
@@ -314,7 +416,7 @@ export async function rankArticles(
 
 		log("ranked articles", rankedArticles?.length);
 
-		if (rankedArticles.length < MIN_NUMBER_OF_ARTICLES) {
+		if (rankedArticles.length < MIN_NUMBER_OF_ARTICLES_SINGLE) {
 			log("Not enough ranked articles on this attempt");
 			throw new AppError("Not enough ranked articles on this attempt");
 		}
@@ -372,7 +474,7 @@ async function limitArticlesPerSource(
 
 		log("articles with limited sources", sortedLimitedArticles?.length);
 
-		if (sortedLimitedArticles.length < MIN_NUMBER_OF_ARTICLES) {
+		if (sortedLimitedArticles.length < MIN_NUMBER_OF_ARTICLES_SINGLE) {
 			log("Not enough articles with limited sources on this attempt");
 			throw new AppError(
 				"Not enough articles with limited sources on this attempt",
@@ -433,7 +535,7 @@ export async function mergeFilteredArticles(
 
 		await writeTestData(["merged-ranked-article-data.json"], mergedArticles);
 
-		if (mergedArticles.length < MIN_NUMBER_OF_ARTICLES) {
+		if (mergedArticles.length < MIN_NUMBER_OF_ARTICLES_SINGLE) {
 			log("Not enough mergedRankedArticles on this attempt");
 			throw new AppError("Not enough mergedRankedArticles on this attempt");
 		}
@@ -515,4 +617,114 @@ export function deduplicateArticles<T extends WithTitleAndLink>(
 		log(`Error in deduplicateArticles: ${error}`);
 		return [];
 	}
+}
+
+const MAX_ARTICLES_PER_SOURCE_PER_CATEGORY = 2;
+const BATCH_SIZE = 10; // Number of articles to score in one AI call
+
+type CategoryCount = Record<Category, number>;
+
+type ProcessedArticleWithSource = ProcessedArticle & {
+	source: string;
+};
+
+export async function redistributeArticles(
+	articles: ProcessedArticle[],
+): Promise<ProcessedArticleWithSource[]> {
+	log("redistributing articles");
+
+	const categoryMap: Record<Category, ProcessedArticleWithSource[]> = {
+		"Industry Trends & Policy": [],
+		"Clinical Innovations & Best Practices": [],
+		"Business Operations & Technology": [],
+		"Caregiver Support & Resources": [],
+		Other: [],
+	};
+	const sourceCountMap: Record<string, CategoryCount> = {};
+
+	// Initialize category map and source count map
+	for (const category of CATEGORIES) {
+		sourceCountMap[category] = Object.fromEntries(
+			CATEGORIES.map((cat) => [cat, 0]),
+		) as CategoryCount;
+	}
+
+	// First pass: Distribute articles to their original categories
+	for (const article of articles) {
+		const articleWithSource = AddSourceToArticle(article);
+		categoryMap[articleWithSource.category].push(articleWithSource);
+		if (!sourceCountMap[articleWithSource.source]) {
+			sourceCountMap[articleWithSource.source] = Object.fromEntries(
+				CATEGORIES.map((cat) => [cat, 0]),
+			) as CategoryCount;
+		}
+		sourceCountMap[articleWithSource.source][articleWithSource.category]++;
+	}
+
+	// Second pass: Redistribute articles if needed
+	const redistributedArticles: ProcessedArticleWithSource[] = [];
+	const articlesToRedistribute: ProcessedArticleWithSource[] = [];
+
+	for (const category of CATEGORIES) {
+		for (const article of categoryMap[category]) {
+			if (
+				sourceCountMap[article.source][category] >
+				MAX_ARTICLES_PER_SOURCE_PER_CATEGORY
+			) {
+				articlesToRedistribute.push(article);
+			} else {
+				redistributedArticles.push(article);
+			}
+		}
+	}
+
+	// Redistribute articles in batches
+	for (let i = 0; i < articlesToRedistribute.length; i += BATCH_SIZE) {
+		const batch = articlesToRedistribute.slice(i, i + BATCH_SIZE);
+		log(`redistributing batch of ${batch.length} articles using ai.`);
+		const newCategories = await findBestAlternativeCategories(batch);
+
+		for (let j = 0; j < batch.length; j++) {
+			const article = batch[j];
+			const newCategory = newCategories[j];
+
+			if (newCategory && newCategory !== article.category) {
+				sourceCountMap[article.source][article.category]--;
+				article.category = newCategory;
+				sourceCountMap[article.source][newCategory]++;
+			}
+
+			redistributedArticles.push(article);
+		}
+	}
+
+	log("redistributed articles", redistributedArticles.length);
+
+	return redistributedArticles;
+}
+
+async function findBestAlternativeCategories(
+	articles: ArticleWithQualityAndCategory[],
+): Promise<Category[]> {
+	const prompt = `
+    Analyze the following articles and determine the best category for each from these options: ${CATEGORIES.join(", ")}.
+    Consider the article's title, description, and current category. Prefer to keep the current category if it's appropriate.
+    If a new category is clearly better, choose that instead. Respond with an array of category names, one for each article.
+
+    Articles:
+    ${JSON.stringify(
+					articles.map((a) => ({
+						title: a.title,
+						description: a.description,
+						currentCategory: a.category,
+					})),
+				)}
+  `;
+
+	const { content: categories } = await generateAIJsonResponse({
+		prompt,
+		schema: z.array(z.enum(CATEGORIES)),
+	});
+
+	return categories;
 }

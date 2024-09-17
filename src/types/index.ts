@@ -95,6 +95,18 @@ export interface CategorizedArticle extends ArticleForCategorization {
 	category: Category;
 }
 
+export interface ArticleFilteringData
+	extends Omit<ArticleWithSourceAndCount, "link"> {}
+
+export interface RankedArticle
+	extends Omit<ArticleWithSource, "link">,
+		Omit<ArticleWithQuality, "link">,
+		Omit<ArticleWithCount, "link"> {}
+
+export interface ProcessedArticle extends ArticleWithQualityAndCategory {
+	finalRank: number;
+}
+
 // Database types
 export type Newsletter = typeof newsletters.$inferSelect;
 export type NewNewsletter = typeof newsletters.$inferInsert;

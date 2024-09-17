@@ -6,9 +6,9 @@ import { generateAITextResponse } from "../lib/ai.js";
 import { getCache, setCache } from "../lib/cache.js";
 import {
 	CACHE_KEY,
-	INITIAL_FETCH_COUNT,
 	IS_DEVELOPMENT,
 	SPECIFIC_PAGES,
+	TARGET_NUMBER_OF_ARTICLES_COMBINED,
 } from "../lib/constants.js";
 import { AppError, NetworkError, NotFoundError } from "../lib/errors.js";
 import { searchNews } from "../lib/google-search.js";
@@ -56,8 +56,8 @@ export async function getArticleData() {
 		}
 
 		const [googleResults, specificPageResults] = await Promise.all([
-			fetchGoogleSearchResults(),
-			fetchSpecificPageResults(),
+			fetchGoogleResults(),
+			fetchSpecificSiteResults(),
 		]);
 
 		const results: ArticleWithOptionalSource[] = [
@@ -65,7 +65,7 @@ export async function getArticleData() {
 			...specificPageResults,
 		];
 
-		if (results.length < INITIAL_FETCH_COUNT) {
+		if (results.length < TARGET_NUMBER_OF_ARTICLES_COMBINED) {
 			const additionalResults = await fetchFromAdditionalSources();
 			results.push(...additionalResults);
 		}
@@ -93,17 +93,45 @@ const searchQueries = [
 	"homecare fall prevention technology",
 ];
 
-export async function fetchGoogleSearchResults(): Promise<BaseArticle[]> {
-	try {
-		const googleSearchResults = await searchNews(searchQueries);
+export async function fetchGoogleResults(): Promise<BaseArticle[]> {
+	if (IS_DEVELOPMENT) {
+		const testData = await readTestData<ArticleWithOptionalSource[]>(
+			"google-results.json",
+		);
+		if (testData) {
+			log("Using test data for Google results");
+			return testData;
+		}
+		log("No test data found for Google results, fetching live data");
+	}
 
-		if (!googleSearchResults || !googleSearchResults.length) {
+	const cacheKey = `${CACHE_KEY}_google`;
+	if (!IS_DEVELOPMENT) {
+		const cachedData = await getCache(cacheKey);
+		if (cachedData) {
+			log("Using cached Google search results");
+			return cachedData;
+		}
+	}
+
+	try {
+		const googleResults = await searchNews(searchQueries);
+
+		if (!googleResults?.length) {
 			throw new NotFoundError("No results found in Google search");
 		}
 
-		log("google search results count", googleSearchResults.length);
+		log("google search results count", googleResults.length);
 
-		return googleSearchResults;
+		// Cache the results
+		await setCache(cacheKey, googleResults);
+
+		// Write test data in development mode
+		if (IS_DEVELOPMENT) {
+			await writeDataIfNotExists("google-results.json", googleResults);
+		}
+
+		return googleResults;
 	} catch (error) {
 		if (error instanceof NotFoundError) throw error;
 		throw new NetworkError("Failed to fetch Google search results", {
@@ -113,11 +141,33 @@ export async function fetchGoogleSearchResults(): Promise<BaseArticle[]> {
 	}
 }
 
-async function fetchSpecificPageResults(): Promise<
+export async function fetchSpecificSiteResults(): Promise<
 	ArticleWithOptionalSource[]
 > {
+	if (IS_DEVELOPMENT) {
+		const testData = await readTestData<ArticleWithOptionalSource[]>(
+			"specific-site-results.json",
+		);
+		if (testData) {
+			log("Using test data for specific site results");
+			return testData;
+		}
+		log("No test data found for specific site results, fetching live data");
+	}
+
+	const cacheKey = `${CACHE_KEY}_specific`;
+
+	if (!IS_DEVELOPMENT) {
+		// Check cache first
+		const cachedData = await getCache(cacheKey);
+		if (cachedData) {
+			log("Using cached specific site results");
+			return cachedData;
+		}
+	}
+
 	try {
-		const specificPageResults: ArticleWithOptionalSource[] = [];
+		const specificSiteResults: ArticleWithOptionalSource[] = [];
 
 		const blacklistedDomains = await getAllBlacklistedDomainNames();
 		const filteredSpecificPages = SPECIFIC_PAGES.filter((page) => {
@@ -127,18 +177,29 @@ async function fetchSpecificPageResults(): Promise<
 		for (const page of filteredSpecificPages) {
 			const articleLinks = await scrapeArticles(page);
 			const relevantArticles = await filterArticlesByPage(articleLinks, page);
-			specificPageResults.push(...relevantArticles);
+			specificSiteResults.push(...relevantArticles);
 		}
 
-		log("specific page results count", specificPageResults.length);
+		log("specific page results count", specificSiteResults.length);
 
-		if (specificPageResults.length === 0) {
+		if (specificSiteResults.length === 0) {
 			throw new NotFoundError("No valid articles found from specific pages", {
 				pages: filteredSpecificPages,
 			});
 		}
 
-		return specificPageResults;
+		// Cache the results
+		await setCache(cacheKey, specificSiteResults);
+
+		// Write test data in development mode
+		if (IS_DEVELOPMENT) {
+			await writeDataIfNotExists(
+				"specific-site-results.json",
+				specificSiteResults,
+			);
+		}
+
+		return specificSiteResults;
 	} catch (error) {
 		if (error instanceof NotFoundError) throw error;
 		throw new AppError("Failed to fetch specific page results", {

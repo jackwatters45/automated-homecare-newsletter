@@ -7,9 +7,13 @@ import {
 	getNewsletterFrequency,
 } from "../api/service.js";
 
-import type { ArticleWithSnippet, BaseArticle } from "../types/index.js";
+import type {
+	ArticleWithOptionalSource,
+	ArticleWithSnippet,
+	BaseArticle,
+} from "../types/index.js";
 import { closeBrowser, getBrowser } from "./browser.js";
-import { REDIRECT_URLS } from "./constants.js";
+import { JOB_RELATED_URL_PATTERNS, REDIRECT_URLS } from "./constants.js";
 import { handleError } from "./errorHandler.js";
 import { AppError, NetworkError, NotFoundError } from "./errors.js";
 import { getRecurringFrequency, retry } from "./utils.js";
@@ -69,6 +73,15 @@ export async function searchNews(
 							finalUrl = url;
 						}
 
+						const isJobRelated = JOB_RELATED_URL_PATTERNS.some((pattern) =>
+							finalUrl.toString().toLowerCase().includes(pattern),
+						);
+
+						if (isJobRelated) {
+							log(`Job-related URL: ${finalUrl.origin}`);
+							continue;
+						}
+
 						const blacklistedDomains = await getAllBlacklistedDomainNames();
 						const isBlacklisted = blacklistedDomains.some((blacklisted) => {
 							return finalUrl.origin.includes(blacklisted);
@@ -123,6 +136,17 @@ export async function searchNews(
 	);
 
 	return validResults;
+}
+
+function filterOutJobUrls(
+	articles: ArticleWithOptionalSource[],
+): ArticleWithOptionalSource[] {
+	return articles.filter(
+		(article) =>
+			!JOB_RELATED_URL_PATTERNS.some((pattern) =>
+				article.link.toLowerCase().includes(pattern),
+			),
+	);
 }
 
 async function getPageUrl(page: Page, url: string): Promise<URL | null> {

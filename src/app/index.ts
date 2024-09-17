@@ -2,57 +2,98 @@ import "dotenv/config";
 
 import debug from "debug";
 
-import { CLIENT_URL } from "../lib/constants.js";
+import {
+	CLIENT_URL,
+	MAX_ARTICLES_PER_TYPE,
+	TARGET_NUMBER_OF_ARTICLES_SINGLE,
+} from "../lib/constants.js";
 import { resend } from "../lib/email.js";
 
 import { eq } from "drizzle-orm/expressions";
 import {
-	createNewsletter,
+	addNewsletterToDB,
 	getAllReviewerEmails,
 	getNewsletter,
 } from "../api/service.js";
 import { db } from "../db/index.js";
 import { newsletters } from "../db/schema.js";
 import { AppError, NotFoundError } from "../lib/errors.js";
-import logger from "../lib/logger.js";
 import { renderTemplate } from "../lib/template.js";
-import { getEnv, retry } from "../lib/utils.js";
-import type { NewNewsletter } from "../types/index.js";
-import { getArticleData } from "./data-fetching.js";
-import { filterAndRankArticles } from "./data-filtering.js";
+import { getEnv, retry, shuffleArray } from "../lib/utils.js";
+import type {
+	ArticleWithQualityAndCategory,
+	NewNewsletter,
+	ProcessedArticle,
+} from "../types/index.js";
+import {
+	fetchGoogleResults,
+	fetchSpecificSiteResults,
+} from "./data-fetching.js";
+import {
+	filterAndRankGoogleArticles,
+	filterAndRankSpecificSiteArticles,
+	redistributeArticles,
+} from "./data-filtering.js";
 import { generateSummary } from "./format-articles.js";
 
 const log = debug(`${process.env.APP_NAME}:app:index.ts`);
 
-async function generateNewsletterArticles() {
-	try {
-		const results = await getArticleData();
-		if (!results) throw new AppError("Error fetching articles");
+export async function generateNewsletterData() {
+	// Fetch results
+	const [rawGoogleResults, rawSpecificSiteResults] = await Promise.all([
+		fetchGoogleResults(),
+		fetchSpecificSiteResults(),
+	]);
 
-		const articles = await filterAndRankArticles(results);
-		if (!articles) throw new AppError("Error filtering articles");
+	// Filter and rank results
+	const rankedGoogleArticles =
+		await filterAndRankGoogleArticles(rawGoogleResults);
+	const rankedSpecificSiteArticles = await filterAndRankSpecificSiteArticles(
+		rawSpecificSiteResults,
+	);
 
-		return articles;
-	} catch (error) {
-		if (error instanceof AppError) throw error;
-		throw new AppError("Error in generateNewsletterArticles", { cause: error });
-	}
+	// Combine results
+	const combinedArticles = combineAndBalanceArticles(
+		rankedGoogleArticles,
+		rankedSpecificSiteArticles,
+	);
+
+	const redistributedArticles = await redistributeArticles(combinedArticles);
+
+	// Generate summary
+	const summary = await generateSummary(combinedArticles);
+
+	// Shuffle combined articles
+	const shuffleCombinedArticles = shuffleArray(redistributedArticles);
+
+	return {
+		summary,
+		articles: shuffleCombinedArticles,
+	};
 }
 
-export async function generateNewsletterData(): Promise<
-	NewNewsletter | undefined
-> {
+function combineAndBalanceArticles(
+	googleArticles: ArticleWithQualityAndCategory[],
+	specificSiteArticles: ArticleWithQualityAndCategory[],
+): ProcessedArticle[] {
+	const combinedArticles = [
+		...googleArticles.slice(0, MAX_ARTICLES_PER_TYPE),
+		...specificSiteArticles.slice(0, MAX_ARTICLES_PER_TYPE),
+	].sort((a, b) => b.quality - a.quality);
+
+	return combinedArticles.map((article, index) => ({
+		...article,
+		finalRank: index,
+	}));
+}
+
+export async function createNewsletter(): Promise<NewNewsletter | undefined> {
 	log("generating newsletter data");
 
 	try {
-		const articlesData = await generateNewsletterArticles();
+		const newsletterData = await retry(() => generateNewsletterData());
 
-		const summary = await generateSummary(articlesData);
-
-		const newsletter = await createNewsletter({
-			summary,
-			articles: articlesData,
-		});
+		const newsletter = await retry(() => addNewsletterToDB(newsletterData));
 
 		log("newsletter data generated", newsletter.articles.length);
 
@@ -65,7 +106,7 @@ export async function generateNewsletterData(): Promise<
 
 export async function sendNewsletterReviewEmail() {
 	try {
-		const newsletterData = await generateNewsletterData();
+		const newsletterData = await createNewsletter();
 
 		if (!newsletterData) {
 			throw new NotFoundError("Newsletter data not found", { newsletterData });

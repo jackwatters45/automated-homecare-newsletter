@@ -1,20 +1,10 @@
 # Automated Homecare Newsletter
 
-- confirm error handling good + commit
-- unfiltered unique articles
+- get ready to share
+  - connect proper email to send newsletter
+  - better way to sync recipients
 
-- better distribution by source (ensure its okay doesnt have to be perfect)
-  - seperate the two source type completely
-  - max articles per source, max categories per source
-  - add a few more google search terms
-
-- add a form to add good sources
-- add the blacklisted domains + good source (and others) forms to the edit page as well for easy access
-
----
-
-- mock api to sync contacts
-- update pages in claude + optimize
+- update pages in claude/cursor + optimize
 
 ## Roadmap
 

@@ -4,6 +4,7 @@ import type { NextFunction, Request, Response } from "express";
 import path from "node:path";
 import { z } from "zod";
 import {
+	createNewsletter,
 	generateNewsletterData,
 	sendNewsletter,
 	sendNewsletterReviewEmail,
@@ -27,10 +28,10 @@ import {
 	addBulkBlacklistedDomains,
 	addBulkRecipients,
 	addBulkReviewers,
+	addNewsletterToDB,
 	addRecipient,
 	addReviewer,
 	createAd,
-	createNewsletter,
 	deleteAd,
 	deleteArticle,
 	deleteBlacklistedDomain,
@@ -129,7 +130,7 @@ export const newsletterController = {
 	// Create a new newsletter
 	create: async (req: Request, res: Response, next: NextFunction) => {
 		try {
-			const newNewsletter = await createNewsletter(req.body);
+			const newNewsletter = await addNewsletterToDB(req.body);
 			res.status(201).json(newNewsletter);
 		} catch (error) {
 			next(error);
@@ -203,7 +204,7 @@ export const newsletterController = {
 	// generate a new newsletter
 	generate: async (req: Request, res: Response, next: NextFunction) => {
 		try {
-			const result = await generateNewsletterData();
+			const result = await createNewsletter();
 			res.json({ result, id: result?.id });
 		} catch (error) {
 			next(error);
