@@ -1,0 +1,29 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      - pnpm-store:/root/.pnpm-store
+    environment:
+      - NODE_ENV=development
+      - DEBUG=${DEBUG:-automated-homecare-newsletter:*}
+      - PORT=8080
+      - PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
+      - PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
+    command: pnpm run dev
+    develop:
+      watch:
+        - action: sync
+          path: ./src
+          target: /app/src
+        - action: sync
+          path: ./package.json
+          target: /app/package.json
+        - action: rebuild
+          path: package.json
+
+volumes:
+  pnpm-store:

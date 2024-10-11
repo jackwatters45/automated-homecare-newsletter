@@ -7,7 +7,8 @@
 	"scripts": {
 		"test": "vitest",
 		"coverage": "vitest run --coverage",
-		"dev": "DEBUG=automated-homecare-newsletter:* tsx src/index.ts",
+		"dev": "DEBUG=automated-homecare-newsletter:* tsx watch src/index.ts",
+		"docker:dev": "docker compose up --build",
 		"build": "tsc",
 		"prestart": "npm run build",
 		"start": "node --import ./instrument.mjs ./dist/index.js",
