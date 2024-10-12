@@ -159,6 +159,25 @@ export async function getNewsletter(id: number): Promise<PopulatedNewsletter> {
 	}
 }
 
+export async function getNewsletterHTML(id: number) {
+	try {
+		const newsletterData = await getNewsletter(id);
+
+		if (!newsletterData) {
+			throw new NotFoundError("Newsletter data not found", { newsletterData });
+		}
+
+		const html = await renderTemplate({
+			data: newsletterData,
+		});
+
+		return html;
+	} catch (error) {
+		if (error instanceof AppError) throw error;
+		throw new AppError("Error in getNewsletterHTML", { cause: error });
+	}
+}
+
 export async function addNewsletterToDB({
 	summary,
 	articles: articleInputs,
