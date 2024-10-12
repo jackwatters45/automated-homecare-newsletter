@@ -1,5 +1,7 @@
 import path from "node:path";
+import { genomics_v1 } from "googleapis";
 import type { PageToScrape } from "../types/index.js";
+import { AppError } from "./errors.js";
 
 export const TEST_PAGES: PageToScrape[] = [
 	{
@@ -123,6 +125,7 @@ export const JOB_RELATED_URL_PATTERNS = [
 	"/career/",
 ];
 
-export const CACHE_KEY = "articleData";
+export const ARTICLE_DATA_CACHE_KEY = "articleData";
+export const LIST_MEMBERS_CACHE_KEY = "listMembers";
 
 export const MAX_TOKENS = 10000;
