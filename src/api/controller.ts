@@ -5,7 +5,6 @@ import path from "node:path";
 import { z } from "zod";
 import {
 	createNewsletter,
-	generateNewsletterData,
 	sendNewsletter,
 	sendNewsletterReviewEmail,
 	sendNewsletterReviewEmailById,
@@ -15,7 +14,6 @@ import { updateNewsletterFrequency } from "../lib/cron.js";
 import {
 	AppError,
 	ConflictError,
-	DatabaseError,
 	NotFoundError,
 	ValidationError,
 } from "../lib/errors.js";
@@ -26,7 +24,6 @@ import {
 	addArticle,
 	addBlacklistedDomain,
 	addBulkBlacklistedDomains,
-	addBulkRecipients,
 	addBulkReviewers,
 	addNewsletterToDB,
 	addRecipient,
@@ -43,16 +40,15 @@ import {
 	getAllBlacklistedDomainNames,
 	getAllExternalBlacklistedDomainNames,
 	getAllNewsletters,
-	getAllNewslettersWithRecipients,
 	getAllRecipients,
 	getAllReviewers,
 	getAllUnsentNewsletters,
 	getNewsletter,
 	getNewsletterFrequency,
+	getNewsletterHTML,
 	recipientInputSchema,
 	removeAdFromNewsletter,
 	removeAllBlacklistedDomains,
-	removeAllRecipients,
 	removeAllReviewers,
 	subscribeAndNotify,
 	subscribeExisitingRecipient,

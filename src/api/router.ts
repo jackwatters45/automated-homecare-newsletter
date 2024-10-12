@@ -22,6 +22,7 @@ apiRouter.post("/newsletters/generate", newsletterController.generate);
 apiRouter.post("/newsletters/review", newsletterController.review);
 apiRouter.post("/newsletters/:id/review", newsletterController.reviewById);
 apiRouter.post("/newsletters/:id/send", newsletterController.send);
+apiRouter.get("/newsletters/:id/get-html", newsletterController.getHTML);
 apiRouter.post("/newsletters", newsletterController.create);
 
 apiRouter.patch(
