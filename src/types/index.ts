@@ -1,10 +1,4 @@
-import type {
-	ads,
-	articles,
-	newsletters,
-	recipients,
-	reviewers,
-} from "../db/schema.js";
+import type { ads, articles, newsletters, reviewers } from "../db/schema.js";
 import type { CATEGORIES } from "../lib/constants.js";
 
 // Basic types
@@ -114,9 +108,6 @@ export type NewNewsletter = typeof newsletters.$inferInsert;
 export type Article = typeof articles.$inferSelect;
 export type NewArticle = typeof articles.$inferInsert;
 
-export type Recipient = typeof recipients.$inferSelect;
-export type NewRecipient = typeof recipients.$inferInsert;
-
 export type Reviewer = typeof reviewers.$inferSelect;
 export type NewReviewer = typeof reviewers.$inferInsert;
 
@@ -127,6 +118,17 @@ export type NewAd = typeof ads.$inferInsert;
 export interface PopulatedCategory {
 	name: Category;
 	articles: Article[];
+}
+
+export interface RecipientInput {
+	fullName: string;
+	email: string;
+}
+
+export interface Recipient extends RecipientInput {
+	status: string;
+	contactId: string;
+	id: string;
 }
 
 export interface PopulatedNewsletter extends Newsletter {

@@ -17,6 +17,7 @@ export const statusEnum = pgEnum("status", ["SENT", "FAILED", "DRAFT"]);
 
 export const newsletters = createTable("newsletters", {
 	id: serial("id").primaryKey(),
+	mailChimpId: text("mailchimp_id"),
 	summary: text("summary"),
 	sendAt: timestamp("send_at").defaultNow(),
 	status: statusEnum("status").default("DRAFT"),
@@ -41,41 +42,6 @@ export const articles = createTable("articles", {
 	updatedAt: timestamp("updated_at").defaultNow(),
 });
 
-export const recipientStatusEnum = pgEnum("recipient_status", [
-	"ACTIVE",
-	"INACTIVE",
-]);
-
-export const recipients = createTable("recipients", {
-	id: serial("id").primaryKey(),
-	email: text("email").notNull(),
-	status: recipientStatusEnum("status").default("ACTIVE"),
-	createdAt: timestamp("created_at").defaultNow(),
-	updatedAt: timestamp("updated_at").defaultNow(),
-});
-
-export const newsletterRecipients = createTable(
-	"newsletter_recipients",
-	{
-		newsletterId: integer("newsletter_id")
-			.notNull()
-			.references(() => newsletters.id, {
-				onDelete: "cascade",
-				onUpdate: "cascade",
-			}),
-		recipientId: integer("recipient_id")
-			.notNull()
-			.references(() => recipients.id, {
-				onDelete: "cascade",
-				onUpdate: "cascade",
-			}),
-		createdAt: timestamp("created_at").defaultNow(),
-	},
-	(table) => ({
-		pk: primaryKey({ columns: [table.newsletterId, table.recipientId] }),
-	}),
-);
-
 export const articlesRelations = relations(articles, ({ one }) => ({
 	newsletter: one(newsletters, {
 		fields: [articles.newsletterId],
@@ -85,27 +51,8 @@ export const articlesRelations = relations(articles, ({ one }) => ({
 
 export const newslettersRelations = relations(newsletters, ({ many }) => ({
 	articles: many(articles),
-	recipients: many(newsletterRecipients),
 	ads: many(adNewsletterRelations),
 }));
-
-export const recipientsRelations = relations(recipients, ({ many }) => ({
-	newsletters: many(newsletterRecipients),
-}));
-
-export const newsletterRecipientsRelations = relations(
-	newsletterRecipients,
-	({ one }) => ({
-		newsletter: one(newsletters, {
-			fields: [newsletterRecipients.newsletterId],
-			references: [newsletters.id],
-		}),
-		recipient: one(recipients, {
-			fields: [newsletterRecipients.recipientId],
-			references: [recipients.id],
-		}),
-	}),
-);
 
 export const reviewers = createTable("newsletter_reviewers", {
 	id: serial("id").primaryKey(),

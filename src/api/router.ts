@@ -14,10 +14,6 @@ export const apiRouter = express.Router();
 
 // Newsletter Routes
 apiRouter.get("/newsletters/frequency", newsletterController.getFrequency);
-apiRouter.get(
-	"/newsletters/with-recipients",
-	newsletterController.getAllWithRecipients,
-);
 apiRouter.get("/newsletters", newsletterController.getAll);
 apiRouter.get("/newsletters/unsent", newsletterController.getAllUnsent);
 apiRouter.get("/newsletters/:id", newsletterController.getOne);
@@ -51,11 +47,17 @@ apiRouter.post("/articles", articleController.create);
 apiRouter.delete("/articles/:id", articleController.delete);
 
 // Recipient Routes
-apiRouter.get("/recipients", recipientController.getAll);
-apiRouter.delete("/recipients/all", recipientController.removeAll);
+apiRouter.get("/recipients", recipientController.getAllRecipients);
+apiRouter.post("/recipients/add", recipientController.addRecipient);
 apiRouter.delete("/recipients/:id", recipientController.deleteRecipient);
-apiRouter.post("/recipients/bulk", recipientController.addBulk);
-apiRouter.post("/recipients/:id", recipientController.addRecipient);
+apiRouter.patch(
+	"/recipients/:id/unsubscribe",
+	recipientController.unsubscribeRecipient,
+);
+apiRouter.patch(
+	"/recipients/:id/subscribe",
+	recipientController.subscribeExisitingRecipient,
+);
 
 // Page Routes
 apiRouter.get("/page/generate", pagesController.renderGenerateButton);
@@ -109,10 +111,7 @@ apiRouter.delete(
 export const subscriptionRouter = express.Router();
 
 // Subscription Routes
-subscriptionRouter.post(
-	"/subscribe/:id",
-	subscriptionController.addSubscription,
-);
+subscriptionRouter.post("/subscribe", subscriptionController.addSubscription);
 subscriptionRouter.delete(
 	"/unsubscribe/:id",
 	subscriptionController.removeSubscription,

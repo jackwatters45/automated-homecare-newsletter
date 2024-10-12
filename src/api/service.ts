@@ -1,3 +1,4 @@
+import mailchimp from "@mailchimp/mailchimp_marketing";
 import debug from "debug";
 import { and, desc, eq, gt, inArray, not } from "drizzle-orm/expressions";
 import { z } from "zod";
@@ -8,9 +9,7 @@ import {
 	ads,
 	articles,
 	blacklistedDomains,
-	newsletterRecipients,
 	newsletters,
-	recipients,
 	reviewers,
 	settings,
 } from "../db/schema.js";
@@ -30,13 +29,19 @@ import type {
 	NewNewsletter,
 	PopulatedCategory,
 	PopulatedNewsletter,
+	Recipient,
+	RecipientInput,
 } from "../types/index.js";
 
 import { type ExtractTablesWithRelations, sql } from "drizzle-orm";
 import type { NodePgQueryResultHKT } from "drizzle-orm/node-postgres";
 import type { PgTransaction } from "drizzle-orm/pg-core";
-import { CATEGORIES } from "../lib/constants.js";
+import { getCache, setCache } from "../lib/cache.js";
+import { CATEGORIES, LIST_MEMBERS_CACHE_KEY } from "../lib/constants.js";
+import { MAILCHIMP_AUDIENCE_ID } from "../lib/env.js";
 import logger from "../lib/logger.js";
+import { sendTransactionalEmail } from "../lib/mailchimp.js";
+import { renderTemplate } from "../lib/template.js";
 import {
 	getDescription,
 	groupBy,
@@ -62,34 +67,6 @@ export async function getAllUnsentNewsletters() {
 	} catch (error) {
 		throw new AppError("Failed to retrieve unsent newsletters", {
 			operation: "findMany",
-			table: "newsletters",
-			cause: error,
-		});
-	}
-}
-
-export async function getAllNewslettersWithRecipients() {
-	try {
-		return await db.query.newsletters
-			.findMany({
-				with: {
-					recipients: {
-						columns: {},
-						with: {
-							recipient: true,
-						},
-					},
-				},
-			})
-			.then((newsletters) =>
-				newsletters.map((newsletter) => ({
-					...newsletter,
-					recipients: newsletter.recipients.map((nr) => nr.recipient),
-				})),
-			);
-	} catch (error) {
-		throw new AppError("Failed to retrieve newsletters with recipients", {
-			operation: "findMany with recipients",
 			table: "newsletters",
 			cause: error,
 		});
@@ -139,13 +116,9 @@ export function sortAndPopulateCategories(
 
 export async function getNewsletter(id: number): Promise<PopulatedNewsletter> {
 	try {
-		const newsletter = await db.query.newsletters.findFirst({
+		const newsletterPromise = await db.query.newsletters.findFirst({
 			where: (newsletters, { eq }) => eq(newsletters.id, id),
 			with: {
-				recipients: {
-					columns: {},
-					with: { recipient: true },
-				},
 				ads: {
 					columns: {},
 					with: { ad: true },
@@ -154,15 +127,26 @@ export async function getNewsletter(id: number): Promise<PopulatedNewsletter> {
 			},
 		});
 
+		const recipientsPromise = getAllRecipients();
+
+		const [newsletter, recipients] = await Promise.all([
+			newsletterPromise,
+			recipientsPromise,
+		]);
+
 		if (!newsletter) {
 			throw new NotFoundError("Newsletter not found", { id });
+		}
+
+		if (!recipients) {
+			throw new AppError("Failed to get audience data");
 		}
 
 		const categorizedArticles = sortAndPopulateCategories(newsletter.articles);
 
 		return {
 			...newsletter,
-			recipients: newsletter.recipients.map((nr) => nr.recipient),
+			recipients: recipients,
 			ads: newsletter.ads.map((na) => na.ad),
 			categories: categorizedArticles,
 		};
@@ -184,7 +168,6 @@ export async function addNewsletterToDB({
 }): Promise<NewNewsletter & { articles: Article[] }> {
 	try {
 		logger.info("Creating newsletter");
-		const allRecipients = await getAllRecipients();
 
 		return await db.transaction(async (tx) => {
 			// Create newsletter
@@ -204,25 +187,12 @@ export async function addNewsletterToDB({
 				)
 				.returning();
 
-			await tx.insert(newsletterRecipients).values(
-				allRecipients.map((recipient) => {
-					log({
-						newsletterId: newsletter.id,
-						recipientId: recipient.id,
-					});
-					return {
-						newsletterId: newsletter.id,
-						recipientId: recipient.id,
-					};
-				}),
-			);
-
 			return { ...newsletter, articles: articlesArr };
 		});
 	} catch (error) {
 		throw new AppError("Failed to create newsletter", {
 			operation: "transaction",
-			tables: ["newsletters", "articles", "newsletter_recipients"],
+			tables: ["newsletters", "articles"],
 			summary,
 			articleCount: articleInputs.length,
 			cause: error,
@@ -282,7 +252,7 @@ export async function updateArticleOrder(
 	} catch (error) {
 		throw new AppError("Failed to update article order", {
 			operation: "transaction",
-			tables: ["newsletters", "articles", "newsletter_recipients"],
+			tables: ["newsletters", "articles"],
 			newsletterId,
 			articleIds,
 			cause: error,
@@ -391,11 +361,6 @@ export async function deleteNewsletter(id: number) {
 		return await db.transaction(async (tx) => {
 			// Delete all articles associated with this newsletter
 			await tx.delete(articles).where(eq(articles.newsletterId, id));
-
-			// Delete related newsletter recipients
-			await tx
-				.delete(newsletterRecipients)
-				.where(eq(newsletterRecipients.newsletterId, id));
 
 			// Finally, delete the newsletter
 			const [deletedNewsletter] = await tx
@@ -584,260 +549,216 @@ export async function deleteArticle(id: number) {
 	}
 }
 
-// Recipient Functions
-export async function getAllRecipients() {
-	try {
-		const queriedRecipients = await db.query.recipients.findMany({
-			where: eq(recipients.status, "ACTIVE"),
-		});
+// Type guards because mailchimp api is braindead
+function isFetchListsSuccessful(
+	response: mailchimp.lists.ListMembersInfoSuccessResponse | unknown,
+): response is mailchimp.lists.ListMembersInfoSuccessResponse {
+	return (
+		(response as mailchimp.lists.ListMembersInfoSuccessResponse).members !==
+		undefined
+	);
+}
 
-		return queriedRecipients;
+function isFetchMemberSuccessful(
+	response: mailchimp.lists.MembersSuccessResponse | unknown,
+): response is mailchimp.lists.MembersSuccessResponse {
+	return (
+		(response as mailchimp.lists.MembersSuccessResponse).email_address !==
+		undefined
+	);
+}
+
+// Recipient Functions
+export async function getAllRecipients(
+	listId = MAILCHIMP_AUDIENCE_ID,
+): Promise<Recipient[]> {
+	const membersResponse = await mailchimp.lists.getListMembersInfo(listId);
+	if (!isFetchListsSuccessful(membersResponse)) {
+		throw new AppError(
+			`Failed to get audience: ${JSON.stringify(membersResponse)}`,
+		);
+	}
+
+	const listMembers = membersResponse.members.map((member) => ({
+		id: member.id,
+		status: member.status,
+		contactId: member.contact_id,
+		fullName: member.full_name,
+		email: member.email_address,
+	}));
+
+	await setCache<Recipient[]>(LIST_MEMBERS_CACHE_KEY, listMembers);
+
+	return listMembers;
+}
+
+export async function getRecipient(
+	email: string,
+	listId = MAILCHIMP_AUDIENCE_ID,
+): Promise<Recipient | null> {
+	try {
+		const recipient = await mailchimp.lists.getListMember(listId, email);
+
+		if (!isFetchMemberSuccessful(recipient)) {
+			return null;
+		}
+
+		return {
+			id: recipient.id,
+			status: recipient.status,
+			contactId: recipient.contact_id,
+			fullName: recipient.full_name,
+			email: recipient.email_address,
+		};
 	} catch (error) {
-		throw new AppError("Failed to retrieve recipients", {
-			operation: "findMany",
-			table: "recipients",
-			cause: error,
-		});
+		if (error instanceof Error) {
+			if ("status" in error && (error as { status: number }).status === 404) {
+				return null;
+			}
+			throw new AppError(`Failed to get recipient: ${error.message}`);
+		}
+		throw new AppError("An unknown error occurred while getting recipient");
 	}
 }
 
-const emailSchema = z.string().email();
+const emailSchema = z
+	.string()
+	.email()
+	.transform((email) => decodeURIComponent(email));
 
-export async function addRecipient(rawEmail: string) {
-	let email = "";
+export const recipientInputSchema = z.object({
+	firstName: z.string(),
+	lastName: z.string(),
+	email: emailSchema,
+});
+
+type RecipientSource = "existing" | "admin" | "subscribed";
+export async function addRecipient(
+	input: z.infer<typeof recipientInputSchema>,
+	source: RecipientSource,
+) {
 	try {
-		email = decodeURIComponent(rawEmail);
-		emailSchema.parse(email);
-	} catch (error) {
-		if (error instanceof z.ZodError) {
-			throw new ValidationError("Invalid email format", {
-				rawEmail,
-				email: rawEmail,
-			});
+		const parsedInput = recipientInputSchema.parse(input);
+
+		const recipient = await getRecipient(parsedInput.email);
+
+		const subscribed = recipient?.status === "subscribed";
+		if (subscribed) {
+			return { result: "Member already subscribed" };
 		}
-		throw new AppError("Failed to decode email", { rawEmail, cause: error });
-	}
 
-	try {
-		return await db.transaction(async (tx) => {
-			// Check if recipient already exists
-			const existingRecipient = await tx.query.recipients.findFirst({
-				where: eq(recipients.email, email),
+		if (recipient) {
+			await mailchimp.lists.setListMember(MAILCHIMP_AUDIENCE_ID, recipient.id, {
+				email_address: parsedInput.email,
+				status: "subscribed",
+				status_if_new: "subscribed",
+				merge_fields: {
+					FNAME: parsedInput.firstName,
+					LNAME: parsedInput.lastName,
+					SUBSOURCE: source,
+				},
 			});
 
-			if (existingRecipient) {
-				if (existingRecipient.status === "INACTIVE") {
-					// Reactivate the recipient
-					const [reactivatedRecipient] = await tx
-						.update(recipients)
-						.set({ status: "ACTIVE", updatedAt: new Date() })
-						.where(eq(recipients.id, existingRecipient.id))
-						.returning();
+			return { result: "Member re-subscribed" };
+		}
 
-					// Add to unsent newsletters
-					await addToUnsentNewsletters(tx, reactivatedRecipient.id);
-
-					return reactivatedRecipient;
-				}
-				throw new ConflictError("Recipient already exists and is active", {
-					email,
-				});
-			}
-
-			const [newRecipient] = await tx
-				.insert(recipients)
-				.values({ email })
-				.returning();
-
-			await addToUnsentNewsletters(tx, newRecipient.id);
-
-			return newRecipient;
+		await mailchimp.lists.addListMember(MAILCHIMP_AUDIENCE_ID, {
+			email_address: parsedInput.email,
+			status: "subscribed",
+			merge_fields: {
+				FNAME: parsedInput.firstName,
+				LNAME: parsedInput.lastName,
+				SUBSOURCE: "Admin",
+			},
 		});
+
+		return { result: "Member created and subscribed" };
 	} catch (error) {
 		if (error instanceof ConflictError) throw error;
-		throw new AppError("Failed to add recipient", {
-			operation: "insert recipient",
-			table: "recipients",
-			email,
+		if (error instanceof z.ZodError) {
+			throw new ValidationError("Invalid input", { details: error.issues });
+		}
+		if (error instanceof URIError) {
+			throw new AppError("Failed to decode email", { cause: error });
+		}
+		throw new AppError("Failed to add recipient to MailChimp audience", {
+			input: input,
+			source: "MailChimp audience",
 			cause: error,
 		});
 	}
 }
 
-export async function deleteRecipient(rawEmail: string) {
-	let email = "";
+export async function subscribeExisitingRecipient(contactId: string) {
 	try {
-		email = decodeURIComponent(rawEmail);
-		emailSchema.parse(email);
-	} catch (error) {
-		if (error instanceof z.ZodError) {
-			throw new ValidationError("Invalid email format", { rawEmail, email });
-		}
-		throw new AppError("Failed to decode email", { rawEmail });
-	}
-
-	try {
-		return await db.transaction(async (tx) => {
-			// Find the recipient
-			const recipient = await tx.query.recipients.findFirst({
-				where: and(eq(recipients.email, email), eq(recipients.status, "ACTIVE")),
-			});
-
-			if (!recipient) {
-				return { message: "Recipient not found or already inactive" };
-			}
-
-			// Soft delete: update status to INACTIVE
-			const [updatedRecipient] = await tx
-				.update(recipients)
-				.set({ status: "INACTIVE", updatedAt: new Date() })
-				.where(eq(recipients.id, recipient.id))
-				.returning();
-
-			// Remove from unsent newsletters only
-			const unsentNewsletters = await tx
-				.select({ id: newsletters.id })
-				.from(newsletters)
-				.where(not(eq(newsletters.status, "SENT")));
-
-			const { rowCount: deletedAssociations } = await tx
-				.delete(newsletterRecipients)
-				.where(
-					and(
-						eq(newsletterRecipients.recipientId, recipient.id),
-						unsentNewsletters && unsentNewsletters.length > 0
-							? inArray(
-									newsletterRecipients.newsletterId,
-									unsentNewsletters.map((n) => n.id),
-								)
-							: sql`1 = 0`, // This condition is always false
-					),
-				);
-
-			return { updatedRecipient, deletedAssociations };
+		await mailchimp.lists.updateListMember(MAILCHIMP_AUDIENCE_ID, contactId, {
+			status: "subscribed",
 		});
+	} catch (error) {
+		throw new AppError("Failed to subscribe recipient", {
+			operation: "subscribe",
+			contactId,
+			source: "MailChimp audience",
+			cause: error,
+		});
+	}
+}
+
+export async function subscribeAndNotify(
+	input: z.infer<typeof recipientInputSchema>,
+) {
+	try {
+		await addRecipient(input, "subscribed");
+
+		await sendTransactionalEmail({
+			to: [input.email],
+			type: "html",
+			subject: "Welcome to the Homecare Newsletter by TrollyCare",
+			body: `You have been added to the TrollyCare Newsletter. If you believe this is an error, <a href="*|UNSUB|*">click here</a> to unsubscribe.
+      Thank you for subscribing!
+      `,
+		});
+
+		logger.info(`User ${input.email} subscribed and notified successfully`);
+	} catch (error) {
+		logger.error(`Failed to subscribe and notify user ${input.email}:`, error);
+
+		throw new AppError("Failed to subscribe and notify user", {
+			operation: "subscribe",
+			contactId: input.email,
+			source: "MailChimp audience",
+			cause: error,
+		});
+	}
+}
+
+export async function unsubscribeRecipient(contactId: string) {
+	try {
+		await mailchimp.lists.updateListMember(MAILCHIMP_AUDIENCE_ID, contactId, {
+			status: "unsubscribed",
+		});
+
+		return { result: "Member unsubscribed" };
+	} catch (error) {
+		throw new AppError("Failed to unsubscribe recipient", {
+			operation: "unsubscribe",
+			contactId,
+			source: "MailChimp audience",
+			cause: error,
+		});
+	}
+}
+
+export async function deleteRecipient(contactId: string) {
+	try {
+		await mailchimp.lists.deleteListMember(MAILCHIMP_AUDIENCE_ID, contactId);
 	} catch (error) {
 		throw new AppError("Failed to delete recipient", {
 			operation: "delete",
-			table: "recipients",
-			email,
+			contactId,
+			source: "MailChimp audience",
 			cause: error,
 		});
-	}
-}
-
-export async function addBulkRecipients(emails: string[]): Promise<string[]> {
-	try {
-		const uniqueEmails = [...new Set(emails)];
-		const validEmails = uniqueEmails.filter((email) => isValidEmail(email));
-
-		if (validEmails.length === 0) return [];
-
-		return await db.transaction(async (tx) => {
-			const insertedOrUpdatedRecipients = await Promise.all(
-				validEmails.map(async (email) => {
-					const existingRecipient = await tx.query.recipients.findFirst({
-						where: eq(recipients.email, email),
-					});
-
-					if (existingRecipient && existingRecipient.status === "INACTIVE") {
-						if (existingRecipient.status === "INACTIVE") {
-							const [reactivated] = await tx
-								.update(recipients)
-								.set({ status: "ACTIVE", updatedAt: new Date() })
-								.where(eq(recipients.id, existingRecipient.id))
-								.returning();
-							return reactivated;
-						}
-						return existingRecipient;
-					}
-
-					const [newRecipient] = await tx
-						.insert(recipients)
-						.values({ email, status: "ACTIVE" })
-						.returning();
-					return newRecipient;
-				}),
-			);
-
-			await addToUnsentNewsletters(
-				tx,
-				insertedOrUpdatedRecipients.map((r) => r.id),
-			);
-
-			return insertedOrUpdatedRecipients.map((r) => r.email);
-		});
-	} catch (error) {
-		throw new AppError("Failed to add recipients", {
-			operation: "insert",
-			table: "recipients",
-			cause: error,
-		});
-	}
-}
-
-export async function removeAllRecipients(): Promise<void> {
-	try {
-		await db.transaction(async (tx) => {
-			// Get all unsent newsletters
-			const unsentNewsletters = await tx
-				.select({ id: newsletters.id })
-				.from(newsletters)
-				.where(not(eq(newsletters.status, "SENT")));
-
-			// Remove all recipients from unsent newsletters
-			await tx.delete(newsletterRecipients).where(
-				unsentNewsletters && unsentNewsletters.length > 0
-					? inArray(
-							newsletterRecipients.newsletterId,
-							unsentNewsletters.map((n) => n.id),
-						)
-					: sql`1 = 0`, // This condition is always false
-			);
-
-			// Set all active recipients to inactive
-			const res = await tx
-				.update(recipients)
-				.set({ status: "INACTIVE", updatedAt: new Date() })
-				.where(eq(recipients.status, "ACTIVE"))
-				.returning();
-
-			logger.info(
-				"Deactivated all recipients and removed from unsent newsletters",
-				res,
-			);
-		});
-	} catch (error) {
-		throw new AppError("Failed to remove all recipients", {
-			operation: "delete",
-			table: "recipients",
-			cause: error,
-		});
-	}
-}
-
-type TX = PgTransaction<
-	NodePgQueryResultHKT,
-	typeof import("../db/schema.js"),
-	ExtractTablesWithRelations<typeof import("../db/schema.js")>
->;
-
-async function addToUnsentNewsletters(tx: TX, recipientId: number | number[]) {
-	const unsentNewsletters = await tx
-		.select({ id: newsletters.id })
-		.from(newsletters)
-		.where(not(eq(newsletters.status, "SENT")));
-
-	if (unsentNewsletters.length > 0) {
-		const recipientIds = Array.isArray(recipientId) ? recipientId : [recipientId];
-		await tx.insert(newsletterRecipients).values(
-			unsentNewsletters.flatMap((newsletter) =>
-				recipientIds.map((id) => ({
-					newsletterId: newsletter.id,
-					recipientId: id,
-				})),
-			),
-		);
 	}
 }
 
@@ -992,11 +913,6 @@ export async function addBulkReviewers(emails: string[]): Promise<string[]> {
 						.returning();
 					return newReviewer;
 				}),
-			);
-
-			await addToUnsentNewsletters(
-				tx,
-				insertedReviewers.map((r) => r.id),
 			);
 
 			return insertedReviewers.map((r) => r.email);

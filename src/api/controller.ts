@@ -49,10 +49,14 @@ import {
 	getAllUnsentNewsletters,
 	getNewsletter,
 	getNewsletterFrequency,
+	recipientInputSchema,
 	removeAdFromNewsletter,
 	removeAllBlacklistedDomains,
 	removeAllRecipients,
 	removeAllReviewers,
+	subscribeAndNotify,
+	subscribeExisitingRecipient,
+	unsubscribeRecipient,
 	updateAd,
 	updateArticleCategory,
 	updateArticleDescription,
@@ -98,19 +102,6 @@ export const newsletterController = {
 		try {
 			const allUnsentNewsletters = await getAllUnsentNewsletters();
 			res.json(allUnsentNewsletters);
-		} catch (error) {
-			next(error);
-		}
-	},
-
-	getAllWithRecipients: async (
-		req: Request,
-		res: Response,
-		next: NextFunction,
-	) => {
-		try {
-			const allNewsletters = await getAllNewslettersWithRecipients();
-			res.json(allNewsletters);
 		} catch (error) {
 			next(error);
 		}
@@ -240,6 +231,17 @@ export const newsletterController = {
 		}
 	},
 
+	// Get newsletter HTML
+	getHTML: async (req: Request, res: Response, next: NextFunction) => {
+		try {
+			const { id } = req.params;
+			const html = await getNewsletterHTML(Number(id));
+			res.json(html);
+		} catch (error) {
+			next(error);
+		}
+	},
+
 	// Get newsletter frequency
 	getFrequency: async (req: Request, res: Response, next: NextFunction) => {
 		try {
@@ -299,7 +301,13 @@ const updateDescriptionSchema = z.object({
 	description: z.string().min(1).max(1000),
 });
 
-const emailSchema = z.string().email("Invalid email address");
+const emailSchema = z
+	.string()
+	.trim()
+	.email("Invalid email address")
+	.transform((email) => {
+		return email.toLowerCase();
+	});
 
 const bulkEmailsSchema = z.array(emailSchema);
 
@@ -357,8 +365,8 @@ export const articleController = {
 
 // Recipient Controllers
 export const recipientController = {
-	// Get all recipients
-	getAll: async (req: Request, res: Response, next: NextFunction) => {
+	// Get audience from mailchimp
+	getAllRecipients: async (req: Request, res: Response, next: NextFunction) => {
 		try {
 			const recipients = await getAllRecipients();
 			res.json(recipients);
@@ -368,16 +376,10 @@ export const recipientController = {
 	},
 	// Add a recipient
 	addRecipient: async (req: Request, res: Response, next: NextFunction) => {
-		const { id: email } = req.params;
-
-		const parsedEmail = emailSchema.safeParse(email);
-		if (!parsedEmail.success) {
-			next(new ValidationError("Invalid email format"));
-		}
-
 		try {
-			const recipient = await addRecipient(email);
-			res.json(recipient);
+			const parsedInput = recipientInputSchema.parse(req.body);
+			const subscription = await addRecipient(parsedInput, "admin");
+			res.json(subscription);
 		} catch (error) {
 			if (error instanceof z.ZodError) {
 				next(new ValidationError("Invalid input", { details: error.errors }));
@@ -391,17 +393,72 @@ export const recipientController = {
 			}
 		}
 	},
-	// Delete a recipient
-	deleteRecipient: async (req: Request, res: Response, next: NextFunction) => {
-		const { id: email } = req.params;
+	// Subscribe existing recipient
+	subscribeExisitingRecipient: async (
+		req: Request,
+		res: Response,
+		next: NextFunction,
+	) => {
+		const { id: contactId } = req.params;
 
-		const parsedEmail = emailSchema.safeParse(email);
-		if (!parsedEmail.success) {
-			next(new ValidationError("Invalid email format"));
+		if (!contactId) {
+			next(new ValidationError("Invalid input: contactId is required"));
 		}
 
 		try {
-			await deleteRecipient(email);
+			await subscribeExisitingRecipient(contactId);
+			res.json({ message: "Recipient subscribed successfully" });
+		} catch (error) {
+			if (error instanceof z.ZodError) {
+				next(new ValidationError("Invalid input", { details: error.issues }));
+			} else if (
+				error instanceof AppError &&
+				error.message === "Recipient not found"
+			) {
+				next(new NotFoundError("Recipient not found"));
+			} else {
+				next(error);
+			}
+		}
+	},
+	// Unsubscribe a recipient
+	unsubscribeRecipient: async (
+		req: Request,
+		res: Response,
+		next: NextFunction,
+	) => {
+		const { id: contactId } = req.params;
+
+		if (!contactId) {
+			next(new ValidationError("Invalid input: contactId is required"));
+		}
+
+		try {
+			await unsubscribeRecipient(contactId);
+			res.json({ message: "Recipient unsubscribed successfully" });
+		} catch (error) {
+			if (error instanceof z.ZodError) {
+				next(new ValidationError("Invalid input", { details: error.issues }));
+			} else if (
+				error instanceof AppError &&
+				error.message === "Recipient not found"
+			) {
+				next(new NotFoundError("Recipient not found"));
+			} else {
+				next(error);
+			}
+		}
+	},
+	// Delete a recipient
+	deleteRecipient: async (req: Request, res: Response, next: NextFunction) => {
+		const { id: contactId } = req.params;
+
+		if (!contactId) {
+			next(new ValidationError("Invalid input: contactId is required"));
+		}
+
+		try {
+			await deleteRecipient(contactId);
 			res.json({ message: "Recipient deleted successfully" });
 		} catch (error) {
 			if (error instanceof z.ZodError) {
@@ -416,34 +473,6 @@ export const recipientController = {
 			}
 		}
 	},
-	// Add bulk recipients
-	addBulk: async (req: Request, res: Response, next: NextFunction) => {
-		try {
-			const { emails } = req.body;
-			const parsedEmails = bulkEmailsSchema.safeParse(emails);
-			if (!parsedEmails.success) {
-				next(new ValidationError("Invalid input: emails should be an array"));
-			}
-
-			const addedEmails = await addBulkRecipients(emails);
-			res.status(200).json(addedEmails);
-		} catch (error) {
-			if (error instanceof z.ZodError) {
-				next(new ValidationError("Invalid input", { details: error.errors }));
-			} else {
-				next(error);
-			}
-		}
-	},
-	// Remove all recipients
-	removeAll: async (req: Request, res: Response, next: NextFunction) => {
-		try {
-			await removeAllRecipients();
-			res.status(200).json({ message: "All recipients removed successfully" });
-		} catch (error) {
-			next(error);
-		}
-	},
 };
 
 // Subscription Controllers
@@ -451,14 +480,8 @@ export const subscriptionController = {
 	// add a subscription
 	addSubscription: async (req: Request, res: Response, next: NextFunction) => {
 		try {
-			const { id: email } = req.params;
-
-			const parsedEmail = emailSchema.safeParse(email);
-			if (!parsedEmail.success) {
-				next(new ValidationError("Invalid email format"));
-			}
-
-			const subscription = await addRecipient(email);
+			const parsedInput = recipientInputSchema.parse(req.body);
+			const subscription = await subscribeAndNotify(parsedInput);
 			res.json(subscription);
 		} catch (error) {
 			if (error instanceof z.ZodError) {
@@ -483,8 +506,8 @@ export const subscriptionController = {
 				next(new ValidationError("Invalid email format"));
 			}
 
-			const subscription = await deleteRecipient(email);
-			res.json(subscription);
+			const result = await unsubscribeRecipient(email);
+			res.json(result);
 		} catch (error) {
 			if (error instanceof AppError && error.message === "Subscriber not found") {
 				next(new NotFoundError("Subscriber not found"));

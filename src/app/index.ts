@@ -7,7 +7,6 @@ import {
 	MAX_ARTICLES_PER_TYPE,
 	TARGET_NUMBER_OF_ARTICLES_SINGLE,
 } from "../lib/constants.js";
-import { resend } from "../lib/email.js";
 
 import { eq } from "drizzle-orm/expressions";
 import {
@@ -18,6 +17,10 @@ import {
 import { db } from "../db/index.js";
 import { newsletters } from "../db/schema.js";
 import { AppError, NotFoundError } from "../lib/errors.js";
+import {
+	createAndSendCampaign,
+	sendTransactionalEmail,
+} from "../lib/mailchimp.js";
 import { renderTemplate } from "../lib/template.js";
 import { getEnv, retry, shuffleArray } from "../lib/utils.js";
 import type {
@@ -120,16 +123,11 @@ export async function sendNewsletterReviewEmail() {
 		retry(async () => {
 			const reviewers = await getAllReviewerEmails();
 
-			const { data, error } = await resend.emails.send({
-				from: getEnv("RESEND_FROM_EMAIL"),
+			const { data } = await sendTransactionalEmail({
 				to: reviewers,
 				subject: "Review TrollyCare Newsletter",
-				text: `Please review the newsletter and approve it before it is sent. link to newsletter: ${CLIENT_URL}/newsletters/${id}`,
+				body: `Please review the newsletter and approve it before it is sent. link to newsletter: ${CLIENT_URL}/newsletters/${id}`,
 			});
-
-			if (error) {
-				throw new AppError("Error sending email", { cause: error });
-			}
 
 			return {
 				newsletter: newsletterData,
@@ -153,16 +151,11 @@ export async function sendNewsletterReviewEmailById(id: number) {
 
 		const reviewers = await getAllReviewerEmails();
 
-		const { data, error } = await resend.emails.send({
-			from: getEnv("RESEND_FROM_EMAIL"),
+		const { data } = await sendTransactionalEmail({
 			to: reviewers,
 			subject: "Review TrollyCare Newsletter",
-			text: `Please review the newsletter and approve it before it is sent. link to newsletter: ${CLIENT_URL}/newsletters/${id}`,
+			body: `Please review the newsletter and approve it before it is sent. link to newsletter: ${CLIENT_URL}/newsletters/${id}`,
 		});
-
-		if (error) {
-			throw new AppError("Error sending email", { cause: error });
-		}
 
 		return {
 			newsletter: newsletterData,
@@ -179,31 +172,15 @@ export async function sendNewsletter(id: number) {
 	try {
 		const newsletterData = await getNewsletter(id);
 
-		for (const recipient of newsletterData.recipients) {
-			const html = await renderTemplate({
-				data: newsletterData,
-				recipientEmail: recipient.email,
-			});
+		const html = await renderTemplate({
+			data: newsletterData,
+		});
 
-			if (!html) {
-				throw new AppError("Incomplete newsletter template", { recipient });
-			}
-
-			const { error } = await resend.emails.send({
-				from: getEnv("RESEND_FROM_EMAIL"),
-				to: recipient.email,
-				subject: `TrollyCare Newsletter - ${new Date().toLocaleDateString()}`,
-				html,
-			});
-
-			if (error) {
-				throw new AppError("Error sending email", { cause: error });
-			}
-		}
+		const campaignId = await createAndSendCampaign(html);
 
 		const updatedNewsletter = await db
 			.update(newsletters)
-			.set({ status: "SENT" })
+			.set({ status: "SENT", mailChimpId: campaignId })
 			.where(eq(newsletters.id, id))
 			.returning();
 
