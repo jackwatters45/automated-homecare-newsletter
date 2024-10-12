@@ -3,6 +3,7 @@ import debug from "debug";
 import { z } from "zod";
 import { getNewsletterFrequency } from "../api/service.js";
 import { generateAIJsonResponse } from "../lib/ai.js";
+import { bottleneck } from "../lib/bottleneck.js";
 import {
 	CATEGORIES,
 	MAX_ARTICLES_PER_SOURCE,
@@ -11,7 +12,7 @@ import {
 	TOPIC,
 } from "../lib/constants.js";
 import { AppError, NotFoundError } from "../lib/errors.js";
-import { rateLimiter } from "../lib/rate-limit.js";
+import logger from "../lib/logger.js";
 import {
 	AddSourceToArticle,
 	getDescription,
@@ -131,7 +132,7 @@ async function fetchArticleDescription(
 ): Promise<ArticleWithSourceAndCount> {
 	if (!article.description) {
 		article.description =
-			(await rateLimiter.schedule(() => getDescription(article))) ?? "";
+			(await bottleneck.schedule(() => getDescription(article))) ?? "";
 	}
 	return article;
 }
@@ -147,73 +148,10 @@ export async function addDescriptionsToArticles(
 			articlesWithDescriptions.push(articleWithDescription);
 		}
 
-		console.log("Added descriptions to articles");
+		logger.info("Added descriptions to articles");
 		return articlesWithDescriptions;
 	});
 }
-
-// export async function filterAndRankArticlesCombined(
-// 	rawArticles: ArticleWithOptionalSource[],
-// 	targetArticleCount = TARGET_NUMBER_OF_ARTICLES,
-// 	maxArticlesPerSource = MAX_ARTICLES_PER_SOURCE,
-// ) {
-// 	log("filtering and ranking articles");
-// 	try {
-// 		const uniqueArticles = deduplicateAndCountArticles(rawArticles);
-
-// 		const shuffledArticles = shuffleArray(uniqueArticles);
-// 		const aiFilteringInput = extractArticleFilteringData(shuffledArticles);
-
-// 		// First round of filtering: Filter based on title and description/snippet
-// 		const firstFilteredArticles = await retry(
-// 			async () => await filterArticles(aiFilteringInput),
-// 			5,
-// 		);
-
-// 		// Generate descriptions for articles without them
-// 		const articlesWithDescriptions = await addDescriptionsToArticles(
-// 			firstFilteredArticles,
-// 		);
-
-// 		log("Filtered articles with descriptions", articlesWithDescriptions.length);
-
-// 		// Second round of filtering with updated descriptions
-// 		const secondFilteredArticles = await retry(
-// 			async () =>
-// 				await filterArticles(articlesWithDescriptions, targetArticleCount, false),
-// 			5,
-// 		);
-
-// 		const rankedArticles = await retry(
-// 			async () => await rankArticles(secondFilteredArticles, targetArticleCount),
-// 			5,
-// 		);
-
-// 		const articlesWithLimitedSources = await retry(
-// 			async () =>
-// 				await limitArticlesPerSource(rankedArticles, maxArticlesPerSource),
-// 			5,
-// 		);
-
-// 		const articlesWithCategories = await retry(
-// 			async () => await generateCategories(articlesWithLimitedSources),
-// 		);
-
-// 		const mergedRankedArticles = await mergeFilteredArticles(
-// 			shuffledArticles,
-// 			articlesWithCategories,
-// 		);
-
-// 		const articles = deduplicateArticles(mergedRankedArticles);
-
-// 		log("final (deduplicated) article count", articles.length);
-
-// 		return articles;
-// 	} catch (error) {
-// 		if (error instanceof AppError) throw error;
-// 		throw new AppError("Error in filterAndRankArticles", { cause: error });
-// 	}
-// }
 
 export async function filterArticlesByPage(
 	articles: ArticleData[],
