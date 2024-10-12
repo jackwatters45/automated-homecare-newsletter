@@ -22,7 +22,7 @@ import {
 	sendTransactionalEmail,
 } from "../lib/mailchimp.js";
 import { renderTemplate } from "../lib/template.js";
-import { getEnv, retry, shuffleArray } from "../lib/utils.js";
+import { retry, shuffleArray } from "../lib/utils.js";
 import type {
 	ArticleWithQualityAndCategory,
 	NewNewsletter,
