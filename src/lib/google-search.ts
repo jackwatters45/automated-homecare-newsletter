@@ -2,11 +2,9 @@ import debug from "debug";
 import { google } from "googleapis";
 import type { Browser, Page } from "puppeteer";
 
-import {
-	getAllBlacklistedDomainNames,
-	getNewsletterFrequency,
-} from "../api/service.js";
+import { getAllBlacklistedDomainNames } from "../api/service.js";
 
+import * as cheerio from "cheerio";
 import type {
 	ArticleWithOptionalSource,
 	ArticleWithSnippet,
@@ -16,7 +14,7 @@ import { closeBrowser, getBrowser } from "./browser.js";
 import { JOB_RELATED_URL_PATTERNS, REDIRECT_URLS } from "./constants.js";
 import { handleError } from "./errorHandler.js";
 import { AppError, NetworkError, NotFoundError } from "./errors.js";
-import { getRecurringFrequency, retry } from "./utils.js";
+import { retry } from "./utils.js";
 
 const log = debug(`${process.env.APP_NAME}:google-search.ts`);
 const debugLog = debug(`debug:${process.env.APP_NAME}:google-search.ts`);
@@ -92,7 +90,11 @@ export async function searchNews(
 							continue;
 						}
 
-						const title = item.title;
+						let title = item.title;
+						if (title?.trim().endsWith("...")) {
+							title = await getFullTitle(finalUrl.href);
+						}
+
 						if (!title) {
 							log(`No title found for query: ${q}`);
 							continue;
@@ -149,7 +151,7 @@ function filterOutJobUrls(
 	);
 }
 
-async function getPageUrl(page: Page, url: string): Promise<URL | null> {
+export async function getPageUrl(page: Page, url: string): Promise<URL | null> {
 	try {
 		const response = await page.goto(url, {
 			waitUntil: "networkidle0",
@@ -205,5 +207,18 @@ export async function simpleSearch(query: string, pages = 1): Promise<void> {
 		log("\n");
 	} catch (error) {
 		log(`Error searching for query "${query}": ${error}`);
+	}
+}
+
+async function getFullTitle(url: string): Promise<string | null> {
+	try {
+		const response = await fetch(url);
+		const html = await response.text();
+		const $ = cheerio.load(html);
+		const title = $("title").text();
+		return title || null;
+	} catch (error) {
+		log(`Error fetching full title from ${url}: ${error}`);
+		return null;
 	}
 }
