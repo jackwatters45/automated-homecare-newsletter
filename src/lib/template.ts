@@ -13,18 +13,22 @@ const log = debug(`${process.env.APP_NAME}:template.ts`);
 
 interface RenderTemplateOptions {
 	data: PopulatedNewsletter;
-	recipientEmail?: string;
 	fileName?: string;
 }
+
 export async function renderTemplate({
 	data,
-	recipientEmail,
 	fileName = "newsletter.hbs",
 }: RenderTemplateOptions): Promise<string> {
 	const source = await fs.readFile(
 		path.join(BASE_PATH, "public", "views", fileName),
 		"utf-8",
 	);
+
+	// Register a Handlebars helper to create safe URLs
+	Handlebars.registerHelper("safeUrl", (url) => {
+		return new Handlebars.SafeString(url);
+	});
 
 	const template = Handlebars.compile(source);
 
@@ -59,7 +63,6 @@ export async function renderTemplate({
 		categories: data?.categories,
 		summary: data?.summary,
 		ads: data?.ads,
-		unsubscribeUrl: `${CLIENT_URL}/unsubscribe?email=${encodeURIComponent(recipientEmail ?? "example@example.com")}`,
 		subscribeUrl: `${CLIENT_URL}/subscribe`,
 	});
 
