@@ -1,4 +1,4 @@
-// browser.js
+// browser.ts
 import puppeteer from "puppeteer";
 
 let browserInstance: puppeteer.Browser | null = null;

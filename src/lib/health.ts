@@ -3,8 +3,7 @@ import debug from "debug";
 import { desc, gte } from "drizzle-orm/expressions";
 import type { Request, Response } from "express";
 import { db } from "../db/index.js";
-import { recipients } from "../db/schema.js";
-import { cronLogs } from "../db/schema.js"; // Assuming you have a cronLogs table
+import { cronLogs, newsletters } from "../db/schema.js";
 import { API_URL } from "./constants.js";
 import { AppError } from "./errors.js";
 import logger from "./logger.js";
@@ -57,7 +56,7 @@ export async function healthCheck(req: Request, res: Response) {
 
 async function checkDatabaseStatus(): Promise<string> {
 	try {
-		await db.select().from(recipients).limit(1);
+		await db.select().from(newsletters).limit(1);
 		return "connected";
 	} catch (error) {
 		logger.error("Database connection failed", { error });

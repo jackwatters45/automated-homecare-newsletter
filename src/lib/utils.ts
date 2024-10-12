@@ -335,14 +335,6 @@ export const extractDate = (
 		? new Date($(element).find(selector).text().trim())
 		: undefined;
 
-export const getEnv = (name: string) => {
-	const value = process.env[name];
-	if (!value) {
-		throw new AppError(`Missing environment variable: ${name}`);
-	}
-	return value;
-};
-
 export function validateCategory(
 	category: string,
 ): NewArticleInput["category"] {
