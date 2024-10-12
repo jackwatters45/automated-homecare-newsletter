@@ -18,9 +18,9 @@ const getRedisArgs = () => {
 };
 const redis = new Redis(getRedisArgs());
 
-export async function setCache(
+export async function setCache<T>(
 	key: string,
-	data: ArticleWithOptionalSource[],
+	data: T,
 	ttl = 86400,
 ): Promise<void> {
 	try {
@@ -31,11 +31,9 @@ export async function setCache(
 	}
 }
 
-export async function getCache(
-	key: string,
-): Promise<ArticleWithOptionalSource[] | null> {
+export async function getCache<T>(key: string): Promise<T | null> {
 	try {
-		return await redis.get<ArticleWithOptionalSource[]>(key);
+		return await redis.get<T>(key);
 	} catch (error) {
 		logger.error("Error getting cache:", error);
 		return null;

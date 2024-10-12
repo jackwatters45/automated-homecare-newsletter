@@ -5,7 +5,7 @@ import { getAllBlacklistedDomainNames } from "../api/service.js";
 import { generateAITextResponse } from "../lib/ai.js";
 import { getCache, setCache } from "../lib/cache.js";
 import {
-	CACHE_KEY,
+	ARTICLE_DATA_CACHE_KEY,
 	IS_DEVELOPMENT,
 	SPECIFIC_PAGES,
 	TARGET_NUMBER_OF_ARTICLES_COMBINED,
@@ -48,7 +48,9 @@ export async function getArticleData() {
 			log("No test data found, falling back to live data");
 		} else {
 			// Check Upstash Redis cache first
-			const cachedData = await getCache(CACHE_KEY);
+			const cachedData = await getCache<ArticleWithOptionalSource[]>(
+				ARTICLE_DATA_CACHE_KEY,
+			);
 			if (cachedData) {
 				log("Using cached article data from Upstash Redis");
 				return cachedData;
@@ -70,7 +72,7 @@ export async function getArticleData() {
 			results.push(...additionalResults);
 		}
 
-		await setCache(CACHE_KEY, results);
+		await setCache<ArticleWithOptionalSource[]>(ARTICLE_DATA_CACHE_KEY, results);
 		await writeDataIfNotExists("raw-article-data.json", results);
 
 		return results;
@@ -105,9 +107,9 @@ export async function fetchGoogleResults(): Promise<BaseArticle[]> {
 		log("No test data found for Google results, fetching live data");
 	}
 
-	const cacheKey = `${CACHE_KEY}_google`;
+	const cacheKey = `${ARTICLE_DATA_CACHE_KEY}_google`;
 	if (!IS_DEVELOPMENT) {
-		const cachedData = await getCache(cacheKey);
+		const cachedData = await getCache<ArticleWithOptionalSource[]>(cacheKey);
 		if (cachedData) {
 			log("Using cached Google search results");
 			return cachedData;
@@ -124,7 +126,7 @@ export async function fetchGoogleResults(): Promise<BaseArticle[]> {
 		log("google search results count", googleResults.length);
 
 		// Cache the results
-		await setCache(cacheKey, googleResults);
+		await setCache<ArticleWithOptionalSource[]>(cacheKey, googleResults);
 
 		// Write test data in development mode
 		if (IS_DEVELOPMENT) {
@@ -155,11 +157,11 @@ export async function fetchSpecificSiteResults(): Promise<
 		log("No test data found for specific site results, fetching live data");
 	}
 
-	const cacheKey = `${CACHE_KEY}_specific`;
+	const cacheKey = `${ARTICLE_DATA_CACHE_KEY}_specific`;
 
 	if (!IS_DEVELOPMENT) {
 		// Check cache first
-		const cachedData = await getCache(cacheKey);
+		const cachedData = await getCache<ArticleWithOptionalSource[]>(cacheKey);
 		if (cachedData) {
 			log("Using cached specific site results");
 			return cachedData;
@@ -189,7 +191,7 @@ export async function fetchSpecificSiteResults(): Promise<
 		}
 
 		// Cache the results
-		await setCache(cacheKey, specificSiteResults);
+		await setCache<ArticleWithOptionalSource[]>(cacheKey, specificSiteResults);
 
 		// Write test data in development mode
 		if (IS_DEVELOPMENT) {
