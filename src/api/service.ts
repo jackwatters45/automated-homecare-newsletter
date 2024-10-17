@@ -1,4 +1,5 @@
 import mailchimp from "@mailchimp/mailchimp_marketing";
+import * as cheerio from "cheerio";
 import debug from "debug";
 import { and, desc, eq, gt, inArray, not } from "drizzle-orm/expressions";
 import { z } from "zod";
@@ -446,11 +447,83 @@ export async function getNewsletterFrequency(): Promise<number> {
 }
 
 // Article Functions
+export async function updateArticleTitle(id: number, titleInput: string) {
+	let title = titleInput;
+	try {
+		// if no title is provided, generate a title from the description
+		if (!title) {
+			const [article] = await db
+				.select({ description: articles.description })
+				.from(articles)
+				.where(eq(articles.id, id))
+				.limit(1);
+
+			const { content } = await generateAITextResponse({
+				prompt: `Given the following article description, generate a title for the article:
+
+				${article.description}
+
+				Title:`,
+			});
+
+			title = content?.trim();
+		}
+
+		const [updatedArticle] = await db
+			.update(articles)
+			.set({ title, updatedAt: new Date() })
+			.where(eq(articles.id, id))
+			.returning();
+
+		if (!updatedArticle) {
+			throw new NotFoundError("Article not found", { id });
+		}
+
+		return updatedArticle;
+	} catch (error) {
+		if (error instanceof NotFoundError) throw error;
+		throw new AppError("Failed to update article title", {
+			operation: "update",
+			table: "articles",
+			id,
+			titleLength: title.length,
+			cause: error,
+		});
+	}
+}
+
 export async function updateArticleDescription(
 	id: number,
-	description: string,
+	descriptionInput: string,
 ) {
+	let description = descriptionInput;
 	try {
+		// if no title is provided, generate a title from the description
+		if (!description) {
+			const [article] = await db
+				.select({ link: articles.link })
+				.from(articles)
+				.where(eq(articles.id, id))
+				.limit(1);
+
+			const pageContent = await retry(() => fetchPageContent(article.link));
+
+			if (!pageContent) {
+				log("Page content is empty");
+				return [];
+			}
+
+			const $ = cheerio.load(pageContent);
+
+			const descriptionPrompt = createDescriptionPrompt($.html());
+
+			const { content } = await generateAITextResponse({
+				prompt: descriptionPrompt,
+			});
+
+			description = content?.trim();
+		}
+
 		const [updatedArticle] = await db
 			.update(articles)
 			.set({ description, updatedAt: new Date() })

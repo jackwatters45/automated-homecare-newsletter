@@ -298,8 +298,14 @@ const articleSchema = z.object({
 		.optional(),
 });
 
+const updateTitleSchema = z.object({
+	title: z.string().max(100, "Title must be less than 100 characters"),
+});
+
 const updateDescriptionSchema = z.object({
-	description: z.string().min(1).max(1000),
+	description: z
+		.string()
+		.max(500, "Description must be less than 500 characters"),
 });
 
 const emailSchema = z
@@ -314,6 +320,21 @@ const bulkEmailsSchema = z.array(emailSchema);
 
 // Article Controllers
 export const articleController = {
+	// Update an article's title
+	updateTitle: async (req: Request, res: Response, next: NextFunction) => {
+		const { id } = req.params;
+		try {
+			const { title } = updateTitleSchema.parse(req.body);
+			const updatedArticle = await updateArticleTitle(Number(id), title);
+			res.json(updatedArticle);
+		} catch (error) {
+			if (error instanceof z.ZodError) {
+				next(new ValidationError("Invalid input", { details: error.errors }));
+			} else {
+				next(error);
+			}
+		}
+	},
 	// Update an article's description
 	updateDescription: async (req: Request, res: Response, next: NextFunction) => {
 		const { id } = req.params;
