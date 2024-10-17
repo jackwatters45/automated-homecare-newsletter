@@ -27,6 +27,9 @@ RUN pnpm install --frozen-lockfile
 # Copy the rest of the application
 COPY . .
 
+# Create a directory for uploads
+RUN mkdir -p /app/uploads && chmod 777 /app/uploads
+
 # Set environment variable to use system-installed Chromium
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true
 ENV PUPPETEER_EXECUTABLE_PATH /usr/bin/chromium

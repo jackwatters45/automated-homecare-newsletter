@@ -129,3 +129,5 @@ export const ARTICLE_DATA_CACHE_KEY = "articleData";
 export const LIST_MEMBERS_CACHE_KEY = "listMembers";
 
 export const MAX_TOKENS = 10000;
+
+export const BASE_UPLOAD_DIR = "/app/uploads";

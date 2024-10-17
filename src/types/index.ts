@@ -125,8 +125,12 @@ export interface RecipientInput {
 	email: string;
 }
 
-export interface Recipient extends RecipientInput {
-	status: string;
+export type RecipientStatus = "subscribed" | "unsubscribed";
+export interface RecipientFromEpic extends RecipientInput {
+	status: RecipientStatus;
+}
+
+export interface Recipient extends RecipientFromEpic {
 	contactId: string;
 	id: string;
 }

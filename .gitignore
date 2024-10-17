@@ -39,3 +39,6 @@ drizzle
 
 # Data
 data
+
+# Uploads folder
+uploads/*

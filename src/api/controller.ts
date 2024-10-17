@@ -9,7 +9,7 @@ import {
 	sendNewsletterReviewEmail,
 	sendNewsletterReviewEmailById,
 } from "../app/index.js";
-import { BASE_PATH } from "../lib/constants.js";
+import { BASE_PATH, BASE_UPLOAD_DIR } from "../lib/constants.js";
 import { updateNewsletterFrequency } from "../lib/cron.js";
 import {
 	AppError,
@@ -17,8 +17,11 @@ import {
 	NotFoundError,
 	ValidationError,
 } from "../lib/errors.js";
+import logger from "../lib/logger.js";
+import { handleFileChunk, processCompleteFile } from "../lib/recipient-sync.js";
 import { renderTemplate } from "../lib/template.js";
 import { validateCategory } from "../lib/utils.js";
+import { FileInputSchema, sanitizeFilePath } from "../lib/validation.js";
 import {
 	addAdToNewsletter,
 	addArticle,
@@ -46,6 +49,7 @@ import {
 	getNewsletter,
 	getNewsletterFrequency,
 	getNewsletterHTML,
+	getRecipient,
 	recipientInputSchema,
 	removeAdFromNewsletter,
 	removeAllBlacklistedDomains,
@@ -57,6 +61,7 @@ import {
 	updateArticleCategory,
 	updateArticleDescription,
 	updateArticleOrder,
+	updateArticleTitle,
 	updateNewsletterSummary,
 	updateSetting,
 } from "./service.js";
@@ -389,6 +394,45 @@ export const recipientController = {
 			}
 		}
 	},
+	// Sync recipients
+	syncRecipients: async (req: Request, res: Response, next: NextFunction) => {
+		if (!req.file) {
+			logger.error("No file uploaded");
+			return res.status(400).json({ error: "No file uploaded" });
+		}
+
+		const { originalFilename, chunkIndex, totalChunks } = FileInputSchema.parse({
+			originalFilename: req.file.originalname,
+			chunkIndex: Number.parseInt(req.body.chunkIndex),
+			totalChunks: Number.parseInt(req.body.totalChunks),
+		});
+
+		if (!originalFilename) {
+			logger.error("Filename is missing");
+			return res.status(400).json({ error: "Filename is missing" });
+		}
+
+		const sanitizedFilename = sanitizeFilePath(originalFilename);
+
+		try {
+			// Always handle the chunk first
+			await handleFileChunk(req.file.path, chunkIndex, sanitizedFilename);
+			logger.info(`Chunk ${chunkIndex} handled successfully`);
+
+			if (chunkIndex === totalChunks - 1) {
+				logger.info("Processing complete file");
+				const result = await processCompleteFile(sanitizedFilename, totalChunks);
+				logger.info("File processing complete, sending response");
+				res.json(result);
+			} else {
+				res.json({ message: "Chunk received" });
+			}
+		} catch (error) {
+			logger.error("Error in syncRecipients:", error);
+			next(error);
+		}
+	},
+
 	// Subscribe existing recipient
 	subscribeExisitingRecipient: async (
 		req: Request,

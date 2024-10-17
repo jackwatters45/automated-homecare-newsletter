@@ -1,4 +1,5 @@
 import express from "express";
+import { upload } from "../lib/multer.js";
 import {
 	adController,
 	articleController,
@@ -44,12 +45,18 @@ apiRouter.patch(
 	"/articles/:id/description",
 	articleController.updateDescription,
 );
+apiRouter.patch("/articles/:id/title", articleController.updateTitle);
 apiRouter.post("/articles", articleController.create);
 apiRouter.delete("/articles/:id", articleController.delete);
 
 // Recipient Routes
 apiRouter.get("/recipients", recipientController.getAllRecipients);
 apiRouter.post("/recipients/add", recipientController.addRecipient);
+apiRouter.post(
+	"/recipients/sync",
+	upload.single("file"),
+	recipientController.syncRecipients,
+);
 apiRouter.delete("/recipients/:id", recipientController.deleteRecipient);
 apiRouter.patch(
 	"/recipients/:id/unsubscribe",

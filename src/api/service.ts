@@ -31,23 +31,34 @@ import type {
 	PopulatedNewsletter,
 	Recipient,
 	RecipientInput,
+	RecipientStatus,
 } from "../types/index.js";
 
 import { type ExtractTablesWithRelations, sql } from "drizzle-orm";
 import type { NodePgQueryResultHKT } from "drizzle-orm/node-postgres";
 import type { PgTransaction } from "drizzle-orm/pg-core";
+import e from "express";
+import { createDescriptionPrompt } from "../app/format-articles.js";
+import { generateAITextResponse } from "../lib/ai.js";
 import { getCache, setCache } from "../lib/cache.js";
 import { CATEGORIES, LIST_MEMBERS_CACHE_KEY } from "../lib/constants.js";
+import {
+	type SyncRecipientsInput,
+	syncRecipientsSchema,
+} from "../lib/csv-processor.js";
 import { MAILCHIMP_AUDIENCE_ID } from "../lib/env.js";
 import logger from "../lib/logger.js";
 import { sendTransactionalEmail } from "../lib/mailchimp.js";
 import { renderTemplate } from "../lib/template.js";
 import {
+	fetchPageContent,
 	getDescription,
 	groupBy,
 	isValidEmail,
+	retry,
 	validateCategory,
 } from "../lib/utils.js";
+import { emailSchema } from "../lib/validation.js";
 
 const log = debug(`${process.env.APP_NAME}:routes/api/service.ts`);
 
@@ -600,7 +611,7 @@ export async function getAllRecipients(
 
 	const listMembers = membersResponse.members.map((member) => ({
 		id: member.id,
-		status: member.status,
+		status: member.status as RecipientStatus,
 		contactId: member.contact_id,
 		fullName: member.full_name,
 		email: member.email_address,
@@ -624,7 +635,7 @@ export async function getRecipient(
 
 		return {
 			id: recipient.id,
-			status: recipient.status,
+			status: recipient.status as RecipientStatus,
 			contactId: recipient.contact_id,
 			fullName: recipient.full_name,
 			email: recipient.email_address,
@@ -639,11 +650,6 @@ export async function getRecipient(
 		throw new AppError("An unknown error occurred while getting recipient");
 	}
 }
-
-const emailSchema = z
-	.string()
-	.email()
-	.transform((email) => decodeURIComponent(email));
 
 export const recipientInputSchema = z.object({
 	firstName: z.string(),
@@ -706,6 +712,30 @@ export async function addRecipient(
 			cause: error,
 		});
 	}
+}
+
+export async function syncRecipients(recipients: SyncRecipientsInput) {
+	const uploadedRecipients = syncRecipientsSchema.parse(recipients);
+
+	const updatedRecipients: mailchimp.lists.BatchListMembersBodyMembersObject[] =
+		uploadedRecipients.map((recipient) => {
+			return {
+				email_address: recipient.email,
+				email_type: "html",
+				status: recipient.status,
+				merge_fields: {
+					FNAME: recipient.fullName,
+					SUBSOURCE: "Epic",
+				},
+			};
+		});
+
+	const result = await mailchimp.lists.batchListMembers(MAILCHIMP_AUDIENCE_ID, {
+		members: updatedRecipients,
+		update_existing: true,
+	});
+
+	return { result: "Members updated successfully" };
 }
 
 export async function subscribeExisitingRecipient(contactId: string) {
