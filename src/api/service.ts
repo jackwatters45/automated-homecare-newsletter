@@ -31,17 +31,14 @@ import type {
 	PopulatedCategory,
 	PopulatedNewsletter,
 	Recipient,
-	RecipientInput,
 	RecipientStatus,
 } from "../types/index.js";
 
-import { type ExtractTablesWithRelations, sql } from "drizzle-orm";
-import type { NodePgQueryResultHKT } from "drizzle-orm/node-postgres";
-import type { PgTransaction } from "drizzle-orm/pg-core";
-import e from "express";
+import { sql } from "drizzle-orm";
 import { createDescriptionPrompt } from "../app/format-articles.js";
 import { generateAITextResponse } from "../lib/ai.js";
-import { getCache, setCache } from "../lib/cache.js";
+import { sendTransactionalEmail } from "../lib/aws-ses.js";
+import { setCache } from "../lib/cache.js";
 import { CATEGORIES, LIST_MEMBERS_CACHE_KEY } from "../lib/constants.js";
 import {
 	type SyncRecipientsInput,
@@ -49,7 +46,6 @@ import {
 } from "../lib/csv-processor.js";
 import { MAILCHIMP_AUDIENCE_ID } from "../lib/env.js";
 import logger from "../lib/logger.js";
-import { sendTransactionalEmail } from "../lib/mailchimp.js";
 import { renderTemplate } from "../lib/template.js";
 import {
 	fetchPageContent,
@@ -832,16 +828,20 @@ export async function subscribeAndNotify(
 	try {
 		await addRecipient(input, "subscribed");
 
-		await sendTransactionalEmail({
-			to: [input.email],
-			type: "html",
-			subject: "Welcome to the Homecare Newsletter by TrollyCare",
-			body: `You have been added to the TrollyCare Newsletter. If you believe this is an error, <a href="*|UNSUB|*">click here</a> to unsubscribe.
-      Thank you for subscribing!
+		logger.info(`User ${input.email} subscribed`);
+
+		const res = await sendTransactionalEmail({
+			html: `You have been added to the TrollyCare Newsletter. If you believe this is an error, <a href="*|UNSUB|*">click here</a> to unsubscribe.
+      
+				Thank you for subscribing!
       `,
+			subject: "Welcome to the Homecare Newsletter by TrollyCare",
+			to: input.email,
 		});
 
 		logger.info(`User ${input.email} subscribed and notified successfully`);
+
+		return res;
 	} catch (error) {
 		logger.error(`Failed to subscribe and notify user ${input.email}:`, error);
 

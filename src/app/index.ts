@@ -2,12 +2,6 @@ import "dotenv/config";
 
 import debug from "debug";
 
-import {
-	CLIENT_URL,
-	MAX_ARTICLES_PER_TYPE,
-	TARGET_NUMBER_OF_ARTICLES_SINGLE,
-} from "../lib/constants.js";
-
 import { eq } from "drizzle-orm/expressions";
 import {
 	addNewsletterToDB,
@@ -16,11 +10,10 @@ import {
 } from "../api/service.js";
 import { db } from "../db/index.js";
 import { newsletters } from "../db/schema.js";
+import { sendTransactionalEmail } from "../lib/aws-ses.js";
+import { CLIENT_URL, MAX_ARTICLES_PER_TYPE } from "../lib/constants.js";
 import { AppError, NotFoundError } from "../lib/errors.js";
-import {
-	createAndSendCampaign,
-	sendTransactionalEmail,
-} from "../lib/mailchimp.js";
+import { createAndSendCampaign } from "../lib/mailchimp.js";
 import { renderTemplate } from "../lib/template.js";
 import { retry, shuffleArray } from "../lib/utils.js";
 import type {
@@ -123,15 +116,15 @@ export async function sendNewsletterReviewEmail() {
 		retry(async () => {
 			const reviewers = await getAllReviewerEmails();
 
-			const { data } = await sendTransactionalEmail({
-				to: reviewers,
+			const res = await sendTransactionalEmail({
 				subject: "Review TrollyCare Newsletter",
-				body: `Please review the newsletter and approve it before it is sent. link to newsletter: ${CLIENT_URL}/newsletters/${id}`,
+				text: `Please review the newsletter and approve it before it is sent. link to newsletter: ${CLIENT_URL}/newsletters/${id}`,
+				to: reviewers,
 			});
 
 			return {
 				newsletter: newsletterData,
-				data,
+				emailResult: res,
 				message: "Email sent successfully",
 			};
 		});
@@ -151,15 +144,15 @@ export async function sendNewsletterReviewEmailById(id: number) {
 
 		const reviewers = await getAllReviewerEmails();
 
-		const { data } = await sendTransactionalEmail({
-			to: reviewers,
+		const res = await sendTransactionalEmail({
 			subject: "Review TrollyCare Newsletter",
-			body: `Please review the newsletter and approve it before it is sent. link to newsletter: ${CLIENT_URL}/newsletters/${id}`,
+			text: `Please review the newsletter and approve it before it is sent. link to newsletter: ${CLIENT_URL}/newsletters/${id}`,
+			to: reviewers,
 		});
 
 		return {
 			newsletter: newsletterData,
-			data,
+			emailResult: res,
 			message: "Email sent successfully",
 		};
 	} catch (error) {
